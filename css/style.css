@@ -2249,6 +2249,7 @@ section {
     .partnership-grid {
         flex-direction: column;
         align-items: center;
+        flex-wrap: wrap;
     }
     .partnership-grid .partnership-card {
         flex: 0 0 90% !important;
