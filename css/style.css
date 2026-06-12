@@ -1155,10 +1155,11 @@ section {
 }
 
 .partnership-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    align-items: stretch;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: nowrap;
 }
 
 .partnership-card {
