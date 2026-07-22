@@ -2714,3 +2714,17 @@ body.dark-mode .vision { border-top: 1px solid rgba(232,207,148,.12); }
   body.dark-mode .activity-card { min-height: 0; }
   body.dark-mode .gallery-world { margin-bottom: 32px; }
 }
+
+/* Mobile hero breathing room: pull the editorial opening upward, then pace its hierarchy deliberately. */
+@media (max-width: 768px) {
+  .top-bar { padding-top: 7px; padding-bottom: 7px; }
+  .nav-container { min-height: 66px; }
+  .hero { padding-top: 48px; padding-bottom: 82px; }
+  .hero-badge { margin-bottom: 28px; }
+  .hero-title { gap: 20px; margin-bottom: 36px; }
+  .hero-title-small { line-height: 1.5; }
+  .hero-title-sub { margin-top: 2px; }
+  .hero-description { margin-bottom: 36px; line-height: 1.95; }
+  .hero-quote { margin-bottom: 38px; }
+  .hero-buttons { margin-bottom: 34px; }
+}
