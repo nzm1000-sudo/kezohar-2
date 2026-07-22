@@ -25,6 +25,9 @@
         initCopyButtons();
         initFloatingDonate();
         initCurrentYear();
+        initThemeToggle();
+        initImageModal();
+        initActiveNavigation();
     });
 
     // ==========================================
@@ -55,8 +58,10 @@
         if (!menuToggle || !navMenu) return;
 
         menuToggle.addEventListener('click', function() {
-            navMenu.classList.toggle('active');
-            menuToggle.classList.toggle('active');
+            const isOpen = navMenu.classList.toggle('active');
+            menuToggle.classList.toggle('active', isOpen);
+            menuToggle.setAttribute('aria-expanded', String(isOpen));
+            menuToggle.setAttribute('aria-label', isOpen ? 'סגירת תפריט' : 'פתיחת תפריט');
         });
 
         // Close menu when clicking a link
@@ -64,6 +69,8 @@
             link.addEventListener('click', function() {
                 navMenu.classList.remove('active');
                 menuToggle.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+                menuToggle.setAttribute('aria-label', 'פתיחת תפריט');
             });
         });
 
@@ -72,6 +79,8 @@
             if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
                 navMenu.classList.remove('active');
                 menuToggle.classList.remove('active');
+                menuToggle.setAttribute('aria-expanded', 'false');
+                menuToggle.setAttribute('aria-label', 'פתיחת תפריט');
             }
         });
     }
@@ -225,6 +234,60 @@
                 floatingBtn.classList.remove('visible');
             }
         }, { passive: true });
+    }
+
+    // ==========================================
+    // Theme preference — honours system choice, remembers explicit choice
+    // ==========================================
+    function initThemeToggle() {
+        const toggle = document.getElementById('themeToggle');
+        if (!toggle) return;
+        const stored = localStorage.getItem('kezohar-theme');
+        const isDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setTheme(isDark);
+        toggle.addEventListener('click', () => {
+            const next = !document.body.classList.contains('dark-mode');
+            setTheme(next);
+            localStorage.setItem('kezohar-theme', next ? 'dark' : 'light');
+        });
+        function setTheme(dark) {
+            document.body.classList.toggle('dark-mode', dark);
+            toggle.setAttribute('aria-pressed', String(dark));
+            toggle.setAttribute('aria-label', dark ? 'מעבר למצב בהיר' : 'מעבר למצב כהה');
+            toggle.querySelector('i').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+        }
+    }
+
+    // ==========================================
+    // Accessible image dialog (Escape + backdrop close + focus return)
+    // ==========================================
+    function initImageModal() {
+        const modal = document.getElementById('rav-modal');
+        const trigger = document.querySelector('.rav-trigger');
+        const close = modal && modal.querySelector('.modal-close');
+        if (!modal || !trigger || !close) return;
+        const closeModal = () => { modal.hidden = true; trigger.focus(); };
+        trigger.addEventListener('click', () => { modal.hidden = false; close.focus(); });
+        close.addEventListener('click', closeModal);
+        modal.addEventListener('click', event => { if (event.target === modal) closeModal(); });
+        document.addEventListener('keydown', event => { if (event.key === 'Escape' && !modal.hidden) closeModal(); });
+    }
+
+    // ==========================================
+    // Current location indicator in one-page navigation
+    // ==========================================
+    function initActiveNavigation() {
+        const links = [...document.querySelectorAll('.nav-menu a')];
+        const sections = links.map(link => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+        if (!sections.length || !('IntersectionObserver' in window)) return;
+        const observer = new IntersectionObserver(entries => {
+            const active = entries.filter(entry => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+            if (!active) return;
+            links.forEach(link => link.removeAttribute('aria-current'));
+            const link = links.find(item => item.getAttribute('href') === '#' + active.target.id);
+            if (link) link.setAttribute('aria-current', 'page');
+        }, { rootMargin: '-35% 0px -55% 0px', threshold: [0, .1, .25] });
+        sections.forEach(section => observer.observe(section));
     }
 
     // ==========================================

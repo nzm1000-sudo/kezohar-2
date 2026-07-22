@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <a class="skip-link" href="#main-content">דלג לתוכן המרכזי</a>
 
     <!-- Top Bar -->
     <div class="top-bar">
@@ -34,7 +35,7 @@
     </div>
 
     <!-- Navigation -->
-    <nav class="navbar" id="navbar">
+    <nav class="navbar" id="navbar" aria-label="ניווט ראשי">
         <div class="container nav-container">
             <a href="#home" class="nav-logo">
                 <div class="logo-icon">
@@ -46,7 +47,7 @@
                 </div>
             </a>
             
-            <ul class="nav-menu" id="navMenu">
+            <ul class="nav-menu" id="navMenu" aria-label="קישורי ניווט">
                 <li><a href="#home">בית</a></li>
                 <li><a href="#vision">החזון</a></li>
                 <li><a href="#activities">הפעילויות</a></li>
@@ -55,20 +56,25 @@
                 <li><a href="#donate">תרומה</a></li>
             </ul>
             
+            <button class="theme-toggle" id="themeToggle" type="button" aria-label="מעבר למצב כהה" aria-pressed="false">
+                <i class="fas fa-moon" aria-hidden="true"></i>
+            </button>
+
             <a href="#donate" class="btn-donate-nav">
                 <i class="fas fa-heart"></i> לתרומה
             </a>
             
-            <button class="menu-toggle" id="menuToggle" aria-label="תפריט">
+            <button class="menu-toggle" id="menuToggle" aria-label="פתיחת תפריט" aria-controls="navMenu" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
         </div>
     </nav>
 
+    <main id="main-content" tabindex="-1">
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-bg">
-            <img src="images/soldier-battle-to-home.jpg" alt="מהחזית אל הבית - חייל בודד" class="hero-bg-image">
+            <img src="images/soldier-battle-to-home.jpg" alt="מהחזית אל הבית - חייל בודד" class="hero-bg-image" width="1024" height="572" fetchpriority="high">
         </div>
         <div class="hero-overlay"></div>
         
@@ -91,17 +97,16 @@
             </p>
             
             <div class="hero-quote" data-aos="fade-up" data-aos-delay="300">
-    <img src="images/rav.png" alt="הרב שלום יוסף ברבי שליט״א" 
-         onclick="document.getElementById('rav-modal').style.display='flex'"
-         style="width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid #C3986B;vertical-align:middle;margin-left:12px;cursor:pointer;">
+    <button type="button" class="rav-trigger" aria-label="הצגת תמונת הרב שלום יוסף ברבי שליט״א" aria-haspopup="dialog" aria-controls="rav-modal">
+        <img src="images/rav.webp" alt="" width="64" height="64">
+    </button>
     בנשיאות הרב <strong>שלום יוסף ברבי שליט״א</strong>
 </div>
 
 <!-- מודל תמונה -->
-<div id="rav-modal" onclick="this.style.display='none'"
-     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;cursor:pointer;">
-    <img src="images/rav.png" alt="הרב שלום יוסף ברבי שליט״א"
-         style="max-width:90vw;max-height:90vh;border-radius:16px;border:3px solid #C3986B;">
+<div id="rav-modal" class="image-modal" role="dialog" aria-modal="true" aria-label="תמונת הרב שלום יוסף ברבי שליט״א" hidden>
+    <button type="button" class="modal-close" aria-label="סגירת תמונת הרב"><i class="fas fa-times" aria-hidden="true"></i></button>
+    <img src="images/rav.webp" alt="הרב שלום יוסף ברבי שליט״א" width="1200" height="898">
 </div>
             
             <div class="hero-buttons" data-aos="fade-up" data-aos-delay="400">
@@ -158,7 +163,7 @@
                 
                 <div class="vision-card vision-card-primary" data-aos="fade-up" data-aos-delay="200">
                     <div class="vision-image">
-                        <img src="images/education-girl-science.jpg" alt="ילדה לומדת עם מורה תומכת" loading="lazy">
+                        <img src="images/education-girl-science.webp" alt="ילדה לומדת עם מורה תומכת" loading="lazy">
                         <div class="vision-image-badge">
                             <i class="fas fa-heart"></i> בלב הפרויקט
                         </div>
@@ -174,7 +179,7 @@
                 
                 <div class="vision-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="vision-image">
-                        <img src="images/education-teens.jpg" alt="בני נוער מסורתיים בקהילה" loading="lazy">
+                        <img src="images/education-teens.webp" alt="בני נוער מסורתיים בקהילה" loading="lazy">
                     </div>
                     <div class="vision-card-body">
                         <div class="vision-icon-wrapper">
@@ -231,7 +236,7 @@
                 <!-- 3. בית כנסת -->
                 <article class="activity-card" data-aos="fade-up" data-aos-delay="150">
                     <div class="activity-image">
-                        <img src="images/synagogue.png" alt="בית כנסת מפואר">
+                        <img src="images/synagogue.webp" alt="בית כנסת מפואר">
                     </div>
                     <div class="activity-body">
                         <div class="activity-icon"><i class="fas fa-synagogue"></i></div>
@@ -244,7 +249,7 @@
                 <!-- 4. מקוואות -->
                 <article class="activity-card" data-aos="fade-up" data-aos-delay="200">
                     <div class="activity-image">
-                        <img src="images/mikveh.png" alt="מקוואות מפוארים">
+                        <img src="images/mikveh.webp" alt="מקוואות מפוארים">
                     </div>
                     <div class="activity-body">
                         <div class="activity-icon"><i class="fas fa-tint"></i></div>
@@ -257,7 +262,7 @@
                <!-- 5. ייעוץ -->
                 <article class="activity-card" data-aos="fade-up" data-aos-delay="250">
                     <div class="activity-image">
-                        <img src="images/counseling.png" alt="מתחם ייעוץ">
+                        <img src="images/counseling.webp" alt="מתחם ייעוץ">
                     </div>
                     <div class="activity-body">
                         <div class="activity-icon"><i class="fas fa-comments"></i></div>
@@ -270,7 +275,7 @@
                 <!-- 6. חלוקת מזון -->
                 <article class="activity-card" data-aos="fade-up" data-aos-delay="300">
                     <div class="activity-image">
-                        <img src="images/food.png" alt="חלוקת מזון">
+                        <img src="images/food.webp" alt="חלוקת מזון">
                     </div>
                     <div class="activity-body">
                         <div class="activity-icon"><i class="fas fa-utensils"></i></div>
@@ -283,7 +288,7 @@
                 <!-- 7. ייעוץ רפואי -->
                 <article class="activity-card" data-aos="fade-up" data-aos-delay="350">
                     <div class="activity-image">
-                        <img src="images/medical.png" alt="ייעוץ רפואי">
+                        <img src="images/medical.webp" alt="ייעוץ רפואי">
                     </div>
                     <div class="activity-body">
                         <div class="activity-icon"><i class="fas fa-stethoscope"></i></div>
@@ -338,7 +343,7 @@
                         <figcaption>הגעה לחדר אישי</figcaption>
                     </figure>
                     <figure class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
-                        <img src="images/soldier-sleeping.jpg" alt="חייל נח במיטה חמה אחרי המילואים" loading="lazy">
+                        <img src="images/soldier-sleeping.webp" alt="חייל נח במיטה חמה אחרי המילואים" loading="lazy">
                         <figcaption>מנוחה שמגיעה</figcaption>
                     </figure>
                     <figure class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
@@ -365,11 +370,11 @@
                         <figcaption>ליווי אישי לכל ילד</figcaption>
                     </figure>
                     <figure class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
-                        <img src="images/education-girl-science.jpg" alt="ילדה לומדת מדעים" loading="lazy">
+                        <img src="images/education-girl-science.webp" alt="ילדה לומדת מדעים" loading="lazy">
                         <figcaption>סקרנות וגילוי</figcaption>
                     </figure>
                     <figure class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
-                        <img src="images/education-teens.jpg" alt="בני נוער מסורתיים בכיתה" loading="lazy">
+                        <img src="images/education-teens.webp" alt="בני נוער מסורתיים בכיתה" loading="lazy">
                         <figcaption>דור של מנהיגים</figcaption>
                     </figure>
                 </div>
@@ -755,6 +760,8 @@
         </div>
     </section>
 
+    </main>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -814,7 +821,7 @@
     </a>
 
     <!-- Toast Notification -->
-    <div class="toast" id="toast">
+    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
         <i class="fas fa-check-circle"></i>
         <span id="toastMessage">הועתק בהצלחה!</span>
     </div>
