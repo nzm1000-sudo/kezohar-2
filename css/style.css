@@ -2369,3 +2369,9 @@ body.dark-mode .vision-card, body.dark-mode .activity-card, body.dark-mode .bene
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+
+/* Preview/CDN-safe rendering: content remains visible even if the animation CDN is delayed or blocked. */
+[data-aos] {
+    opacity: 1 !important;
+    transform: none !important;
+}
