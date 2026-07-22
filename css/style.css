@@ -2687,3 +2687,30 @@ body.dark-mode .footer-bottom { color: #f7f2e8; }
 body.dark-mode .footer-credit,
 body.dark-mode .footer-bottom p { color: #c8d2d3; }
 body.dark-mode .footer-tagline { color: #efcc79; }
+
+/* Mobile dark-mode composition: establish clear surfaces and remove dead vertical space. */
+body.dark-mode .activities { background: #081821; }
+body.dark-mode .activities-grid { background: transparent; border-color: transparent; gap: 14px; }
+body.dark-mode .activity-card,
+body.dark-mode .activity-card:nth-child(3n) { background: #152a34; border: 1px solid rgba(232,207,148,.22); box-shadow: 0 18px 30px rgba(0,0,0,.23); }
+body.dark-mode .activity-card:hover { box-shadow: 0 22px 38px rgba(0,0,0,.32), inset 0 0 0 1px #c8a45b; }
+body.dark-mode .vision-card,
+body.dark-mode .gallery-world,
+body.dark-mode .benefit-item,
+body.dark-mode .process-step,
+body.dark-mode .partnership-grid .partnership-card:not(.partnership-card-top),
+body.dark-mode .donate-card { box-shadow: 0 18px 32px rgba(0,0,0,.22); }
+body.dark-mode .gallery-section,
+body.dark-mode .benefits,
+body.dark-mode .process,
+body.dark-mode .partnership,
+body.dark-mode .vision { border-top: 1px solid rgba(232,207,148,.12); }
+
+@media (max-width: 768px) {
+  /* A section should feel like the next chapter, not a large empty interruption. */
+  body.dark-mode section:not(.hero) { padding-top: 56px; padding-bottom: 56px; }
+  body.dark-mode .section-header { margin-bottom: 36px; }
+  body.dark-mode .activities-grid { gap: 12px; }
+  body.dark-mode .activity-card { min-height: 0; }
+  body.dark-mode .gallery-world { margin-bottom: 32px; }
+}
