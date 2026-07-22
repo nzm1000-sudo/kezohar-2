@@ -2733,3 +2733,24 @@ body.dark-mode .vision { border-top: 1px solid rgba(232,207,148,.12); }
 @media (max-width: 768px) {
   .activities-grid { gap: clamp(78px, 23vw, 96px) !important; }
 }
+
+/* Carry the same generous mobile rhythm into the partnership choices. */
+@media (max-width: 768px) {
+  .partnership-grid { gap: clamp(78px, 23vw, 96px); }
+}
+
+/* A quiet travelling stitch: only the gallery dividers move, slowly and without visual noise. */
+.gallery-world-header { position: relative; border-bottom: 0; }
+.gallery-world-header::after {
+  content: ''; position: absolute; right: 0; bottom: 0; left: 0; height: 2px;
+  background: repeating-linear-gradient(90deg, var(--warm-gray-300) 0 9px, transparent 9px 18px);
+  background-size: 36px 2px;
+  opacity: .78;
+  animation: stitchDrift 18s linear infinite;
+}
+body.dark-mode .gallery-world-header::after {
+  background-image: repeating-linear-gradient(90deg, rgba(247,242,232,.62) 0 9px, transparent 9px 18px);
+  opacity: .68;
+}
+@keyframes stitchDrift { from { background-position: 0 0; } to { background-position: 72px 0; } }
+@media (prefers-reduced-motion: reduce) { .gallery-world-header::after { animation: none; } }
