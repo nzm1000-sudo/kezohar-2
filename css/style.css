@@ -2728,3 +2728,8 @@ body.dark-mode .vision { border-top: 1px solid rgba(232,207,148,.12); }
   .hero-quote { margin-bottom: 38px; }
   .hero-buttons { margin-bottom: 34px; }
 }
+
+/* Mobile activity rhythm: intentional breathing room between separate service stories. */
+@media (max-width: 768px) {
+  .activities-grid { gap: clamp(78px, 23vw, 96px) !important; }
+}
