@@ -2647,3 +2647,43 @@ body.dark-mode .benefit-icon { background: rgba(234,138,60,.15); color: #F1A455;
 
 /* Removed: the experimental asymmetric foundation stone did not meet the visual standard. */
 .partnership::before { display: none; }
+
+/* Dark mode v2: a calm night-slate canvas, distinct from its content surfaces. */
+body.dark-mode {
+  --white: #fffaf0; /* semantic white remains readable; surfaces are set explicitly below */
+  --cream: #07141d;
+  --sand: #0b1821;
+  --text-dark: #fff8e9;
+  --text-medium: #d5dfe0;
+  --text-light: #b9c7c9;
+  background: #07141d;
+}
+body.dark-mode .vision,
+body.dark-mode .gallery-section,
+body.dark-mode .partnership,
+body.dark-mode .benefits,
+body.dark-mode .process { background: #07141d; }
+body.dark-mode .vision { background: linear-gradient(90deg,#07141d 0%,#07141d 64%,#0b1b25 64%,#0b1b25 100%); }
+/* The cards are charcoal-slate, deliberately warmer and lighter than the navy page. */
+body.dark-mode .vision-card,
+body.dark-mode .gallery-world,
+body.dark-mode .benefit-item,
+body.dark-mode .process-step,
+body.dark-mode .partnership-grid .partnership-card:not(.partnership-card-top) { background: #14232c; border-color: rgba(232,207,148,.24); }
+body.dark-mode .gallery-world { background: #14232c; }
+body.dark-mode .donate { background: linear-gradient(145deg,#06131c,#0d2632); }
+body.dark-mode .donate-card { background: #172a34; }
+body.dark-mode .trust-section { background: #0b202b; }
+body.dark-mode .footer { background: #040d13; }
+/* Explicit footer and final-CTA typography prevents any inherited dark-on-dark text. */
+body.dark-mode .donate-cta h3,
+body.dark-mode .footer-logo h3,
+body.dark-mode .footer-links h4,
+body.dark-mode .footer-contact h4,
+body.dark-mode .footer-description,
+body.dark-mode .footer-links a,
+body.dark-mode .contact-list,
+body.dark-mode .footer-bottom { color: #f7f2e8; }
+body.dark-mode .footer-credit,
+body.dark-mode .footer-bottom p { color: #c8d2d3; }
+body.dark-mode .footer-tagline { color: #efcc79; }
