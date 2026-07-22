@@ -243,7 +243,7 @@
         const toggle = document.getElementById('themeToggle');
         if (!toggle) return;
         const stored = localStorage.getItem('kezohar-theme');
-        const isDark = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = stored === 'dark';
         setTheme(isDark);
         toggle.addEventListener('click', () => {
             const next = !document.body.classList.contains('dark-mode');

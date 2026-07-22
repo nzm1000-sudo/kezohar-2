@@ -2375,3 +2375,15 @@ body.dark-mode .vision-card, body.dark-mode .activity-card, body.dark-mode .bene
     opacity: 1 !important;
     transform: none !important;
 }
+
+/* Dark mode must never compromise reading contrast over photography. */
+body.dark-mode .hero-overlay {
+    background:
+        radial-gradient(ellipse at top right, rgba(214, 174, 98, .16), transparent 52%),
+        linear-gradient(180deg, rgba(2, 12, 23, .90) 0%, rgba(3, 18, 32, .86) 52%, rgba(2, 12, 23, .94) 100%);
+}
+body.dark-mode .hero-description,
+body.dark-mode .hero-title-sub,
+body.dark-mode .hero-quote { color: #F5F1E8; }
+body.dark-mode .hero-description strong,
+body.dark-mode .hero-quote strong { color: #F2D89B; }
