@@ -2632,3 +2632,18 @@ body.dark-mode .process-number { color: #071a2b; background: #e5c779; }
 .partnership > .container { position: relative; z-index: 1; }
 body.dark-mode .partnership::before { opacity: .55; box-shadow: 12px 16px 0 rgba(0,0,0,.28), inset 8px 8px 13px rgba(255,255,255,.3), inset -12px -13px 15px rgba(61,37,8,.38); }
 @media (max-width: 768px) { .partnership::before { width: 62px; height: 62px; top: 95px; left: 20px; opacity: .54; } }
+
+/* Final mobile contrast and colour balance pass from device review. */
+.btn-secondary,
+.btn-secondary:hover,
+.btn-secondary:focus-visible { color: #ffffff !important; border-color: rgba(255,255,255,.84); background: rgba(6,28,50,.52); }
+body.dark-mode .btn-secondary,
+body.dark-mode .btn-secondary:hover { color: #ffffff !important; background: rgba(3,16,28,.72); }
+
+/* Benefit symbols use the campaign's restrained copper orange, not another blue surface. */
+.benefit-icon { background: rgba(234,138,60,.13); color: #EA8A3C; border: 1px solid rgba(234,138,60,.34); box-shadow: none; }
+.benefit-item:hover .benefit-icon { background: #EA8A3C; color: #071A2B; transform: translateY(-2px); }
+body.dark-mode .benefit-icon { background: rgba(234,138,60,.15); color: #F1A455; border-color: rgba(241,164,85,.44); }
+
+/* Removed: the experimental asymmetric foundation stone did not meet the visual standard. */
+.partnership::before { display: none; }
