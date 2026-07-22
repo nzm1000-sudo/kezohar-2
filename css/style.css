@@ -2546,3 +2546,51 @@ section:not(.hero) { padding: 125px 0; }
   .benefits-grid { grid-template-columns: 1fr; }
 }
 @media (hover: none) { .heritage-book-3d { animation: none; } }
+
+/* Complete dark palette: each light editorial surface receives an intentional dark counterpart. */
+body.dark-mode { background: #061827; }
+body.dark-mode .vision,
+body.dark-mode .gallery-section,
+body.dark-mode .partnership,
+body.dark-mode .benefits,
+body.dark-mode .process { background: #071d2e; }
+body.dark-mode .vision { background: linear-gradient(90deg,#071d2e 0%,#071d2e 64%,#0b2a3e 64%,#0b2a3e 100%); }
+body.dark-mode .section-title,
+body.dark-mode .vision-card h3,
+body.dark-mode .benefit-item h3,
+body.dark-mode .process h3 { color: #fff8e9; }
+body.dark-mode .section-subtitle,
+body.dark-mode .vision-card p,
+body.dark-mode .benefit-item p,
+body.dark-mode .process p { color: #d6e1e3; }
+body.dark-mode .section-label { color: #f0d797; border-bottom-color: #c8a45b; }
+body.dark-mode .vision-card,
+body.dark-mode .benefit-item,
+body.dark-mode .partnership-grid .partnership-card:not(.partnership-card-top) { background: #0c2a3e; border-color: rgba(232,207,148,.26); }
+body.dark-mode .partnership-grid .partnership-card:not(.partnership-card-top) .partnership-meter,
+body.dark-mode .partnership-grid .partnership-card:not(.partnership-card-top) .partnership-total,
+body.dark-mode .partnership-grid .partnership-card:not(.partnership-card-top) .price-period,
+body.dark-mode .partnership-grid .partnership-card:not(.partnership-card-top) .partnership-features li { color: #d7e1e2; }
+body.dark-mode .partnership-grid .partnership-card:not(.partnership-card-top) .price-amount { color: #f1d895; }
+body.dark-mode .gallery-content { border-top-color: rgba(232,207,148,.28); }
+body.dark-mode .benefits-grid { border-color: rgba(232,207,148,.22); }
+body.dark-mode .benefit-item { border-color: rgba(232,207,148,.22); }
+body.dark-mode .benefit-item:hover { background: #10344a; }
+body.dark-mode .process-connector { background: rgba(232,207,148,.32); }
+
+/* CTA contrast is locked: text never inherits a low-contrast token. */
+.partnership-btn,
+.partnership-btn:hover,
+.partnership-btn-highlight,
+.partnership-btn-premium { color: #ffffff !important; background: #123956; border-color: transparent; text-shadow: none; }
+.partnership-card-top .partnership-btn,
+.partnership-card-top .partnership-btn:hover { color: #071a2b !important; background: #e5c779; }
+.donate-btn, .donate-btn:hover { color: #ffffff !important; }
+
+/* The 3D book is deliberately legible on mobile while staying behind the message. */
+@media (max-width: 768px) {
+  .hero-architecture { opacity: 1; }
+  .heritage-book-3d { width: 145vw; max-width: none; left: -25vw; bottom: 2%; opacity: .56; mix-blend-mode: normal; filter: drop-shadow(0 26px 22px rgba(0,0,0,.52)); }
+  .hero-content { position: relative; z-index: 3; }
+  .hero-description, .hero-title-sub { text-shadow: 0 2px 16px rgba(0,0,0,.68); }
+}
