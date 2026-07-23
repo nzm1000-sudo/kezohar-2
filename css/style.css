@@ -852,15 +852,15 @@ section {
 }
 
 .activity-icon {
-    width: 58px;
-    height: 58px;
+    width: 46px;
+    height: 46px;
     background: var(--gradient-primary);
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--accent-400);
-    font-size: 24px;
+    font-size: 20px;
     margin-bottom: 18px;
     box-shadow: var(--shadow-sm);
     transition: all var(--transition);
@@ -991,6 +991,8 @@ section {
     overflow: hidden;
     aspect-ratio: 4 / 3;
     box-shadow: var(--shadow-sm);
+    border: 3px solid transparent;
+    border-image: linear-gradient(135deg, #C89F9F 0%, #F5E7C3 50%, #A995B9 100%) 1;
     transition: all var(--transition);
     cursor: pointer;
 }
