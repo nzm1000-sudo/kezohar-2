@@ -3,13 +3,15 @@
  * the earlier visual layers in style.css.
  */
 
-/* Keep the vision-card markers at the same compact scale as the activity markers. */
+/* Keep the vision-card markers at the same compact scale as the activity markers,
+   with the centre of the icon sitting exactly on the image / body seam
+   (mirroring the .activity-icon positioning). */
 .vision-icon-wrapper {
     width: 46px;
     height: 46px;
-    margin-top: -37px;
+    margin-top: -45px;
     margin-bottom: 16px;
-    border-width: 3px;
+    border-width: 4px;
     font-size: 20px;
 }
 
@@ -79,8 +81,9 @@ body.dark-mode .gallery-item:nth-child(3) {
     .vision-icon-wrapper {
         width: 46px;
         height: 46px;
-        margin-top: -37px;
+        margin-top: -45px;
         font-size: 20px;
+        border-width: 4px;
     }
 
     .rav-trigger {
