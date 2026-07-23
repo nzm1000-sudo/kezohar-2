@@ -2754,3 +2754,25 @@ body.dark-mode .gallery-world-header::after {
 }
 @keyframes stitchDrift { from { background-position: 0 0; } to { background-position: 72px 0; } }
 @media (prefers-reduced-motion: reduce) { .gallery-world-header::after { animation: none; } }
+
+/* Calm editorial divider: a still, low-saturation fade replaces the moving dashed stitch. */
+.gallery-world-header::after {
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(178, 128, 143, .34) 18%,   /* antique rose */
+    rgba(245, 231, 196, .70) 50%,   /* warm ivory */
+    rgba(161, 133, 177, .34) 82%,   /* muted lavender */
+    transparent 100%) !important;
+  background-size: 100% 100%;
+  opacity: .9;
+  animation: none !important;
+}
+body.dark-mode .gallery-world-header::after {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(192, 142, 158, .42) 18%,
+    rgba(240, 211, 147, .68) 50%,
+    rgba(179, 150, 195, .42) 82%,
+    transparent 100%) !important;
+}
