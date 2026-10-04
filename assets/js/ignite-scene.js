@@ -1,6 +1,6 @@
 // Partnership: choosing a tier ignites a cluster of the building's points (illustrative only).
 import * as THREE from 'three';
-import { buildCloud, makeMaterial, skyTexture } from './building.js';
+import { buildCloud, makeMass, makeMaterial, makeGroundGlow, setDepth, skyTexture } from './building.js';
 
 export const SEEDS = {
   100: { seed: [-8.4, 2.6, 2.2], r: 1.2 },
@@ -20,9 +20,12 @@ export function createIgnite(canvas, { mobile = false, tier = '360' } = {}) {
   const N = mobile ? 7000 : 12000;
   const geo = buildCloud(N, 23);
   const mat = makeMaterial({ size: 2.4, pr: dpr });
-  mat.uniforms.uAssemble.value = 1; mat.uniforms.uIgnite.value = 1;
+  mat.uniforms.uAssemble.value = 1; mat.uniforms.uIgnite.value = 1; mat.uniforms.uIntensity.value = mobile ? 1.1 : 1.35;
   const pts = new THREE.Points(geo, mat); pts.frustumCulled = false;
-  const group = new THREE.Group(); group.add(pts); scene.add(group);
+  const ground = makeGroundGlow(), mass = makeMass();
+  ground.material.uniforms.uOpacity.value = 0.75; mass.userData.material.uniforms.uOpacity.value = 0.94;
+  const group = new THREE.Group(); group.add(ground, mass, pts); scene.add(group);
+  let dist = 26;
 
   const target = { r: SEEDS[tier].r, seed: new THREE.Vector3(...SEEDS[tier].seed) };
   mat.uniforms.uRadius.value = 0.01; mat.uniforms.uSeed.value.copy(target.seed);
@@ -31,9 +34,10 @@ export function createIgnite(canvas, { mobile = false, tier = '360' } = {}) {
     const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return;
     renderer.setSize(w, h, false); camera.aspect = w / h;
     const half = THREE.MathUtils.degToRad(camera.fov / 2);
-    const dist = Math.max(26, 11.2 / Math.tan(half) / camera.aspect);
-    camera.position.set(-5, 7, dist); camera.lookAt(0, 2.2, 0); camera.updateProjectionMatrix();
-    mat.uniforms.uSize.value = 2.5 * (dist / 26);
+    dist = Math.max(26, 11.2 / Math.tan(half) / camera.aspect);
+    camera.updateProjectionMatrix();
+    mat.uniforms.uSize.value = 2.1 * (dist / 26);
+    setDepth(mat, dist);
   }
   resize();
   const ro = new ResizeObserver(resize); ro.observe(canvas);
@@ -48,6 +52,11 @@ export function createIgnite(canvas, { mobile = false, tier = '360' } = {}) {
     u.uRadius.value += (target.r - u.uRadius.value) * 0.06;
     u.uSeed.value.lerp(target.seed, 0.08);
     group.rotation.y = -0.18 + Math.sin(t * 0.15) * 0.12;
+    // slow camera drift, same language as the hero
+    camera.position.set(-5 + Math.sin(t * 0.09) * 0.8, 7 + Math.sin(t * 0.07 + 1.3) * 0.3, dist + Math.sin(t * 0.05) * 0.5);
+    camera.lookAt(0, 2.2, 0);
+    // the ground glow follows the lit part of the building
+    ground.material.uniforms.uOpacity.value = 0.45 + 0.4 * Math.min(1, u.uRadius.value / 6);
     renderer.render(scene, camera);
     frames++; acc += dt;
     if (acc > 2.5) { if (frames / acc < 24) slow++; frames = 0; acc = 0; if (slow > 1) { pause(); canvas.parentElement.classList.remove('is-live'); } }

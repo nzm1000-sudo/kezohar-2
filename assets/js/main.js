@@ -7,7 +7,9 @@ const mq = (q) => window.matchMedia(q);
 const MOTION = root.classList.contains('motion');
 const FX = root.classList.contains('fx');
 const MOBILE = mq('(max-width: 767px)').matches || mq('(pointer: coarse)').matches;
-const params = new URLSearchParams(location.search);
+// Test switches for local screenshot runs only: a test harness sets window.__kzTest before load
+// (e.g. { poster: true, noGov: true }). Ignored on any host other than localhost.
+const TEST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && window.__kzTest ? window.__kzTest : null;
 
 /* ---------- theme ---------- */
 const themeBtn = $('[data-theme-toggle]');
@@ -159,16 +161,16 @@ function whenEngaged(fn) {
   if (window.scrollY > 0) go();
 }
 if (FX) {
-  const posterMode = params.has('poster');
+  const posterMode = !!(TEST && TEST.poster);
   const loadHero = async () => {
     try {
       const { createHero } = await import('./hero-scene.js');
       heroScene = createHero($('.hero-canvas'), {
-        mobile: MOBILE, poster: posterMode,
+        mobile: MOBILE, poster: posterMode, noGov: !!(TEST && TEST.noGov), photo: $('.hero-photo img'),
         onStop: () => { heroScene = null; },
       });
       heroScene.setProgress(heroP);
-      window.__hero = heroScene;
+      if (TEST) window.__hero = heroScene;
     } catch (err) {
       console.warn('3D disabled:', err && err.message);
       root.classList.remove('fx'); onScroll();
@@ -193,7 +195,7 @@ function loadScript(src) {
   return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.append(s); });
 }
 // Smooth scroll and the pinned horizontal chapter are desktop-only, so phones never download GSAP/Lenis.
-if (MOTION && !params.has('nolenis') && mq('(min-width: 1024px)').matches && !MOBILE) {
+if (MOTION && !(TEST && TEST.noLenis) && mq('(min-width: 1024px)').matches && !MOBILE) {
   (async () => {
     try {
       await loadScript('assets/vendor/gsap.min.js');
@@ -224,6 +226,5 @@ if (MOTION && !params.has('nolenis') && mq('(min-width: 1024px)').matches && !MO
     });
     // in-page anchors after pin spacers exist
     ScrollTrigger.refresh();
-    window.__st = ScrollTrigger;
   })();
 }
