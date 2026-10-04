@@ -94,12 +94,14 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
   }
   function render(t) {
     const p = state.progress;
-    const assemble = sm(0.05, 0.42, p), orbit = sm(0.45, 0.8, p), dissolve = state.holdDissolve ? 0 : sm(0.72, 0.93, p);
+    // stage map (520vh): dust gathers 3–30%, orbit to the photo's viewpoint 32–62%, then a long dissolve
+    // 55–97% that overlaps the photo cross-fade driven by main.js (50–94%), so light and stone coexist
+    const assemble = sm(0.03, 0.3, p), orbit = sm(0.32, 0.62, p), dissolve = state.holdDissolve ? 0 : sm(0.55, 0.97, p);
     const u = mat.uniforms;
     u.uTime.value = t; u.uAssemble.value = assemble; u.uDissolve.value = dissolve;
     u.uIntensity.value = lerp(1.35, gain, assemble);
     ground.material.uniforms.uOpacity.value = assemble * assemble * (1 - dissolve);
-    mass.userData.material.uniforms.uOpacity.value = sm(0.55, 1, assemble) * (1 - dissolve) * 0.94;
+    mass.userData.material.uniforms.uOpacity.value = sm(0.55, 1, assemble) * (1 - sm(0, 0.55, dissolve)) * 0.94;
     state.cx += (state.mx - state.cx) * 0.04; state.cy += (state.my - state.cy) * 0.04;
     // assembled: 3/4 view from slightly above; orbit swings round to the frontal view of the render
     const swing = Math.sin(orbit * Math.PI) * 0.38;

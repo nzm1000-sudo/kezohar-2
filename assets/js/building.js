@@ -272,8 +272,9 @@ void main(){
   float ang = aPhase * 6.2831 + uTime * .25;
   p += vec3(cos(ang), .35 * sin(ang * 1.3), sin(ang)) * mid * 1.8;
   p += drift * .008 * e;
-  float d = clamp((uDissolve - aDelay * .3) / .7, 0., 1.);
-  p += vec3((fract(aPhase*13.) - .5) * 6., 2. + fract(aPhase*7.) * 8., (fract(aPhase*29.) - .5) * 6.) * d * d;
+  // dissolve: a slow, staggered release — each point drifts gently upward like warm dust in the light
+  float d = clamp((uDissolve - aDelay * .45) / .55, 0., 1.);
+  p += vec3((fract(aPhase*13.) - .5) * 3., 1. + fract(aPhase*7.) * 5., (fract(aPhase*29.) - .5) * 3.) * d * d;
   vec4 wp = modelMatrix * vec4(p, 1.);
   vec4 mv = viewMatrix * wp;
   gl_Position = projectionMatrix * mv;
@@ -306,7 +307,7 @@ void main(){
   }
   col = mix(col, uFogColor, fog * .45);
   vColor = col;
-  vAlpha = tw * (1. - d) * mix(.6, 1., e) * facing * near * (1. - fog * .5);
+  vAlpha = tw * (1. - d * d * (3. - 2. * d)) * mix(.6, 1., e) * facing * near * (1. - fog * .5);
   gl_PointSize = clamp(uSize * aScale * uPR * (30. / depth) * mix(1., sqrt(near), e), 1., 48.);
 }`;
 const FRAG = /* glsl */`

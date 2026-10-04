@@ -24,8 +24,10 @@ themeBtn.addEventListener('click', () => {
   root.dataset.theme = isDark() ? 'light' : 'dark';
   try { localStorage.setItem('kz-theme', root.dataset.theme); } catch (e) { /* storage unavailable */ }
   syncThemeBtn();
+  if (igniteScene) igniteScene.setTheme(isDark());
 });
 syncThemeBtn();
+mq('(prefers-color-scheme: dark)').addEventListener('change', () => { syncThemeBtn(); if (igniteScene) igniteScene.setTheme(isDark()); });
 
 /* ---------- toast ---------- */
 const toast = $('[data-toast]');
@@ -67,25 +69,47 @@ const secIO = new IntersectionObserver((ents) => ents.forEach((e) => {
 ['vision', 'activities', 'partnership', 'benefits', 'donate'].forEach((id) => { const el = document.getElementById(id); if (el) secIO.observe(el); });
 
 /* ---------- hero scroll choreography (CSS vars; 3D reads the same progress) ---------- */
+// The raw scroll position is only a target: every frame the shown progress eases toward it
+// (time-based, so it feels the same at 60 or 120 Hz). A flick of the wheel or a fast swipe glides
+// through the dust → building → photo story instead of snapping.
 const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
-let heroScene = null, heroP = 0;
+let heroScene = null, heroP = 0, heroT = 0, heroRaf = 0, heroLast = 0;
 const heroCopy = $('.hero-copy');
-function heroState() {
-  if (!FX || !root.classList.contains('fx')) return;
+function heroTarget() {
   const r = hero.getBoundingClientRect();
   const span = hero.offsetHeight - window.innerHeight;
-  heroP = Math.min(1, Math.max(0, -r.top / span));
-  const copy = 1 - sm(0.02, 0.14, heroP);
-  const line = sm(0.2, 0.3, heroP) * (1 - sm(0.58, 0.68, heroP));
-  const photo = sm(0.8, 0.96, heroP);
+  return Math.min(1, Math.max(0, -r.top / span));
+}
+function heroApply(p) {
+  const copy = 1 - sm(0.015, 0.11, p);
+  const line = sm(0.14, 0.22, p) * (1 - sm(0.4, 0.48, p));
+  // a long, luxurious cross-fade: the photo eases in over nearly half the stage while the points thin out
+  const photo = sm(0.5, 0.97, p);
+  const blur = 1 - sm(0.52, 0.9, p);
   hero.style.setProperty('--copy', copy.toFixed(3));
   hero.style.setProperty('--line', line.toFixed(3));
-  hero.style.setProperty('--photo', photo.toFixed(3));
+  hero.style.setProperty('--photo', photo.toFixed(4));
+  hero.style.setProperty('--blur', blur.toFixed(3));
   heroCopy.toggleAttribute('data-hidden', copy < 0.02);
-  if (heroScene) heroScene.setProgress(heroP);
+  if (heroScene) heroScene.setProgress(p);
 }
+function heroTick(now) {
+  const dt = Math.min(0.1, (now - (heroLast || now)) / 1000); heroLast = now;
+  const k = 1 - Math.exp(-dt * 3.2);
+  heroP += (heroT - heroP) * k;
+  if (Math.abs(heroT - heroP) < 0.0004) heroP = heroT;
+  heroApply(heroP);
+  heroRaf = heroP === heroT ? 0 : requestAnimationFrame(heroTick);
+}
+function heroState() {
+  if (!FX || !root.classList.contains('fx')) return;
+  heroT = heroTarget();
+  if (TEST && TEST.instant) { heroP = heroT; heroApply(heroP); return; }
+  if (!heroRaf) { heroLast = 0; heroRaf = requestAnimationFrame(heroTick); }
+}
+if (FX) { heroT = heroP = heroTarget(); heroApply(heroP); }
 // keyboard users tabbing into hero CTAs: bring hero copy back into view
-heroCopy.addEventListener('focusin', () => { if (FX && heroP > 0.1) window.scrollTo({ top: hero.offsetTop, behavior: 'auto' }); });
+heroCopy.addEventListener('focusin', () => { if (FX && heroP > 0.1) { window.scrollTo({ top: hero.offsetTop, behavior: 'auto' }); heroT = heroP = 0; heroApply(0); } });
 
 let ticking = false;
 function onScroll() {
@@ -122,8 +146,15 @@ $('[data-open-menu]').addEventListener('click', () => openDialog(menu));
 const NAMES = { 100: 'מטר אחד', 180: 'מטר וחצי', 360: 'שלושה מטרים', 560: 'היכל המייסדים', 1080: 'נבחרת המאה' };
 const fmt = (n) => '₪' + Number(n).toLocaleString('en-US');
 let igniteScene = null;
-const igCircle = $('[data-ignite-circle]');
-const SVG_SEEDS = { 100: [60, 165, 24], 180: [110, 195, 32], 360: [180, 165, 46], 560: [330, 180, 58], 1080: [200, 160, 230] };
+const ART = { 100: 'tier-1', 180: 'tier-15', 360: 'tier-3', 560: 'tier-founder', 1080: 'tier-crown' };
+const igArt = $('.ignite-art');
+function swapArt(v) {
+  if (!igArt || !ART[v]) return;
+  const base = 'assets/img/clay/' + ART[v];
+  $('source', igArt).srcset = `${base}-240.avif 240w, ${base}-480.avif 480w`;
+  const img = $('img', igArt); img.srcset = `${base}-240.webp 240w, ${base}-480.webp 480w`; img.src = base + '-240.webp';
+  if (MOTION) { igArt.classList.remove('is-drop'); void igArt.offsetWidth; igArt.classList.add('is-drop'); }
+}
 function setTier(v, from) {
   v = String(v);
   const a = $(`input[name="tier"][value="${v}"]`); if (a && from !== 'section') a.checked = true;
@@ -131,9 +162,7 @@ function setTier(v, from) {
   $('[data-plaque-tier]').textContent = NAMES[v];
   $('[data-sheet-sum]').innerHTML = `<bdi>${fmt(v)}</bdi> לחודש`;
   $('[data-ignite-name]').textContent = NAMES[v];
-  const s = SVG_SEEDS[v];
-  if (igCircle && s) { igCircle.setAttribute('cx', s[0]); igCircle.setAttribute('cy', s[1]); igCircle.setAttribute('r', s[2]); }
-  if (igniteScene) igniteScene.setTier(v);
+  if (igniteScene) igniteScene.setTier(v); else swapArt(v);
 }
 $$('input[name="tier"]').forEach((i) => i.addEventListener('change', () => setTier(i.value, 'section')));
 $$('input[name="sheet-tier"]').forEach((i) => i.addEventListener('change', () => setTier(i.value, 'sheet')));
@@ -183,8 +212,12 @@ if (FX) {
     if (!e.isIntersecting) return;
     igIO.disconnect();
     try {
-      const { createIgnite } = await import('./ignite-scene.js');
-      igniteScene = createIgnite($('.ignite-canvas'), { mobile: MOBILE, tier: $('input[name="tier"]:checked').value });
+      const { createClay } = await import('./clay-scene.js');
+      igniteScene = createClay($('.ignite-canvas'), {
+        mobile: MOBILE, tier: $('input[name="tier"]:checked').value, dark: isDark(), noGov: !!(TEST && TEST.noGov),
+        onStop: () => { igniteScene = null; swapArt($('input[name="tier"]:checked').value); },
+      });
+      if (TEST) window.__clay = igniteScene;
     } catch (err) { console.warn('ignite fallback:', err && err.message); }
   }, { rootMargin: '400px 0px' });
   igIO.observe(ig);
