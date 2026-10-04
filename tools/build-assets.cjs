@@ -3,6 +3,7 @@
  *   cd tools && npm i three@0.180 gsap lenis @fontsource/bellefair @fontsource/ibm-plex-sans-hebrew qrcode sharp
  *   node build-assets.cjs <folder-with-source-jpegs>
  * Source JPEGs (AI-generated, 13 files named 01-…jpg … 13-…jpg) are not committed.
+ * Clay illustrations: see tools/clay-key.cjs (green-screen renders → transparent AVIF/WebP).
  */
 const fs = require('fs');
 const path = require('path');
@@ -53,7 +54,7 @@ for (const [pkg, f] of fonts) fs.copyFileSync(fsrc(pkg, f), out('fonts', f));
   // ---------- photos ----------
   const map = {
     '01': 'building-dawn', '02': 'building-night', '03': 'soldier-arrival', '04': 'soldier-reading',
-    '05': 'class-teacher', '06': 'class-girl', '07': 'synagogue', '08': 'mikveh', '09': 'counseling',
+    '05': 'class-teacher', '06': 'class-boy', /* 07: synagogue-main comes from the previous site (640/1024/1200) */ '08': 'mikveh', '09': 'counseling',
     '10': 'meals', '11': 'clinic', '12': 'beit-midrash', '13': 'community',
   };
   const widths = { wide: [640, 1024, 1376], photo: [480, 800, 1200] };
