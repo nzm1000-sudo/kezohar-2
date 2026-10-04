@@ -1,835 +1,653 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="he" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="כזוהר הרקיע - קומפלקס רוחני-קהילתי בנתיבות בנשיאות הרב שלום יוסף ברבי שליט״א. שותפות היסטורית למען חיילים בודדים, ילדים עם צרכים מיוחדים ומשפחות.">
-    <title>כזוהר הרקיע | קומפלקס רוחני-קהילתי בנתיבות | עולמות יחד</title>
-    
-    <!-- Google Fonts - Hebrew -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-    
-    <!-- AOS Animations -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css">
-    <!-- Device-reviewed corrections, kept separate so they remain easy to maintain. -->
-    <link rel="stylesheet" href="css/mobile-fixes.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>כזוהר הרקיע | קומפלקס רוחני-קהילתי בנתיבות | עולמות יחד</title>
+<meta name="description" content="כזוהר הרקיע - קומפלקס רוחני-קהילתי בנתיבות בנשיאות הרב שלום יוסף ברבי שליט״א. שותפות היסטורית למען חיילים לוחמים, ילדים עם צרכים מיוחדים ומשפחות.">
+<meta name="theme-color" content="#F7F3EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141311" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="light dark">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="he_IL">
+<meta property="og:title" content="כזוהר הרקיע · מניחים אבן, בונים עתיד">
+<meta property="og:description" content="קומפלקס רוחני-קהילתי בלב נתיבות — הזמנה לשותפות היסטורית.">
+<meta property="og:image" content="og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preload" href="assets/fonts/bellefair-hebrew-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/ibm-plex-sans-hebrew-hebrew-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+  /* Theme + motion capability flags, set before first paint */
+  (function () {
+    var d = document.documentElement, t = null;
+    try { t = localStorage.getItem('kz-theme'); } catch (e) {}
+    if (t === 'light' || t === 'dark') d.setAttribute('data-theme', t);
+    var rm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var sd = navigator.connection && navigator.connection.saveData;
+    var gl = false;
+    try { var c = document.createElement('canvas'); gl = !!(c.getContext('webgl2') || c.getContext('webgl')); } catch (e) {}
+    if (!rm) d.classList.add('motion');
+    if (!rm && !sd && gl) d.classList.add('fx');
+  })();
+</script>
+<link rel="stylesheet" href="assets/css/site.css">
+<script type="importmap">
+{ "imports": { "three": "./assets/vendor/three/three.module.min.js", "three/addons/": "./assets/vendor/three/addons/" } }
+</script>
+<script type="module" src="assets/js/main.js"></script>
 </head>
 <body>
-    <a class="skip-link" href="#main-content">דלג לתוכן המרכזי</a>
+<a class="skip-link" href="#main">דלג לתוכן המרכזי</a>
 
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <div class="container">
-            <div class="top-bar-content">
-                <span class="top-bar-item"><i class="fas fa-shield-alt"></i> עמותה מוכרת · הטבת מס 35% לפי סעיף 46</span>
-                <span class="top-bar-separator">|</span>
-                <span class="top-bar-item"><i class="fas fa-phone-alt"></i> <a href="tel:058-5555530">058-5555530</a></span>
-            </div>
-        </div>
-    </div>
+<svg class="sprite" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="mark" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path d="M5 34h38"/><path d="M14 34a10 10 0 0 1 20 0"/><path d="M36 29l3.7-1.5M33.2 24.8l3.9-3.9M29 22l2.7-6.5M24 21v-9M19 22l-2.7-6.5M14.8 24.8l-3.9-3.9M12 29l-3.7-1.5"/></g></symbol>
+    <symbol id="i-phone" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"><path d="M11.5 4.5h-4a2 2 0 0 0-2 2.2C6.6 17.7 14.3 25.4 25.3 26.5a2 2 0 0 0 2.2-2v-4l-5.5-2-2.5 2.6a14.5 14.5 0 0 1-6.6-6.6L15.5 12z"/></g></symbol>
+    <symbol id="i-copy" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="11" y="11" width="15" height="15" rx="2"/><path d="M21 11V8a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h3"/></g></symbol>
+    <symbol id="i-arrow" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M26 16H6M13 9l-7 7 7 7"/></g></symbol>
+    <symbol id="i-out" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 9 23M11 10h11v11"/></g></symbol>
+    <symbol id="i-sun" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M5 22h22M10 22a6 6 0 0 1 12 0M16 9v3M8.5 12.5l2 2M23.5 12.5l-2 2"/></g></symbol>
+    <symbol id="i-moon" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 22.5A9 9 0 0 1 14.5 7a9 9 0 1 0 12 12 9 9 0 0 1-5.5 3.5z"/></g></symbol>
+    <symbol id="i-close" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 9l14 14M23 9 9 23"/></g></symbol>
+    <symbol id="i-menu" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 11h20M6 21h20"/></g></symbol>
+    <symbol id="i-down" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5v15M10 14l6 6 6-6M7 26h18"/></g></symbol>
+    <symbol id="i-share" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4v16M10 10l6-6 6 6M9 15H7v12h18V15h-2"/></g></symbol>
+    <symbol id="i-check" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.5l6 6L25 10"/></g></symbol>
+</svg>
 
-    <!-- Navigation -->
-    <nav class="navbar" id="navbar" aria-label="ניווט ראשי">
-        <div class="container nav-container">
-            <a href="#home" class="nav-logo">
-                <div class="logo-icon">
-                    <i class="fas fa-star-of-david"></i>
-                </div>
-                <div class="logo-text">
-                    <span class="logo-title">כְּזֹהַר הָרָקִיעַ</span>
-                    <span class="logo-subtitle">עולמות יחד · נתיבות</span>
-                </div>
-            </a>
-            
-            <ul class="nav-menu" id="navMenu" aria-label="קישורי ניווט">
-                <li><a href="#home">בית</a></li>
-                <li><a href="#vision">החזון</a></li>
-                <li><a href="#activities">הפעילויות</a></li>
-                <li><a href="#partnership">שותפות</a></li>
-                <li><a href="#benefits">הטבות</a></li>
-                <li><a href="#donate">תרומה</a></li>
-            </ul>
-            
-            <button class="theme-toggle" id="themeToggle" type="button" aria-label="מעבר למצב כהה" aria-pressed="false">
-                <i class="fas fa-moon" aria-hidden="true"></i>
-            </button>
-
-            <a href="#donate" class="btn-donate-nav">
-                <i class="fas fa-heart"></i> לתרומה
-            </a>
-            
-            <button class="menu-toggle" id="menuToggle" aria-label="פתיחת תפריט" aria-controls="navMenu" aria-expanded="false">
-                <span></span><span></span><span></span>
-            </button>
-        </div>
-    </nav>
-
-    <main id="main-content" tabindex="-1">
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-bg">
-            <img src="images/soldier-battle-to-home.jpg" alt="מהחזית אל הבית - חייל בודד" class="hero-bg-image" width="1024" height="572" fetchpriority="high">
-        </div>
-        <div class="hero-overlay"></div>
-        
-        <div class="container hero-content">
-            <div class="hero-badge" data-aos="fade-down">
-                <i class="fas fa-star"></i>
-                <span>בסיעתא דשמיא · התחלנו</span>
-            </div>
-            
-            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
-                <span class="hero-title-small">הזמנה לשותפות היסטורית</span>
-                <span class="hero-title-main">כְּזֹהַר הָרָקִיעַ</span>
-                <span class="hero-title-sub">קומפלקס רוחני-קהילתי בלב נתיבות</span>
-            </h1>
-            
-            <p class="hero-description" data-aos="fade-up" data-aos-delay="200">
-                מניחים אבן, בונים עתיד.<br>
-                בית שבו הרוח והנתינה נפגשים ללא גבולות — 
-                <strong>עוגן ותמיכה לחיילים הבודדים, לילדים עם צרכים מיוחדים, למשפחות ולכל מי שמחפש אוזן קשבת ולב פתוח.</strong>
-            </p>
-            
-            <div class="hero-quote" data-aos="fade-up" data-aos-delay="300">
-    <button type="button" class="rav-trigger" aria-label="הצגת תמונת הרב שלום יוסף ברבי שליט״א" aria-haspopup="dialog" aria-controls="rav-modal">
-        <img src="images/rav.webp" alt="" width="64" height="64">
-    </button>
-    בנשיאות הרב <strong>שלום יוסף ברבי שליט״א</strong>
-</div>
-
-<!-- מודל תמונה -->
-<div id="rav-modal" class="image-modal" role="dialog" aria-modal="true" aria-label="תמונת הרב שלום יוסף ברבי שליט״א" hidden>
-    <button type="button" class="modal-close" aria-label="סגירת תמונת הרב"><i class="fas fa-times" aria-hidden="true"></i></button>
-    <img src="images/rav.webp" alt="הרב שלום יוסף ברבי שליט״א" width="1200" height="898">
-</div>
-            
-            <div class="hero-buttons" data-aos="fade-up" data-aos-delay="400">
-                <a href="#donate" class="btn btn-primary">
-                    <i class="fas fa-hand-holding-heart"></i>
-                    הצטרפו לשותפות
-                </a>
-                <a href="#activities" class="btn btn-secondary">
-                    <i class="fas fa-arrow-down"></i>
-                    גלו את הפרויקט
-                </a>
-            </div>
-            
-            <div class="hero-tagline" data-aos="fade-up" data-aos-delay="500">
-                <span class="tagline-line"></span>
-                <span class="tagline-text">כִּי לְעוֹלָם חַסְדּוֹ</span>
-                <span class="tagline-line"></span>
-            </div>
-        </div>
-        
-        <div class="scroll-down">
-            <i class="fas fa-chevron-down"></i>
-        </div>
-    </section>
-
-    <!-- Vision Section -->
-    <section class="vision" id="vision">
-        <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <span class="section-label">החזון שלנו</span>
-                <h2 class="section-title">בית אחד. לב גדול. <span class="accent">עולמות יחד.</span></h2>
-                <p class="section-subtitle">
-                    אנו מקימים מרכז קהילתי-ערכי ייחודי בלב נתיבות — מקום שבו כל אחד מוצא את מקומו,
-                    מהחייל הבודד ועד הילד עם הצרכים המיוחדים, מהאמא הצעירה ועד הסבא שמחפש חברה וקהילה.
-                </p>
-            </div>
-            
-            <div class="vision-grid">
-                <div class="vision-card vision-card-primary" data-aos="fade-up" data-aos-delay="100">
-                    <div class="vision-image">
-                        <img src="images/soldier-reading.jpg" alt="חייל בודד מתרגע בסלון חם" loading="lazy">
-                        <div class="vision-image-badge">
-                            <i class="fas fa-heart"></i> בלב הפרויקט
-                        </div>
-                    </div>
-                    <div class="vision-card-body">
-                        <div class="vision-icon-wrapper">
-                            <i class="fas fa-medal"></i>
-                        </div>
-                        <h3>חיילים בודדים</h3>
-                        <p>חדרי אירוח ברמת פרימיום, ארוחות חמות וחיבוק של בית לחיילים שמגינים עלינו — כי הם לא לבד.</p>
-                    </div>
-                </div>
-                
-                <div class="vision-card vision-card-primary" data-aos="fade-up" data-aos-delay="200">
-                    <div class="vision-image">
-                        <img src="images/education-girl-science.webp" alt="ילדה לומדת עם מורה תומכת" loading="lazy">
-                        <div class="vision-image-badge">
-                            <i class="fas fa-heart"></i> בלב הפרויקט
-                        </div>
-                    </div>
-                    <div class="vision-card-body">
-                        <div class="vision-icon-wrapper">
-                            <i class="fas fa-child"></i>
-                        </div>
-                        <h3>ילדים עם צרכים מיוחדים</h3>
-                        <p>כיתות סיוע ייעודיות, ליווי מקצועי וסביבה חמה שבה כל ילד יכול לפרוח ולהגשים את עצמו.</p>
-                    </div>
-                </div>
-                
-                <div class="vision-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="vision-image">
-                        <img src="images/education-teens.webp" alt="בני נוער מסורתיים בקהילה" loading="lazy">
-                    </div>
-                    <div class="vision-card-body">
-                        <div class="vision-icon-wrapper">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h3>משפחות וקהילה</h3>
-                        <p>ייעוץ אישי, זוגי ומשפחתי, תמיכה נפשית וחלוקת מזון לכל מי שמחפש כתף להשען עליה.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Activities Section -->
-    <section class="activities" id="activities">
-        <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <span class="section-label">8 פעילויות · קורת גג אחת</span>
-                <h2 class="section-title">מה בונים <span class="accent">יחד?</span></h2>
-                <p class="section-subtitle">
-                    שמונה שירותים ייחודיים המשלבים רוח, חסד וקהילה — כולם תחת גג אחד בלב נתיבות.
-                </p>
-            </div>
-            
-            <div class="activities-grid">
-                <!-- 1. ילדים עם צרכים מיוחדים - תמונת חינוך אישי -->
-                <article class="activity-card activity-card-featured" data-aos="fade-up" data-aos-delay="50">
-                    <div class="activity-image">
-                        <img src="images/education-boy-learning.jpg" alt="ליווי חינוכי אישי לילד בכיתת סיוע" loading="lazy">
-                        <div class="activity-ribbon">דגש מיוחד</div>
-                    </div>
-                    <div class="activity-body">
-                        <div class="activity-icon"><i class="fas fa-hands-helping"></i></div>
-                        <div class="activity-number">01</div>
-                        <h3>כיתות סיוע לילדים בעלי צרכים מיוחדים</h3>
-                        <p>סביבה תומכת ומקצועית המותאמת אישית לכל ילד — כדי שכולם יצליחו.</p>
-                    </div>
-                </article>
-                
-                <!-- 2. חיילים בודדים - תמונת חייל נכנס לחדר פרימיום -->
-                <article class="activity-card activity-card-featured" data-aos="fade-up" data-aos-delay="100">
-                    <div class="activity-image">
-                        <img src="images/soldier-arriving-room.jpg" alt="חייל בודד מגיע לחדר אירוח פרימיום" loading="lazy">
-                        <div class="activity-ribbon">דגש מיוחד</div>
-                    </div>
-                    <div class="activity-body">
-                        <div class="activity-icon"><i class="fas fa-bed"></i></div>
-                        <div class="activity-number">02</div>
-                        <h3>חדרי אירוח פרימיום לחיילים בודדים</h3>
-                        <p>בית חם ומפנק לחיילים שבאים לשבת, חופשה או פשוט לנשום — עם ארוחות, מיטה נוחה וליווי.</p>
-                    </div>
-                </article>
-                
-                <!-- 3. בית כנסת -->
-                <article class="activity-card" data-aos="fade-up" data-aos-delay="150">
-                    <div class="activity-image">
-                        <img src="images/synagogue.webp" alt="בית כנסת מפואר">
-                    </div>
-                    <div class="activity-body">
-                        <div class="activity-icon"><i class="fas fa-synagogue"></i></div>
-                        <div class="activity-number">03</div>
-                        <h3>בית כנסת מפואר עם מניינים יומיים</h3>
-                        <p>מרחב תפילה מכובד ומזמין, פתוח לכל המתפללים בכל שעות היום.</p>
-                    </div>
-                </article>
-                
-                <!-- 4. מקוואות -->
-                <article class="activity-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="activity-image">
-                        <img src="images/mikveh.webp" alt="מקוואות מפוארים">
-                    </div>
-                    <div class="activity-body">
-                        <div class="activity-icon"><i class="fas fa-tint"></i></div>
-                        <div class="activity-number">04</div>
-                        <h3>מקוואות מפוארים לנשים ולגברים</h3>
-                        <p>מתקנים ברמה הגבוהה ביותר, עם שמירה על פרטיות, נקיון וכבוד.</p>
-                    </div>
-                </article>
-                
-               <!-- 5. ייעוץ -->
-                <article class="activity-card" data-aos="fade-up" data-aos-delay="250">
-                    <div class="activity-image">
-                        <img src="images/counseling.webp" alt="מתחם ייעוץ">
-                    </div>
-                    <div class="activity-body">
-                        <div class="activity-icon"><i class="fas fa-comments"></i></div>
-                        <div class="activity-number">05</div>
-                        <h3>מתחם ייעוץ אישי, זוגי ומשפחתי</h3>
-                        <p>מרחב דיסקרטי ומקצועי לתמיכה, הדרכה וליווי בכל אתגרי החיים.</p>
-                    </div>
-                </article>
-                
-                <!-- 6. חלוקת מזון -->
-                <article class="activity-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="activity-image">
-                        <img src="images/food.webp" alt="חלוקת מזון">
-                    </div>
-                    <div class="activity-body">
-                        <div class="activity-icon"><i class="fas fa-utensils"></i></div>
-                        <div class="activity-number">06</div>
-                        <h3>חלוקת מזון וארוחות חמות לנזקקים</h3>
-                        <p>כי אף אחד לא צריך להישאר רעב — ארוחות מזינות ומכבדות לכל מי שזקוק.</p>
-                    </div>
-                </article>
-                
-                <!-- 7. ייעוץ רפואי -->
-                <article class="activity-card" data-aos="fade-up" data-aos-delay="350">
-                    <div class="activity-image">
-                        <img src="images/medical.webp" alt="ייעוץ רפואי">
-                    </div>
-                    <div class="activity-body">
-                        <div class="activity-icon"><i class="fas fa-stethoscope"></i></div>
-                        <div class="activity-number">07</div>
-                        <h3>ייעוץ רפואי חינם ע״י ד״ר ופסיכולוג</h3>
-                        <p>גישה חופשית לייעוץ רפואי ונפשי מקצועי — ללא עלות, ללא בירוקרטיה.</p>
-                    </div>
-                </article>
-                
-                <!-- 8. כוללים ושיעורי תורה - תמונת כיתה -->
-                <article class="activity-card" data-aos="fade-up" data-aos-delay="400">
-                    <div class="activity-image">
-                        <img src="images/education-classroom.jpg" alt="כיתת לימוד תורני עם תלמידים" loading="lazy">
-                    </div>
-                    <div class="activity-body">
-                        <div class="activity-icon"><i class="fas fa-book-open"></i></div>
-                        <div class="activity-number">08</div>
-                        <h3>כוללים ושיעורי תורה בכל הרמות</h3>
-                        <p>לימוד תורה ברמות שונות — למתחילים ולמתקדמים, לכל גיל ולכל סגנון.</p>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Gallery Section - Two Worlds -->
-    <section class="gallery-section">
-        <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <span class="section-label">שני עולמות · בית אחד</span>
-                <h2 class="section-title">הרגעים <span class="accent">שאנחנו בונים</span></h2>
-                <p class="section-subtitle">
-                    מהחייל שחוזר מהמילואים ומחפש מיטה חמה, ועד הילד שצריך מורה סבלני שיאמין בו —
-                    <strong>כל רגע כאן חשוב.</strong>
-                </p>
-            </div>
-            
-            <!-- Soldiers World -->
-            <div class="gallery-world gallery-world-soldiers" data-aos="fade-up">
-                <div class="gallery-world-header">
-                    <div class="gallery-world-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <div>
-                        <h3>לחיילים שלנו — בית שמחכה</h3>
-                        <p>כי אחרי הכל, הם צריכים מקום לנוח, לקרוא, להיות. בלי גינונים, רק חום ואהבה.</p>
-                    </div>
-                </div>
-                <div class="gallery-grid gallery-grid-3">
-                    <figure class="gallery-item" data-aos="zoom-in" data-aos-delay="100">
-                        <img src="images/soldier-arriving-room.jpg" alt="חייל בודד נכנס לחדר אירוח" loading="lazy">
-                        <figcaption>הגעה לחדר אישי</figcaption>
-                    </figure>
-                    <figure class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
-                        <img src="images/soldier-sleeping.webp" alt="חייל נח במיטה חמה אחרי המילואים" loading="lazy">
-                        <figcaption>מנוחה שמגיעה</figcaption>
-                    </figure>
-                    <figure class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
-                        <img src="images/soldier-reading.jpg" alt="חייל קורא ספר עם כוס קפה" loading="lazy">
-                        <figcaption>רגע של שקט</figcaption>
-                    </figure>
-                </div>
-            </div>
-            
-            <!-- Education World -->
-            <div class="gallery-world gallery-world-education" data-aos="fade-up">
-                <div class="gallery-world-header">
-                    <div class="gallery-world-icon gallery-world-icon-gold">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <div>
-                        <h3>לילדים שלנו — מקום לפרוח</h3>
-                        <p>כיתות תומכות, לימוד אישי, סביבה מאמינה — כי לכל ילד מגיע לגלות את האור שבו.</p>
-                    </div>
-                </div>
-                <div class="gallery-grid gallery-grid-3">
-                    <figure class="gallery-item" data-aos="zoom-in" data-aos-delay="100">
-                        <img src="images/education-boy-learning.jpg" alt="לימוד אישי עם מורה תומך" loading="lazy">
-                        <figcaption>ליווי אישי לכל ילד</figcaption>
-                    </figure>
-                    <figure class="gallery-item" data-aos="zoom-in" data-aos-delay="200">
-                        <img src="images/education-girl-science.webp" alt="ילדה לומדת מדעים" loading="lazy">
-                        <figcaption>סקרנות וגילוי</figcaption>
-                    </figure>
-                    <figure class="gallery-item" data-aos="zoom-in" data-aos-delay="300">
-                        <img src="images/education-teens.webp" alt="בני נוער מסורתיים בכיתה" loading="lazy">
-                        <figcaption>דור של מנהיגים</figcaption>
-                    </figure>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats / Trust Section -->
-    <section class="trust-section">
-        <div class="container">
-            <div class="trust-grid">
-                <div class="trust-item" data-aos="fade-up" data-aos-delay="100">
-                    <div class="trust-number"><span class="counter" data-target="8">0</span></div>
-                    <div class="trust-label">פעילויות מרכזיות</div>
-                </div>
-                <div class="trust-item" data-aos="fade-up" data-aos-delay="200">
-                    <div class="trust-number"><span class="counter" data-target="48">0</span></div>
-                    <div class="trust-label">חודשי פריסה נוחה</div>
-                </div>
-                <div class="trust-item" data-aos="fade-up" data-aos-delay="300">
-                    <div class="trust-number"><span class="counter" data-target="35">0</span>%</div>
-                    <div class="trust-label">החזר מס סעיף 46</div>
-                </div>
-                <div class="trust-item" data-aos="fade-up" data-aos-delay="400">
-                    <div class="trust-number">∞</div>
-                    <div class="trust-label">שמכם חקוק לנצח</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Partnership Levels -->
-    <section class="partnership" id="partnership">
-        <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <span class="section-label">רמות שותפות</span>
-                <h2 class="section-title">תרומה <span class="accent">לפי מטרים</span></h2>
-                <p class="section-subtitle partnership-subtitle">
-                    <i class="fas fa-quote-right"></i>
-                    כל מטר שתתרמו ישא את שמכם לנצח על קירות הקומפלקס.
-                    <i class="fas fa-quote-left"></i>
-                </p>
-                <p class="partnership-note">
-                    <i class="fas fa-info-circle"></i>
-                    כל התרומות בפריסה נוחה של הוראת קבע ל-<strong>48 חודשים</strong>
-                </p>
-            </div>
-            
-            <div class="partnership-grid">
-                
-                <!-- Level 1 -->
-                <div class="partnership-card" data-aos="fade-up" data-aos-delay="50" style="flex:0 0 18%;transform:scale(0.82);transform-origin:bottom center;">
-                    <div class="partnership-header">
-                        <div class="partnership-meter">
-                            <i class="fas fa-ruler"></i>
-                            <span>מטר אחד</span>
-                        </div>
-                        <div class="partnership-price">
-                            <span class="price-amount">₪100</span>
-                            <span class="price-period">/ חודש</span>
-                        </div>
-                        <div class="partnership-total">סה״כ ₪4,800 ל-48 חודשים</div>
-                    </div>
-                    <ul class="partnership-features">
-                        <li><i class="fas fa-check-circle"></i> אישור תרומה למס (סעיף 46)</li>
-                        <li><i class="fas fa-check-circle"></i> עדכונים שוטפים על הבנייה</li>
-                        <li><i class="fas fa-check-circle"></i> הזמנה לאירוע הנחת אבן הפינה</li>
-                    </ul>
-                    <a href="#donate" class="partnership-btn">הצטרפו</a>
-                </div>
-                
-                <!-- Level 2 -->
-                <div class="partnership-card" data-aos="fade-up" data-aos-delay="100" style="flex:0 0 20%;transform:scale(0.91);transform-origin:bottom center;">
-                    <div class="partnership-header">
-                        <div class="partnership-meter">
-                            <i class="fas fa-ruler-combined"></i>
-                            <span>מטר וחצי</span>
-                        </div>
-                        <div class="partnership-price">
-                            <span class="price-amount">₪180</span>
-                            <span class="price-period">/ חודש</span>
-                        </div>
-                        <div class="partnership-total">סה״כ ₪8,640 ל-48 חודשים</div>
-                    </div>
-                    <ul class="partnership-features">
-                        <li><i class="fas fa-check-circle"></i> אישור תרומה למס (סעיף 46)</li>
-                        <li><i class="fas fa-check-circle"></i> עדכונים שוטפים על הבנייה</li>
-                        <li><i class="fas fa-check-circle"></i> שי אישי והזמנה לאירוע הנחת אבן הפינה</li>
-                    </ul>
-                    <a href="#donate" class="partnership-btn">הצטרפו</a>
-                </div>
-
-                <!-- Level 5 - נבחרת המאה באמצע -->
-                <div class="partnership-card partnership-card-top" data-aos="fade-up" data-aos-delay="150" style="flex:0 0 22%;transform:scale(1.06);transform-origin:bottom center;z-index:10;">
-                    <div class="partnership-badge partnership-badge-top">
-                        <i class="fas fa-crown"></i> נבחרת המאה
-                    </div>
-                    <div class="partnership-header">
-                        <div class="partnership-meter">
-                            <i class="fas fa-trophy"></i>
-                            <span>נבחרת המאה</span>
-                        </div>
-                        <div class="partnership-price">
-                            <span class="price-amount">₪1,080</span>
-                            <span class="price-period">/ חודש</span>
-                        </div>
-                        <div class="partnership-total">סה״כ ₪51,840 ל-48 חודשים</div>
-                    </div>
-                    <ul class="partnership-features">
-                        <li><i class="fas fa-check-circle"></i> כל ההטבות הקודמות</li>
-                        <li><i class="fas fa-award"></i> חברות בוועד הכבוד</li>
-                        <li><i class="fas fa-award"></i> שמכם חקוק על לוח המייסדים לנצח</li>
-                        <li><i class="fas fa-award"></i> נסיעה מיוחדת לקברי צדיקים בצפון</li>
-                        <li><i class="fas fa-award"></i> הגרלה לנסיעת כבוד לירושלים עם הרב</li>
-                    </ul>
-                    <a href="#donate" class="partnership-btn partnership-btn-top">הצטרפו לנבחרת</a>
-                </div>
-                
-                <!-- Level 3 -->
-                <div class="partnership-card partnership-card-highlight" data-aos="fade-up" data-aos-delay="200" style="flex:0 0 20%;transform:scale(0.91);transform-origin:bottom center;">
-                    <div class="partnership-badge">פופולרי</div>
-                    <div class="partnership-header">
-                        <div class="partnership-meter">
-                            <i class="fas fa-vector-square"></i>
-                            <span>שלושה מטרים</span>
-                        </div>
-                        <div class="partnership-price">
-                            <span class="price-amount">₪360</span>
-                            <span class="price-period">/ חודש</span>
-                        </div>
-                        <div class="partnership-total">סה״כ ₪17,280 ל-48 חודשים</div>
-                    </div>
-                    <ul class="partnership-features">
-                        <li><i class="fas fa-check-circle"></i> כל ההטבות הקודמות</li>
-                        <li><i class="fas fa-star"></i> ברכה אישית מהרב הנשיא שליט״א ושי אישי</li>
-                        <li><i class="fas fa-star"></i> שמכם על לוח השמות בכניסה</li>
-                        <li><i class="fas fa-star"></i> הזמנה אישית לאירוע הפתיחה הרשמי</li>
-                    </ul>
-                    <a href="#donate" class="partnership-btn partnership-btn-highlight">הצטרפו עכשיו</a>
-                </div>
-                
-                <!-- Level 4 -->
-                <div class="partnership-card partnership-card-premium" data-aos="fade-up" data-aos-delay="250" style="flex:0 0 18%;transform:scale(0.82);transform-origin:bottom center;">
-                    <div class="partnership-badge partnership-badge-premium">היכל המייסדים</div>
-                    <div class="partnership-header">
-                        <div class="partnership-meter">
-                            <i class="fas fa-crown"></i>
-                            <span>היכל המייסדים</span>
-                        </div>
-                        <div class="partnership-price">
-                            <span class="price-amount">₪560</span>
-                            <span class="price-period">/ חודש</span>
-                        </div>
-                        <div class="partnership-total">סה״כ ₪26,880 ל-48 חודשים</div>
-                    </div>
-                    <ul class="partnership-features">
-                        <li><i class="fas fa-check-circle"></i> כל ההטבות הקודמות</li>
-                        <li><i class="fas fa-gem"></i> אבן חקוקה עם שמכם על שם החדר</li>
-                        <li><i class="fas fa-gem"></i> קבלת פנים אישית אצל הרב פעם בשנה</li>
-                        <li><i class="fas fa-gem"></i> אבן ממולאת על שמכם בחזית הבניין</li>
-                    </ul>
-                    <a href="#donate" class="partnership-btn partnership-btn-premium">הצטרפו למייסדים</a>
-                </div>
-                
-            </div>
-        </div>
-    </section>
-    <!-- Benefits Section -->
-    <section class="benefits" id="benefits">
-        <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <span class="section-label">הטבות לתורמים</span>
-                <h2 class="section-title">מה <span class="accent">תקבלו</span> מעבר לזכות?</h2>
-                <p class="section-subtitle">
-                    מעבר לזכות הגדולה של השתתפות בפרויקט מרגש — הכנו עבורכם הטבות מגוונות
-                </p>
-            </div>
-            
-            <div class="benefits-grid">
-                <div class="benefit-item" data-aos="fade-up" data-aos-delay="100">
-                    <div class="benefit-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-                    <h3>החזר מס עד 35%</h3>
-                    <p>עמותה מוכרת לפי סעיף 46 — חלק נכבד מהתרומה חוזר אליכם דרך החזר מס.</p>
-                </div>
-                
-                <div class="benefit-item" data-aos="fade-up" data-aos-delay="150">
-                    <div class="benefit-icon"><i class="fas fa-calendar-check"></i></div>
-                    <h3>פריסה נוחה ל-48 חודשים</h3>
-                    <p>הוראת קבע חודשית נוחה — בלי נטל כספי, עם השפעה גדולה.</p>
-                </div>
-                
-                <div class="benefit-item" data-aos="fade-up" data-aos-delay="200">
-                    <div class="benefit-icon"><i class="fas fa-images"></i></div>
-                    <h3>אלבום תמונות הבנייה</h3>
-                    <p>גישה ייחודית לאלבום תמונות שמתעדכן בהתקדמות הפרויקט בזמן אמת.</p>
-                </div>
-                
-                <div class="benefit-item" data-aos="fade-up" data-aos-delay="250">
-                    <div class="benefit-icon"><i class="fas fa-envelope-open-text"></i></div>
-                    <h3>עדכונים חודשיים</h3>
-                    <p>עדכון שוטף על כל אבן שעולה, כל תהליך וכל הישג בדרך.</p>
-                </div>
-                
-                <div class="benefit-item" data-aos="fade-up" data-aos-delay="300">
-                    <div class="benefit-icon"><i class="fas fa-monument"></i></div>
-                    <h3>שמכם חקוק לנצח</h3>
-                    <p>הנצחה אבנית בקומפלקס — לכם או ליקיריכם, לזיכרון לדורי דורות.</p>
-                </div>
-                
-                <div class="benefit-item" data-aos="fade-up" data-aos-delay="350">
-                    <div class="benefit-icon"><i class="fas fa-book-open"></i></div>
-                    <h3>ברכה מהרב שליט״א</h3>
-                    <p>תורמים מ-3 מטרים ומעלה זוכים לברכה אישית מהרב שלום יוסף ברבי שליט״א.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- How to Join / Process -->
-    <section class="process">
-        <div class="container">
-            <div class="section-header" data-aos="fade-up">
-                <span class="section-label">התהליך</span>
-                <h2 class="section-title">כיצד <span class="accent">מצטרפים?</span></h2>
-                <p class="section-subtitle">4 שלבים פשוטים שמחברים אתכם למשהו גדול מהחיים</p>
-            </div>
-            
-            <div class="process-steps">
-                <div class="process-step" data-aos="fade-up" data-aos-delay="100">
-                    <div class="process-number">1</div>
-                    <div class="process-content">
-                        <h3>בחירת רמת שותפות</h3>
-                        <p>בחרו את רמת התרומה המתאימה לכם — מטר אחד ועד נבחרת המאה.</p>
-                    </div>
-                </div>
-                
-                <div class="process-connector"></div>
-                
-                <div class="process-step" data-aos="fade-up" data-aos-delay="200">
-                    <div class="process-number">2</div>
-                    <div class="process-content">
-                        <h3>השארת פרטים</h3>
-                        <p>שם מלא · מספר טלפון · כתובת דוא״ל לקבלת אישור תרומה.</p>
-                    </div>
-                </div>
-                
-                <div class="process-connector"></div>
-                
-                <div class="process-step" data-aos="fade-up" data-aos-delay="300">
-                    <div class="process-number">3</div>
-                    <div class="process-content">
-                        <h3>הגדרת הוראת קבע</h3>
-                        <p>טופס נוח להוראת קבע בנקאית או תשלום בכרטיס אשראי.</p>
-                    </div>
-                </div>
-                
-                <div class="process-connector"></div>
-                
-                <div class="process-step" data-aos="fade-up" data-aos-delay="400">
-                    <div class="process-number">4</div>
-                    <div class="process-content">
-                        <h3>אישור ומעקב</h3>
-                        <p>אישור תרומה שנתי, עדכון חודשי וגישה לאלבום הבנייה.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Donate Section -->
-    <section class="donate" id="donate">
-        <div class="container">
-            <div class="section-header section-header-light" data-aos="fade-up">
-                <span class="section-label section-label-light">הצטרפו עכשיו</span>
-                <h2 class="section-title section-title-light">ניתן <span class="accent-light">לתרום</span> באמצעות:</h2>
-                <p class="section-subtitle section-subtitle-light">
-                    בחרו את הדרך הנוחה לכם — כל תרומה, בכל סכום, מקרבת אותנו יחד אל היעד
-                </p>
-            </div>
-            
-            <div class="donate-grid">
-                
-                <!-- Phone -->
-                <div class="donate-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="donate-icon donate-icon-phone">
-                        <i class="fas fa-phone-alt"></i>
-                    </div>
-                    <h3>בטלפון</h3>
-                    <p>דברו איתנו ישירות — נשמח ללוות אתכם בתהליך.</p>
-                    <div class="donate-details">
-                        <a href="tel:058-5555530" class="phone-number">
-                            <i class="fas fa-mobile-alt"></i> 058-5555530
-                        </a>
-                        <a href="tel:053-5470052" class="phone-number">
-                            <i class="fas fa-mobile-alt"></i> 053-5470052
-                        </a>
-                    </div>
-                    <a href="tel:058-5555530" class="donate-btn">
-                        <i class="fas fa-phone"></i> התקשרו עכשיו
-                    </a>
-                </div>
-                
-                <!-- Credit Card / Bit -->
-                <div class="donate-card donate-card-featured" data-aos="fade-up" data-aos-delay="200">
-                    <div class="donate-featured-badge">המומלץ ביותר</div>
-                    <div class="donate-icon donate-icon-card">
-                        <i class="fas fa-credit-card"></i>
-                    </div>
-                    <h3>אשראי / ביט</h3>
-                    <p>תרומה מאובטחת ונוחה ישירות באתר — תוך דקות.</p>
-                    <div class="donate-details">
-                        <div class="donate-methods">
-                            <span><i class="fab fa-cc-visa"></i></span>
-                            <span><i class="fab fa-cc-mastercard"></i></span>
-                            <span class="donate-bit">ביט</span>
-                        </div>
-                    </div>
-                    <a href="https://www.matara.pro/nedarimplus/online/?mosad=5776132" target="_blank" rel="noopener" class="donate-btn donate-btn-featured">
-                        <i class="fas fa-lock"></i> לתרומה מאובטחת
-                    </a>
-                </div>
-                
-                <!-- QR Code -->
-                <div class="donate-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="donate-icon donate-icon-qr">
-                        <i class="fas fa-qrcode"></i>
-                    </div>
-                    <h3>סריקת QR</h3>
-                    <p>סרקו את הקוד בטלפון — ותגיעו ישר לדף התרומה.</p>
-                    <div class="donate-details">
-                        <div class="qr-wrapper">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://www.matara.pro/nedarimplus/online/?mosad=5776132&margin=10&color=0B3D5C" alt="קוד QR לתרומה" class="qr-image">
-                        </div>
-                    </div>
-                    <a href="https://www.matara.pro/nedarimplus/online/?mosad=5776132" target="_blank" rel="noopener" class="donate-btn">
-                        <i class="fas fa-external-link-alt"></i> פתיחת הקישור
-                    </a>
-                </div>
-                
-                <!-- Bank Transfer -->
-                <div class="donate-card" data-aos="fade-up" data-aos-delay="400">
-                    <div class="donate-icon donate-icon-bank">
-                        <i class="fas fa-university"></i>
-                    </div>
-                    <h3>העברה בנקאית</h3>
-                    <p>העברה ישירה לחשבון העמותה — פשוט, מהיר ובטוח.</p>
-                    <div class="donate-details bank-details">
-                        <div class="bank-row">
-                            <span class="bank-label">בנק:</span>
-                            <span class="bank-value">מזרחי טפחות</span>
-                        </div>
-                        <div class="bank-row">
-                            <span class="bank-label">סניף:</span>
-                            <span class="bank-value">428</span>
-                        </div>
-                        <div class="bank-row">
-                            <span class="bank-label">מס׳ חשבון:</span>
-                            <span class="bank-value bank-account">
-                                <span id="accountNumber">294319</span>
-                                <button class="copy-btn" data-copy="294319" aria-label="העתק מספר חשבון">
-                                    <i class="fas fa-copy"></i>
-                                </button>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="bank-note">
-                        <i class="fas fa-shield-alt"></i>
-                        החזר עד 35% מסכום התרומה לחשבונכם, ע״פ סעיף 46
-                    </div>
-                </div>
-                
-            </div>
-            
-            <!-- Final CTA -->
-            <div class="donate-cta" data-aos="fade-up">
-                <h3>שמכם יהיה חקוק <span class="accent-light">לנצח נצחים</span></h3>
-                <p>קומפלקס שלם לקהילות שלמות — הצטרפו לשותפות שתשנה חיים.</p>
-                <a href="https://www.matara.pro/nedarimplus/online/?mosad=5776132" target="_blank" rel="noopener" class="btn btn-primary btn-large">
-                    <i class="fas fa-heart"></i>
-                    תרומה עכשיו
-                </a>
-            </div>
-        </div>
-    </section>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <div class="footer-logo">
-                        <i class="fas fa-star-of-david"></i>
-                        <div>
-                            <h3>כְּזֹהַר הָרָקִיעַ</h3>
-                            <p>קומפלקס רוחני-קהילתי · נתיבות</p>
-                        </div>
-                    </div>
-                    <p class="footer-description">
-                        בנשיאות הרב שלום יוסף ברבי שליט״א — מקום שבו הרוח והנתינה נפגשים ללא גבולות.
-                    </p>
-                    <div class="footer-tagline">
-                        <i class="fas fa-quote-right"></i>
-                        כי לעולם חסדו
-                        <i class="fas fa-quote-left"></i>
-                    </div>
-                </div>
-                
-                <div class="footer-links">
-                    <h4>ניווט מהיר</h4>
-                    <ul>
-                        <li><a href="#home">בית</a></li>
-                        <li><a href="#vision">החזון</a></li>
-                        <li><a href="#activities">הפעילויות</a></li>
-                        <li><a href="#partnership">רמות שותפות</a></li>
-                        <li><a href="#benefits">הטבות</a></li>
-                        <li><a href="#donate">תרומה</a></li>
-                    </ul>
-                </div>
-                
-                <div class="footer-contact">
-                    <h4>יצירת קשר</h4>
-                    <ul class="contact-list">
-                        <li><i class="fas fa-phone"></i> <a href="tel:058-5555530">058-5555530</a></li>
-                        <li><i class="fas fa-phone"></i> <a href="tel:053-5470052">053-5470052</a></li>
-                        <li><i class="fas fa-map-marker-alt"></i> נתיבות, ישראל</li>
-                        <li><i class="fas fa-shield-alt"></i> עמותה · סעיף 46</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; <span id="currentYear">2025</span> עולמות יחד · כל הזכויות שמורות</p>
-                <p class="footer-credit">כְּזֹהַר הָרָקִיעַ · פרויקט היסטורי בלב נתיבות</p>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Floating Donate Button -->
-    <a href="#donate" class="floating-donate" id="floatingDonate">
-        <i class="fas fa-heart"></i>
-        <span>לתרומה</span>
+<header class="site-header" data-header data-over="hero">
+  <div class="wrap bar">
+    <a class="brand" href="#top">
+      <svg class="brand-mark" aria-hidden="true"><use href="#mark"/></svg>
+      <span class="brand-text">
+        <span class="brand-word lux-wrap" data-lux="כזוהר הרקיע"><span class="lux">כזוהר הרקיע</span></span>
+        <span class="brand-sub">עולמות יחד · נתיבות</span>
+      </span>
+      <span class="sr-only">— לראש העמוד</span>
     </a>
+    <nav class="nav" aria-label="ניווט ראשי">
+      <ul>
+        <li><a href="#vision">החזון</a></li>
+        <li><a href="#activities">הפעילויות</a></li>
+        <li><a href="#partnership">שותפות</a></li>
+        <li><a href="#benefits">הטבות</a></li>
+        <li><a href="#donate">תרומה</a></li>
+      </ul>
+    </nav>
+    <div class="bar-actions">
+      <button class="icon-btn theme-toggle" type="button" data-theme-toggle aria-pressed="false">
+        <svg class="i-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+        <svg class="i-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+        <span class="sr-only">מצב לילה</span>
+      </button>
+      <button class="btn btn-solid btn-sm header-donate" type="button" data-open-donate>תרמו</button>
+      <button class="icon-btn menu-btn" type="button" data-open-menu aria-haspopup="dialog" aria-controls="menu" aria-expanded="false">
+        <svg aria-hidden="true"><use href="#i-menu"/></svg><span class="sr-only">תפריט</span>
+      </button>
+    </div>
+  </div>
+  <p class="topline"><span>עמותה מוכרת · הטבת מס 35% לפי סעיף 46</span> <a href="tel:0585555530" class="topline-tel"><bdi>058-5555530</bdi></a></p>
+</header>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
-        <i class="fas fa-check-circle"></i>
-        <span id="toastMessage">הועתק בהצלחה!</span>
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="hero-stage">
+    <div class="hero-sky" aria-hidden="true"></div>
+    <picture class="hero-poster" aria-hidden="true">
+      <source type="image/avif" srcset="assets/img/hero-poster-800.avif 800w, assets/img/hero-poster-1600.avif 1600w" sizes="100vw">
+      <img src="assets/img/hero-poster-1600.webp" srcset="assets/img/hero-poster-800.webp 800w, assets/img/hero-poster-1600.webp 1600w" sizes="100vw" width="1600" height="1000" alt="" fetchpriority="high" decoding="async">
+    </picture>
+    <canvas class="hero-canvas" aria-hidden="true"></canvas>
+    <figure class="hero-photo">
+      <picture class="hero-photo-soft" aria-hidden="true"><source type="image/avif" srcset="assets/img/building-dawn-640.avif"><img src="assets/img/building-dawn-640.webp" width="640" height="357" alt="" decoding="async" loading="lazy"></picture>
+      <picture class="hero-photo-sharp"><source type="image/avif" srcset="assets/img/building-dawn-640.avif 640w, assets/img/building-dawn-1024.avif 1024w, assets/img/building-dawn-1376.avif 1376w" sizes="100vw"><img src="assets/img/building-dawn-1024.webp" srcset="assets/img/building-dawn-640.webp 640w, assets/img/building-dawn-1024.webp 1024w, assets/img/building-dawn-1376.webp 1376w" sizes="100vw" width="1376" height="768" alt="הדמיה: מבנה אבן ירושלמית בהיר בנגב בשעת זריחה — אגף ארוך בן שתי קומות עם חלונות צרים ואולם תפילה גבוה עם כניסה מקושתת" decoding="async"></picture>
+    </figure>
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <div class="hero-veil" aria-hidden="true"></div>
+    <div class="hero-halo-clip" aria-hidden="true"><div class="hero-halo"><div class="halo-in"><i class="halo-core"></i><i class="halo-rays"></i><i class="halo-bokeh"></i></div></div></div>
+    <p class="tag tag-glass hero-caption">המחשה</p>
+
+    <div class="wrap hero-copy">
+      <p class="hero-kicker"><span>בסיעתא דשמיא · התחלנו</span></p>
+      <p class="hero-eyebrow">הזמנה לשותפות היסטורית</p>
+      <h1 id="hero-title" class="hero-title lux-wrap" data-lux="כְּזֹהַר הָרָקִיעַ"><span class="lux" data-dust-title>כְּזֹהַר הָרָקִיעַ</span></h1>
+      <p class="hero-sub">קומפלקס רוחני-קהילתי בלב נתיבות</p>
+      <p class="hero-motto">מניחים אבן, בונים עתיד.</p>
+      <p class="hero-lede">בית שבו הרוח והנתינה נפגשים ללא גבולות — עוגן ותמיכה לחיילים הלוחמים, לילדים עם צרכים מיוחדים, למשפחות ולכל מי שמחפש אוזן קשבת ולב&nbsp;פתוח.</p>
+      <p class="hero-presidency">בנשיאות הרב שלום יוסף ברבי שליט״א</p>
+      <div class="hero-ctas">
+        <a class="btn btn-light" href="#partnership">הצטרפו לשותפות</a>
+        <a class="btn btn-ghost-light" href="#vision">גלו את הפרויקט</a>
+      </div>
+    </div>
+    <p class="hero-line" aria-hidden="true"><span>כל מטר שתתרמו ישא את שמכם לנצח על קירות הקומפלקס.</span></p>
+    <div class="hero-scroll" aria-hidden="true"><span>גללו</span><i></i></div>
+    <div class="hero-rail" aria-hidden="true"><i class="hero-rail-fill"></i><b style="--at: 0"></b><b style="--at: .3"></b><b style="--at: .62"></b><b style="--at: 1"></b></div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="stats" aria-label="במספרים">
+  <div class="wrap">
+    <dl class="stats-grid">
+      <div class="stat clay"><dt>פעילויות מרכזיות</dt><dd><bdi>8</bdi></dd></div>
+      <div class="stat clay"><dt>חודשי פריסה נוחה</dt><dd><bdi>48</bdi></dd></div>
+      <div class="stat clay"><dt>החזר מס סעיף 46</dt><dd><bdi>35%</bdi></dd></div>
+      <div class="stat clay"><dt>שמכם חקוק לנצח</dt><dd><bdi>∞</bdi></dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============ VISION ============ -->
+<section class="vision section" id="vision" aria-labelledby="vision-title">
+  <div class="wrap">
+    <div class="vision-head">
+      <p class="eyebrow"><span class="eyebrow-he">כִּי לְעוֹלָם חַסְדּוֹ</span> <span class="eyebrow-sep" aria-hidden="true"></span> החזון שלנו</p>
+      <h2 id="vision-title" class="display-2 reveal">בית אחד. לב גדול.<br><em>עולמות יחד.</em></h2>
+    </div>
+    <div class="vision-grid">
+      <figure class="vision-figure clay reveal">
+        <picture class="frame"><source type="image/avif" srcset="assets/img/community-terrace-640.avif 640w, assets/img/community-terrace-1024.avif 1024w, assets/img/community-terrace-1376.avif 1376w, assets/img/community-terrace-1752.avif 1752w" sizes="(min-width: 1104px) 1056px, calc(100vw - 48px)"><img src="assets/img/community-terrace-1024.webp" srcset="assets/img/community-terrace-640.webp 640w, assets/img/community-terrace-1024.webp 1024w, assets/img/community-terrace-1376.webp 1376w, assets/img/community-terrace-1752.webp 1752w" sizes="(min-width: 1104px) 1056px, calc(100vw - 48px)" width="1752" height="898" alt="ערב קהילתי במרפסת אבן בשעת שקיעה: גברים עם כיפות יושבים יחד סביב שולחן עץ נמוך ומשוחחים לאור פנסים, ברקע עצי זית, מבנה אבן מואר ונוף הרים" loading="lazy" decoding="async"></picture>
+        <figcaption class="tag">המחשה</figcaption>
+      </figure>
+      <div class="vision-text clay">
+        <p class="lede reveal">אנו מקימים מרכז קהילתי-ערכי ייחודי בלב נתיבות — מקום שבו כל אחד מוצא את מקומו, מהחייל הלוחם ועד הילד עם הצרכים המיוחדים, מהאמא הצעירה ועד הסבא שמחפש חברה וקהילה.</p>
+      </div>
+    </div>
+    <ol class="pillars" role="list">
+      <li class="pillar clay clay-sage reveal">
+        <picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/pil-soldier-240.avif 240w, assets/img/clay/pil-soldier-480.avif 480w" sizes="(min-width: 1024px) 168px, 140px"><img src="assets/img/clay/pil-soldier-240.webp" srcset="assets/img/clay/pil-soldier-240.webp 240w, assets/img/clay/pil-soldier-480.webp 480w" sizes="(min-width: 1024px) 168px, 140px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+        <p class="pillar-tag">בלב הפרויקט</p>
+        <h3>חיילים לוחמים</h3>
+        <p>חדרי אירוח ברמת פרימיום, ארוחות חמות וחיבוק של בית לחיילים שמגינים עלינו — כי הם לא לבד.</p>
+      </li>
+      <li class="pillar clay clay-blush reveal">
+        <picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/pil-kids-240.avif 240w, assets/img/clay/pil-kids-480.avif 480w" sizes="(min-width: 1024px) 168px, 140px"><img src="assets/img/clay/pil-kids-240.webp" srcset="assets/img/clay/pil-kids-240.webp 240w, assets/img/clay/pil-kids-480.webp 480w" sizes="(min-width: 1024px) 168px, 140px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+        <p class="pillar-tag">בלב הפרויקט</p>
+        <h3>ילדים עם צרכים מיוחדים</h3>
+        <p>כיתות סיוע ייעודיות, ליווי מקצועי וסביבה חמה שבה כל ילד יכול לפרוח ולהגשים את עצמו.</p>
+      </li>
+      <li class="pillar clay clay-warm reveal">
+        <picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/pil-family-240.avif 240w, assets/img/clay/pil-family-480.avif 480w" sizes="(min-width: 1024px) 168px, 140px"><img src="assets/img/clay/pil-family-240.webp" srcset="assets/img/clay/pil-family-240.webp 240w, assets/img/clay/pil-family-480.webp 480w" sizes="(min-width: 1024px) 168px, 140px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+        <p class="pillar-tag pillar-tag-muted">ולכל הקהילה</p>
+        <h3>משפחות וקהילה</h3>
+        <p>ייעוץ אישי, זוגי ומשפחתי, תמיכה נפשית וחלוקת מזון לכל מי שמחפש כתף להשען עליה.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ ACTIVITIES ============ -->
+<section class="activities" id="activities" aria-labelledby="act-title">
+  <div class="act-pin">
+    <div class="act-track" data-act-track>
+      <header class="act-intro">
+        <p class="eyebrow">8 פעילויות · קורת גג אחת</p>
+        <h2 id="act-title" class="display-2">מה בונים<br><em>יחד?</em></h2>
+        <p class="lede">שמונה שירותים ייחודיים המשלבים רוח, חסד וקהילה — כולם תחת גג אחד בלב נתיבות.</p>
+        <p class="act-hint" aria-hidden="true"><svg><use href="#i-arrow"/></svg> המשיכו לגלול</p>
+      </header>
+      <ol class="act-list" role="list">
+        <li class="act clay">
+          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/class-teacher-480.avif 480w, assets/img/class-teacher-800.avif 800w, assets/img/class-teacher-1200.avif 1200w" sizes="(min-width: 1024px) 34vw, 100vw"><img src="assets/img/class-teacher-800.webp" srcset="assets/img/class-teacher-480.webp 480w, assets/img/class-teacher-800.webp 800w, assets/img/class-teacher-1200.webp 1200w" sizes="(min-width: 1024px) 34vw, 100vw" width="1200" height="805" alt="מורה עם כיפה כורע ליד ילד עם כיפה ליד שולחן עץ, ושניהם בונים יחד בקוביות צבעוניות" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-blocks-240.avif 240w, assets/img/clay/act-blocks-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-blocks-240.webp" srcset="assets/img/clay/act-blocks-240.webp 240w, assets/img/clay/act-blocks-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
+          <div class="act-body">
+            <div class="act-meta"><span class="act-num">01</span><span class="tag tag-accent">דגש מיוחד</span></div>
+            <h3>כיתות סיוע לילדים בעלי צרכים מיוחדים</h3>
+            <p>סביבה תומכת ומקצועית המותאמת אישית לכל ילד — כדי שכולם יצליחו.</p>
+          </div>
+        </li>
+        <li class="act clay">
+          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/soldier-home-480.avif 480w, assets/img/soldier-home-800.avif 800w, assets/img/soldier-home-1024.avif 1024w" sizes="(min-width: 1024px) 540px, calc(100vw - 48px)"><img class="pos-soldier" src="assets/img/soldier-home-800.webp" srcset="assets/img/soldier-home-480.webp 480w, assets/img/soldier-home-800.webp 800w, assets/img/soldier-home-1024.webp 1024w" sizes="(min-width: 1024px) 540px, calc(100vw - 48px)" width="1024" height="572" alt="חייל לוחם במדים ובציוד מלא עומד על התפר שבין שני עולמות: משמאל עמדת בטון ושדה קרב מאובק, ומימין חדר אירוח חם ומואר עם מיטה מוצעת שמחכה לו" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-bed-240.avif 240w, assets/img/clay/act-bed-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-bed-240.webp" srcset="assets/img/clay/act-bed-240.webp 240w, assets/img/clay/act-bed-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
+          <div class="act-body">
+            <div class="act-meta"><span class="act-num">02</span><span class="tag tag-accent">דגש מיוחד</span></div>
+            <h3>חדרי אירוח פרימיום לחיילים לוחמים</h3>
+            <p>בית חם ומפנק לחיילים שבאים לשבת, חופשה או פשוט לנשום — עם ארוחות, מיטה נוחה וליווי.</p>
+          </div>
+        </li>
+        <li class="act clay">
+          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/synagogue-main-640.avif 640w, assets/img/synagogue-main-1024.avif 1024w, assets/img/synagogue-main-1200.avif 1200w" sizes="(min-width: 1024px) 34vw, 100vw"><img src="assets/img/synagogue-main-1024.webp" srcset="assets/img/synagogue-main-640.webp 640w, assets/img/synagogue-main-1024.webp 1024w, assets/img/synagogue-main-1200.webp 1200w" sizes="(min-width: 1024px) 34vw, 100vw" width="1200" height="678" alt="בית כנסת מפואר: אולם תפילה גבוה עם ספסלי עץ, קירות אבן מוארים באור חם, מנורות תלויות וארון קודש מעוטר בקצה המעבר" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-ark-240.avif 240w, assets/img/clay/act-ark-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-ark-240.webp" srcset="assets/img/clay/act-ark-240.webp 240w, assets/img/clay/act-ark-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
+          <div class="act-body">
+            <div class="act-meta"><span class="act-num">03</span></div>
+            <h3>בית כנסת מפואר עם מניינים יומיים</h3>
+            <p>מרחב תפילה מכובד ומזמין, פתוח לכל המתפללים בכל שעות היום.</p>
+          </div>
+        </li>
+        <li class="act clay">
+          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/mikveh-luxury-640.avif 640w, assets/img/mikveh-luxury-1024.avif 1024w, assets/img/mikveh-luxury-1376.avif 1376w" sizes="(min-width: 1024px) 540px, calc(100vw - 48px)"><img class="pos-mikveh" src="assets/img/mikveh-luxury-1024.webp" srcset="assets/img/mikveh-luxury-640.webp 640w, assets/img/mikveh-luxury-1024.webp 1024w, assets/img/mikveh-luxury-1376.webp 1376w" sizes="(min-width: 1024px) 540px, calc(100vw - 48px)" width="1376" height="768" alt="מקווה מפואר ושקט: בריכת טבילה מוארת עם מדרגות ומעקה נירוסטה, קירות אבן בהירים, קמרונות עם תאורה רכה וקיר פסיפס בגווני תכלת" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-mikveh-240.avif 240w, assets/img/clay/act-mikveh-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-mikveh-240.webp" srcset="assets/img/clay/act-mikveh-240.webp 240w, assets/img/clay/act-mikveh-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
+          <div class="act-body">
+            <div class="act-meta"><span class="act-num">04</span></div>
+            <h3>מקוואות מפוארים לנשים ולגברים</h3>
+            <p>מתקנים ברמה הגבוהה ביותר, עם שמירה על פרטיות, נקיון וכבוד.</p>
+          </div>
+        </li>
+        <li class="act clay">
+          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/counseling-480.avif 480w, assets/img/counseling-800.avif 800w, assets/img/counseling-1200.avif 1200w" sizes="(min-width: 1024px) 34vw, 100vw"><img src="assets/img/counseling-800.webp" srcset="assets/img/counseling-480.webp 480w, assets/img/counseling-800.webp 800w, assets/img/counseling-1200.webp 1200w" sizes="(min-width: 1024px) 34vw, 100vw" width="1200" height="805" alt="חדר ייעוץ שקט עם שתי כורסאות פשתן, שולחן עץ קטן ווילון שקוף" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-counsel-240.avif 240w, assets/img/clay/act-counsel-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-counsel-240.webp" srcset="assets/img/clay/act-counsel-240.webp 240w, assets/img/clay/act-counsel-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
+          <div class="act-body">
+            <div class="act-meta"><span class="act-num">05</span></div>
+            <h3>מתחם ייעוץ אישי, זוגי ומשפחתי</h3>
+            <p>מרחב דיסקרטי ומקצועי לתמיכה, הדרכה וליווי בכל אתגרי החיים.</p>
+          </div>
+        </li>
+        <li class="act clay">
+          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/meals-480.avif 480w, assets/img/meals-800.avif 800w, assets/img/meals-1200.avif 1200w" sizes="(min-width: 1024px) 34vw, 100vw"><img src="assets/img/meals-800.webp" srcset="assets/img/meals-480.webp 480w, assets/img/meals-800.webp 800w, assets/img/meals-1200.webp 1200w" sizes="(min-width: 1024px) 34vw, 100vw" width="1200" height="805" alt="מתנדבים עם כיפות וסינרים אורזים ארוחות חמות ולחם טרי בקופסאות קרטון על שולחן עץ ארוך" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-meal-240.avif 240w, assets/img/clay/act-meal-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-meal-240.webp" srcset="assets/img/clay/act-meal-240.webp 240w, assets/img/clay/act-meal-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
+          <div class="act-body">
+            <div class="act-meta"><span class="act-num">06</span></div>
+            <h3>חלוקת מזון וארוחות חמות לנזקקים</h3>
+            <p>כי אף אחד לא צריך להישאר רעב — ארוחות מזינות ומכבדות לכל מי שזקוק.</p>
+          </div>
+        </li>
+        <li class="act clay">
+          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/clinic-480.avif 480w, assets/img/clinic-800.avif 800w, assets/img/clinic-1200.avif 1200w" sizes="(min-width: 1024px) 34vw, 100vw"><img src="assets/img/clinic-800.webp" srcset="assets/img/clinic-480.webp 480w, assets/img/clinic-800.webp 800w, assets/img/clinic-1200.webp 1200w" sizes="(min-width: 1024px) 34vw, 100vw" width="1200" height="805" alt="חדר ייעוץ רפואי מואר: שולחן עץ עם סטטוסקופ, כיסאות ומיטת בדיקה" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-stetho-240.avif 240w, assets/img/clay/act-stetho-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-stetho-240.webp" srcset="assets/img/clay/act-stetho-240.webp 240w, assets/img/clay/act-stetho-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
+          <div class="act-body">
+            <div class="act-meta"><span class="act-num">07</span></div>
+            <h3>ייעוץ רפואי חינם ע״י ד״ר ופסיכולוג</h3>
+            <p>גישה חופשית לייעוץ רפואי ונפשי מקצועי — ללא עלות, ללא בירוקרטיה.</p>
+          </div>
+        </li>
+        <li class="act clay">
+          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/beit-midrash-640.avif 640w, assets/img/beit-midrash-1024.avif 1024w, assets/img/beit-midrash-1376.avif 1376w" sizes="(min-width: 1024px) 34vw, 100vw"><img src="assets/img/beit-midrash-1024.webp" srcset="assets/img/beit-midrash-640.webp 640w, assets/img/beit-midrash-1024.webp 1024w, assets/img/beit-midrash-1376.webp 1376w" sizes="(min-width: 1024px) 34vw, 100vw" width="1376" height="768" alt="בית מדרש: שולחן לימוד ארוך עם ספרי קודש פתוחים ושני לומדים ברקע" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-sefer-240.avif 240w, assets/img/clay/act-sefer-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-sefer-240.webp" srcset="assets/img/clay/act-sefer-240.webp 240w, assets/img/clay/act-sefer-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
+          <div class="act-body">
+            <div class="act-meta"><span class="act-num">08</span></div>
+            <h3>כוללים ושיעורי תורה בכל הרמות</h3>
+            <p>לימוד תורה ברמות שונות — למתחילים ולמתקדמים, לכל גיל ולכל סגנון.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+    <div class="act-progress" aria-hidden="true"><i data-act-bar></i></div>
+  </div>
+</section>
+
+<!-- ============ MOMENTS ============ -->
+<section class="moments section" aria-labelledby="moments-title">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head-main">
+        <p class="eyebrow">שני עולמות · בית אחד</p>
+        <h2 id="moments-title" class="display-2 reveal">הרגעים<br><em>שאנחנו בונים</em></h2>
+      </div>
+      <p class="lede reveal">מהחייל שחוזר מהמילואים ומחפש מיטה חמה, ועד הילד שצריך מורה סבלני שיאמין בו — כל רגע כאן חשוב.</p>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-    <script src="js/main.js"></script>
+    <article class="moment">
+      <figure class="moment-fig clay reveal">
+        <picture class="frame"><source type="image/avif" srcset="assets/img/soldier-arrival-480.avif 480w, assets/img/soldier-arrival-800.avif 800w, assets/img/soldier-arrival-1200.avif 1200w" sizes="(min-width: 1024px) 60vw, 100vw"><img src="assets/img/soldier-arrival-800.webp" srcset="assets/img/soldier-arrival-480.webp 480w, assets/img/soldier-arrival-800.webp 800w, assets/img/soldier-arrival-1200.webp 1200w" sizes="(min-width: 1024px) 60vw, 100vw" width="1200" height="805" alt="חייל במדים עם תיק צד על הכתף נכנס לחדר אירוח חם עם קירות אבן ומיטה מוצעת" loading="lazy" decoding="async"></picture>
+        <figcaption class="tag">המחשה</figcaption>
+      </figure>
+      <div class="moment-text">
+        <h3 class="display-3">לחיילים שלנו — בית שמחכה</h3>
+        <p>כי אחרי הכל, הם צריכים מקום לנוח, לקרוא, להיות. בלי גינונים, רק חום ואהבה.</p>
+        <ul class="moment-list" role="list">
+          <li>הגעה לחדר אישי</li>
+          <li>מנוחה שמגיעה</li>
+          <li>רגע של שקט</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="moment moment-alt">
+      <figure class="moment-fig clay reveal">
+        <picture class="frame"><source type="image/avif" srcset="assets/img/class-boy-480.avif 480w, assets/img/class-boy-800.avif 800w, assets/img/class-boy-1200.avif 1200w" sizes="(min-width: 1024px) 60vw, 100vw"><img src="assets/img/class-boy-800.webp" srcset="assets/img/class-boy-480.webp 480w, assets/img/class-boy-800.webp 800w, assets/img/class-boy-1200.webp 1200w" sizes="(min-width: 1024px) 60vw, 100vw" width="1200" height="805" alt="ילד עם כיפה יושב ליד שולחן עץ בכיתה תומכת ומצייר בעפרונות צבעוניים" loading="lazy" decoding="async"></picture>
+        <figcaption class="tag">המחשה</figcaption>
+      </figure>
+      <div class="moment-text">
+        <h3 class="display-3">לילדים שלנו — מקום לפרוח</h3>
+        <p>כיתות תומכות, לימוד אישי, סביבה מאמינה — כי לכל ילד מגיע לגלות את האור שבו.</p>
+        <ul class="moment-list" role="list">
+          <li>ליווי אישי לכל ילד</li>
+          <li>סקרנות וגילוי</li>
+          <li>דור של מנהיגים</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ PARTNERSHIP ============ -->
+<section class="partner section" id="partnership" aria-labelledby="partner-title">
+  <div class="wrap">
+    <div class="partner-top">
+      <div class="partner-head">
+        <p class="eyebrow">רמות שותפות</p>
+        <h2 id="partner-title" class="display-2 reveal">תרומה<br><em>לפי מטרים</em></h2>
+        <p class="lede">כל מטר שתתרמו ישא את שמכם לנצח על קירות&nbsp;הקומפלקס.</p>
+        <p class="note-line"><svg aria-hidden="true"><use href="#i-check"/></svg> כל התרומות בפריסה נוחה של הוראת קבע ל-48 חודשים</p>
+      </div>
+      <div class="ignite" data-ignite>
+        <div class="ignite-fallback" data-ignite-fallback><picture class="ignite-art"><source type="image/avif" srcset="assets/img/clay/tier-3-240.avif 240w, assets/img/clay/tier-3-480.avif 480w" sizes="(min-width: 1024px) 300px, 220px"><img src="assets/img/clay/tier-3-240.webp" srcset="assets/img/clay/tier-3-240.webp 240w, assets/img/clay/tier-3-480.webp 480w" sizes="(min-width: 1024px) 300px, 220px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></div>
+        <canvas class="ignite-canvas" aria-hidden="true"></canvas>
+        <p class="ignite-caption" aria-live="polite"><span data-ignite-name>שלושה מטרים</span> · <span class="muted">המחשה</span></p>
+      </div>
+    </div>
+
+    <fieldset class="tiers" data-tiers>
+      <legend class="sr-only">בחרו רמת שותפות</legend>
+
+      <div class="tier clay">
+        <input class="tier-input" type="radio" name="tier" id="tier-100" value="100" data-name="מטר אחד">
+        <label class="tier-card" for="tier-100">
+          <picture class="clay-art tier-art"><source type="image/avif" srcset="assets/img/clay/tier-1-240.avif 240w, assets/img/clay/tier-1-480.avif 480w" sizes="(min-width: 1280px) 132px, 120px"><img src="assets/img/clay/tier-1-240.webp" srcset="assets/img/clay/tier-1-240.webp 240w, assets/img/clay/tier-1-480.webp 480w" sizes="(min-width: 1280px) 132px, 120px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+          <span class="tier-name">מטר אחד</span>
+          <span class="tier-price"><bdi>₪100</bdi> <small>/ חודש</small></span>
+          <span class="tier-total">סה״כ <bdi>₪4,800</bdi> ל-48 חודשים</span>
+          <span class="tier-net">לאחר החזר מס של עד 35% <span class="nw">≈ <bdi>₪65</bdi> לחודש</span></span>
+          <span class="tier-benefits">
+            <span>אישור תרומה למס (סעיף 46)</span>
+            <span>עדכונים שוטפים על הבנייה</span>
+            <span>הזמנה לאירוע הנחת אבן הפינה</span>
+          </span>
+        </label>
+        <button class="btn btn-line tier-cta" type="button" data-open-donate data-tier="100">הצטרפו</button>
+      </div>
+
+      <div class="tier clay">
+        <input class="tier-input" type="radio" name="tier" id="tier-180" value="180" data-name="מטר וחצי">
+        <label class="tier-card" for="tier-180">
+          <picture class="clay-art tier-art"><source type="image/avif" srcset="assets/img/clay/tier-15-240.avif 240w, assets/img/clay/tier-15-480.avif 480w" sizes="(min-width: 1280px) 132px, 120px"><img src="assets/img/clay/tier-15-240.webp" srcset="assets/img/clay/tier-15-240.webp 240w, assets/img/clay/tier-15-480.webp 480w" sizes="(min-width: 1280px) 132px, 120px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+          <span class="tier-name">מטר וחצי</span>
+          <span class="tier-price"><bdi>₪180</bdi> <small>/ חודש</small></span>
+          <span class="tier-total">סה״כ <bdi>₪8,640</bdi> ל-48 חודשים</span>
+          <span class="tier-net">לאחר החזר מס של עד 35% <span class="nw">≈ <bdi>₪117</bdi> לחודש</span></span>
+          <span class="tier-benefits">
+            <span>אישור תרומה למס (סעיף 46)</span>
+            <span>עדכונים שוטפים על הבנייה</span>
+            <span>שי אישי והזמנה לאירוע הנחת אבן הפינה</span>
+          </span>
+        </label>
+        <button class="btn btn-line tier-cta" type="button" data-open-donate data-tier="180">הצטרפו</button>
+      </div>
+
+      <div class="tier tier-popular clay">
+        <input class="tier-input" type="radio" name="tier" id="tier-360" value="360" data-name="שלושה מטרים" checked>
+        <label class="tier-card" for="tier-360">
+          <picture class="clay-art tier-art"><source type="image/avif" srcset="assets/img/clay/tier-3-240.avif 240w, assets/img/clay/tier-3-480.avif 480w" sizes="(min-width: 1280px) 132px, 120px"><img src="assets/img/clay/tier-3-240.webp" srcset="assets/img/clay/tier-3-240.webp 240w, assets/img/clay/tier-3-480.webp 480w" sizes="(min-width: 1280px) 132px, 120px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+          <span class="tier-badge">פופולרי</span>
+          <span class="tier-name">שלושה מטרים</span>
+          <span class="tier-price"><bdi>₪360</bdi> <small>/ חודש</small></span>
+          <span class="tier-total">סה״כ <bdi>₪17,280</bdi> ל-48 חודשים</span>
+          <span class="tier-net">לאחר החזר מס של עד 35% <span class="nw">≈ <bdi>₪234</bdi> לחודש</span></span>
+          <span class="tier-benefits">
+            <span>כל ההטבות הקודמות</span>
+            <span>ברכה אישית מהרב הנשיא שליט״א ושי אישי</span>
+            <span>שמכם על לוח השמות בכניסה</span>
+            <span>הזמנה אישית לאירוע הפתיחה הרשמי</span>
+          </span>
+        </label>
+        <button class="btn btn-line tier-cta" type="button" data-open-donate data-tier="360">הצטרפו עכשיו</button>
+      </div>
+
+      <div class="tier clay">
+        <input class="tier-input" type="radio" name="tier" id="tier-560" value="560" data-name="היכל המייסדים">
+        <label class="tier-card" for="tier-560">
+          <picture class="clay-art tier-art"><source type="image/avif" srcset="assets/img/clay/tier-founder-240.avif 240w, assets/img/clay/tier-founder-480.avif 480w" sizes="(min-width: 1280px) 132px, 120px"><img src="assets/img/clay/tier-founder-240.webp" srcset="assets/img/clay/tier-founder-240.webp 240w, assets/img/clay/tier-founder-480.webp 480w" sizes="(min-width: 1280px) 132px, 120px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+          <span class="tier-name">היכל המייסדים</span>
+          <span class="tier-price"><bdi>₪560</bdi> <small>/ חודש</small></span>
+          <span class="tier-total">סה״כ <bdi>₪26,880</bdi> ל-48 חודשים</span>
+          <span class="tier-net">לאחר החזר מס של עד 35% <span class="nw">≈ <bdi>₪364</bdi> לחודש</span></span>
+          <span class="tier-benefits">
+            <span>כל ההטבות הקודמות</span>
+            <span>אבן חקוקה עם שמכם על שם החדר</span>
+            <span>קבלת פנים אישית אצל הרב פעם בשנה</span>
+            <span>אבן ממולאת על שמכם בחזית הבניין</span>
+          </span>
+        </label>
+        <button class="btn btn-line tier-cta" type="button" data-open-donate data-tier="560">הצטרפו למייסדים</button>
+      </div>
+
+      <div class="tier clay">
+        <input class="tier-input" type="radio" name="tier" id="tier-1080" value="1080" data-name="נבחרת המאה">
+        <label class="tier-card" for="tier-1080">
+          <picture class="clay-art tier-art"><source type="image/avif" srcset="assets/img/clay/tier-crown-240.avif 240w, assets/img/clay/tier-crown-480.avif 480w" sizes="(min-width: 1280px) 132px, 120px"><img src="assets/img/clay/tier-crown-240.webp" srcset="assets/img/clay/tier-crown-240.webp 240w, assets/img/clay/tier-crown-480.webp 480w" sizes="(min-width: 1280px) 132px, 120px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+          <span class="tier-name">נבחרת המאה</span>
+          <span class="tier-price"><bdi>₪1,080</bdi> <small>/ חודש</small></span>
+          <span class="tier-total">סה״כ <bdi>₪51,840</bdi> ל-48 חודשים</span>
+          <span class="tier-net">לאחר החזר מס של עד 35% <span class="nw">≈ <bdi>₪702</bdi> לחודש</span></span>
+          <span class="tier-benefits">
+            <span>כל ההטבות הקודמות</span>
+            <span>חברות בוועד הכבוד</span>
+            <span>שמכם חקוק על לוח המייסדים לנצח</span>
+            <span>נסיעה מיוחדת לקברי צדיקים בצפון</span>
+            <span>הגרלה לנסיעת כבוד לירושלים עם הרב</span>
+          </span>
+        </label>
+        <button class="btn btn-line tier-cta" type="button" data-open-donate data-tier="1080">הצטרפו לנבחרת</button>
+      </div>
+    </fieldset>
+    <p class="fine">הסכום „לאחר החזר מס” הוא הערכה בלבד (מחיר חודשי × 0.65), תלוי בחבות המס האישית.</p>
+  </div>
+</section>
+
+<!-- ============ BENEFITS ============ -->
+<section class="benefits section" id="benefits" aria-labelledby="benefits-title">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head-main">
+        <p class="eyebrow">הטבות לתורמים</p>
+        <h2 id="benefits-title" class="display-2 reveal">מה תקבלו<br><em>מעבר לזכות?</em></h2>
+      </div>
+      <p class="lede reveal">מעבר לזכות הגדולה של השתתפות בפרויקט מרגש — הכנו עבורכם הטבות מגוונות</p>
+    </div>
+    <ol class="benefit-grid" role="list">
+      <li class="benefit clay clay-warm reveal"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/ben-tax-240.avif 240w, assets/img/clay/ben-tax-480.avif 480w" sizes="(min-width: 1024px) 150px, 132px"><img src="assets/img/clay/ben-tax-240.webp" srcset="assets/img/clay/ben-tax-240.webp 240w, assets/img/clay/ben-tax-480.webp 480w" sizes="(min-width: 1024px) 150px, 132px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture><span class="benefit-n">01</span><h3>החזר מס עד 35%</h3><p>עמותה מוכרת לפי סעיף 46 — חלק נכבד מהתרומה חוזר אליכם דרך החזר מס.</p></li>
+      <li class="benefit clay clay-sage reveal"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/ben-48-240.avif 240w, assets/img/clay/ben-48-480.avif 480w" sizes="(min-width: 1024px) 150px, 132px"><img src="assets/img/clay/ben-48-240.webp" srcset="assets/img/clay/ben-48-240.webp 240w, assets/img/clay/ben-48-480.webp 480w" sizes="(min-width: 1024px) 150px, 132px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture><span class="benefit-n">02</span><h3>פריסה נוחה ל-48 חודשים</h3><p>הוראת קבע חודשית נוחה — בלי נטל כספי, עם השפעה גדולה.</p></li>
+      <li class="benefit clay clay-sand reveal"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/ben-album-240.avif 240w, assets/img/clay/ben-album-480.avif 480w" sizes="(min-width: 1024px) 150px, 132px"><img src="assets/img/clay/ben-album-240.webp" srcset="assets/img/clay/ben-album-240.webp 240w, assets/img/clay/ben-album-480.webp 480w" sizes="(min-width: 1024px) 150px, 132px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture><span class="benefit-n">03</span><h3>אלבום תמונות הבנייה</h3><p>גישה ייחודית לאלבום תמונות שמתעדכן בהתקדמות הפרויקט בזמן אמת.</p></li>
+      <li class="benefit clay clay-blush reveal"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/ben-mail-240.avif 240w, assets/img/clay/ben-mail-480.avif 480w" sizes="(min-width: 1024px) 150px, 132px"><img src="assets/img/clay/ben-mail-240.webp" srcset="assets/img/clay/ben-mail-240.webp 240w, assets/img/clay/ben-mail-480.webp 480w" sizes="(min-width: 1024px) 150px, 132px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture><span class="benefit-n">04</span><h3>עדכונים חודשיים</h3><p>עדכון שוטף על כל אבן שעולה, כל תהליך וכל הישג בדרך.</p></li>
+      <li class="benefit clay clay-sand reveal"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/ben-plaque-240.avif 240w, assets/img/clay/ben-plaque-480.avif 480w" sizes="(min-width: 1024px) 150px, 132px"><img src="assets/img/clay/ben-plaque-240.webp" srcset="assets/img/clay/ben-plaque-240.webp 240w, assets/img/clay/ben-plaque-480.webp 480w" sizes="(min-width: 1024px) 150px, 132px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture><span class="benefit-n">05</span><h3>שמכם חקוק לנצח</h3><p>הנצחה אבנית בקומפלקס — לכם או ליקיריכם, לזיכרון לדורי דורות.</p></li>
+      <li class="benefit clay clay-warm reveal"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/ben-bless-240.avif 240w, assets/img/clay/ben-bless-480.avif 480w" sizes="(min-width: 1024px) 150px, 132px"><img src="assets/img/clay/ben-bless-240.webp" srcset="assets/img/clay/ben-bless-240.webp 240w, assets/img/clay/ben-bless-480.webp 480w" sizes="(min-width: 1024px) 150px, 132px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture><span class="benefit-n">06</span><h3>ברכה מהרב שליט״א</h3><p>תורמים מ-3 מטרים ומעלה זוכים לברכה אישית מהרב שלום יוסף ברבי שליט״א.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ PROCESS ============ -->
+<section class="process section" aria-labelledby="process-title">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head-main">
+        <p class="eyebrow">התהליך</p>
+        <h2 id="process-title" class="display-2 reveal">כיצד<br><em>מצטרפים?</em></h2>
+      </div>
+      <p class="lede reveal">4 שלבים פשוטים שמחברים אתכם למשהו גדול&nbsp;מהחיים</p>
+    </div>
+    <ol class="steps" role="list">
+      <li class="step clay reveal"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/step-measure-240.avif 240w, assets/img/clay/step-measure-480.avif 480w" sizes="(min-width: 900px) 140px, 120px"><img src="assets/img/clay/step-measure-240.webp" srcset="assets/img/clay/step-measure-240.webp 240w, assets/img/clay/step-measure-480.webp 480w" sizes="(min-width: 900px) 140px, 120px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture><span class="step-n"><bdi>1</bdi></span><h3>בחירת רמת שותפות</h3><p>בחרו את רמת התרומה המתאימה לכם — מטר אחד ועד נבחרת המאה.</p></li>
+      <li class="step clay reveal"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/step-form-240.avif 240w, assets/img/clay/step-form-480.avif 480w" sizes="(min-width: 900px) 140px, 120px"><img src="assets/img/clay/step-form-240.webp" srcset="assets/img/clay/step-form-240.webp 240w, assets/img/clay/step-form-480.webp 480w" sizes="(min-width: 900px) 140px, 120px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture><span class="step-n"><bdi>2</bdi></span><h3>השארת פרטים</h3><p>שם מלא · מספר טלפון · כתובת דוא״ל לקבלת אישור תרומה.</p></li>
+      <li class="step clay reveal"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/step-recur-240.avif 240w, assets/img/clay/step-recur-480.avif 480w" sizes="(min-width: 900px) 140px, 120px"><img src="assets/img/clay/step-recur-240.webp" srcset="assets/img/clay/step-recur-240.webp 240w, assets/img/clay/step-recur-480.webp 480w" sizes="(min-width: 900px) 140px, 120px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture><span class="step-n"><bdi>3</bdi></span><h3>הגדרת הוראת קבע</h3><p>טופס נוח להוראת קבע בנקאית או תשלום בכרטיס אשראי.</p></li>
+      <li class="step clay reveal"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/step-done-240.avif 240w, assets/img/clay/step-done-480.avif 480w" sizes="(min-width: 900px) 140px, 120px"><img src="assets/img/clay/step-done-240.webp" srcset="assets/img/clay/step-done-240.webp 240w, assets/img/clay/step-done-480.webp 480w" sizes="(min-width: 900px) 140px, 120px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture><span class="step-n"><bdi>4</bdi></span><h3>אישור ומעקב</h3><p>אישור תרומה שנתי, עדכון חודשי וגישה לאלבום הבנייה.</p></li>
+    </ol>
+    <div class="center-cta"><button class="btn btn-solid btn-lg" type="button" data-open-donate>הצטרפו עכשיו <svg aria-hidden="true"><use href="#i-arrow"/></svg></button></div>
+  </div>
+</section>
+
+<!-- ============ DONATE ============ -->
+<section class="donate section" id="donate" aria-labelledby="donate-sec-title">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="section-head-main">
+        <p class="eyebrow">תרומה</p>
+        <h2 id="donate-sec-title" class="display-2 reveal">ניתן<br><em>לתרום באמצעות:</em></h2>
+      </div>
+      <p class="lede reveal">בחרו את הדרך הנוחה לכם — כל תרומה, בכל סכום, מקרבת אותנו יחד אל היעד</p>
+    </div>
+
+    <div class="methods">
+      <article class="method method-main clay">
+        <p class="tag tag-accent">המומלץ ביותר</p>
+        <picture class="clay-art method-art"><source type="image/avif" srcset="assets/img/clay/pay-card-240.avif 240w, assets/img/clay/pay-card-480.avif 480w" sizes="(min-width: 640px) 140px, 128px"><img src="assets/img/clay/pay-card-240.webp" srcset="assets/img/clay/pay-card-240.webp 240w, assets/img/clay/pay-card-480.webp 480w" sizes="(min-width: 640px) 140px, 128px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+        <h3>אשראי / ביט</h3>
+        <p>תרומה מאובטחת ונוחה ישירות באתר — תוך דקות.</p>
+        <!-- General link (no tier chosen here). The sheet's button pre-fills the tier: see data-nedarim below. -->
+        <a class="btn btn-solid" href="https://www.matara.pro/nedarimplus/online/?mosad=5776132" target="_blank" rel="noopener">לתרומה מאובטחת <svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr-only">(נפתח בלשונית חדשה)</span></a>
+        <p class="method-small">אשראי · ביט · דרך נדרים פלוס</p>
+      </article>
+
+      <article class="method clay">
+        <picture class="clay-art method-art"><source type="image/avif" srcset="assets/img/clay/pay-phone-240.avif 240w, assets/img/clay/pay-phone-480.avif 480w" sizes="(min-width: 640px) 140px, 128px"><img src="assets/img/clay/pay-phone-240.webp" srcset="assets/img/clay/pay-phone-240.webp 240w, assets/img/clay/pay-phone-480.webp 480w" sizes="(min-width: 640px) 140px, 128px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+        <h3>בטלפון</h3>
+        <p>דברו איתנו ישירות — נשמח ללוות אתכם בתהליך.</p>
+        <ul class="phones" role="list">
+          <li><a href="tel:0585555530"><bdi>058-5555530</bdi></a></li>
+          <li><a href="tel:0535470052"><bdi>053-5470052</bdi></a></li>
+        </ul>
+        <a class="btn btn-line" href="tel:0585555530">התקשרו עכשיו</a>
+      </article>
+
+      <article class="method method-qr clay">
+        <picture class="clay-art method-art"><source type="image/avif" srcset="assets/img/clay/pay-qr-240.avif 240w, assets/img/clay/pay-qr-480.avif 480w" sizes="(min-width: 640px) 140px, 128px"><img src="assets/img/clay/pay-qr-240.webp" srcset="assets/img/clay/pay-qr-240.webp 240w, assets/img/clay/pay-qr-480.webp 480w" sizes="(min-width: 640px) 140px, 128px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+        <h3>סריקת QR</h3>
+        <p>סרקו את הקוד בטלפון — ותגיעו ישר לדף התרומה.</p>
+        <img class="qr" src="assets/img/qr-nedarim.svg" width="168" height="168" alt="קוד QR לדף התרומה בנדרים פלוס" loading="lazy">
+        <a class="link" href="https://www.matara.pro/nedarimplus/online/?mosad=5776132" target="_blank" rel="noopener">פתיחת הקישור<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+      </article>
+
+      <article class="method method-bank clay">
+        <picture class="clay-art method-art"><source type="image/avif" srcset="assets/img/clay/pay-bank-240.avif 240w, assets/img/clay/pay-bank-480.avif 480w" sizes="(min-width: 640px) 140px, 128px"><img src="assets/img/clay/pay-bank-240.webp" srcset="assets/img/clay/pay-bank-240.webp 240w, assets/img/clay/pay-bank-480.webp 480w" sizes="(min-width: 640px) 140px, 128px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
+        <h3>העברה בנקאית</h3>
+        <p>העברה ישירה לחשבון העמותה — פשוט, מהיר ובטוח.</p>
+        <dl class="bank">
+          <div><dt>בנק:</dt><dd><span>מזרחי טפחות</span><button class="copy" type="button" data-copy="מזרחי טפחות" aria-label="העתקת שם הבנק"><svg aria-hidden="true"><use href="#i-copy"/></svg></button></dd></div>
+          <div><dt>סניף:</dt><dd><span><bdi>428</bdi></span><button class="copy" type="button" data-copy="428" aria-label="העתקת מספר הסניף"><svg aria-hidden="true"><use href="#i-copy"/></svg></button></dd></div>
+          <div><dt>מס׳ חשבון:</dt><dd><span><bdi>294319</bdi></span><button class="copy" type="button" data-copy="294319" aria-label="העתקת מספר החשבון"><svg aria-hidden="true"><use href="#i-copy"/></svg></button></dd></div>
+        </dl>
+      </article>
+    </div>
+    <p class="tax-band"><svg aria-hidden="true"><use href="#i-check"/></svg> החזר עד 35% מסכום התרומה לחשבונכם, ע״פ סעיף 46</p>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="finale" aria-labelledby="finale-title">
+  <figure class="finale-fig">
+    <picture><source type="image/avif" srcset="assets/img/building-night-640.avif 640w, assets/img/building-night-1024.avif 1024w, assets/img/building-night-1376.avif 1376w" sizes="100vw"><img src="assets/img/building-night-1024.webp" srcset="assets/img/building-night-640.webp 640w, assets/img/building-night-1024.webp 1024w, assets/img/building-night-1376.webp 1376w" sizes="100vw" width="1376" height="768" alt="הדמיה: אותו מבנה אבן בשעת דמדומים, אור חם בוקע מהחלונות הצרים ומהכניסה המקושתת" loading="lazy" decoding="async"></picture>
+    <figcaption class="tag tag-glass">המחשה</figcaption>
+  </figure>
+  <div class="wrap finale-copy">
+    <h2 id="finale-title" class="display-1">שמכם יהיה חקוק<br><em>לנצח נצחים</em></h2>
+    <p class="lede">קומפלקס שלם לקהילות שלמות — הצטרפו לשותפות שתשנה חיים.</p>
+    <button class="btn btn-light btn-lg" type="button" data-open-donate>תרומה עכשיו <svg aria-hidden="true"><use href="#i-arrow"/></svg></button>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <svg class="footer-mark" aria-hidden="true"><use href="#mark"/></svg>
+      <p class="footer-word lux-wrap" data-lux="כְּזֹהַר הָרָקִיעַ"><span class="lux">כְּזֹהַר הָרָקִיעַ</span></p>
+      <p>קומפלקס רוחני-קהילתי · נתיבות</p>
+      <p class="muted">בנשיאות הרב שלום יוסף ברבי שליט״א — מקום שבו הרוח והנתינה נפגשים ללא גבולות.</p>
+      <p class="footer-verse">כי לעולם חסדו</p>
+    </div>
+    <nav class="footer-nav" aria-label="ניווט מהיר">
+      <h2 class="footer-h">ניווט מהיר</h2>
+      <ul role="list">
+        <li><a href="#top">בית</a></li>
+        <li><a href="#vision">החזון</a></li>
+        <li><a href="#activities">הפעילויות</a></li>
+        <li><a href="#partnership">רמות שותפות</a></li>
+        <li><a href="#benefits">הטבות</a></li>
+        <li><a href="#donate">תרומה</a></li>
+      </ul>
+    </nav>
+    <div class="footer-contact">
+      <h2 class="footer-h">יצירת קשר</h2>
+      <ul role="list">
+        <li><a href="tel:0585555530"><bdi>058-5555530</bdi></a></li>
+        <li><a href="tel:0535470052"><bdi>053-5470052</bdi></a></li>
+        <li>נתיבות, ישראל</li>
+        <li>עמותה · סעיף 46</li>
+        <li><a href="accessibility.html">הצהרת נגישות</a></li>
+        <li><a href="privacy.html">מדיניות פרטיות</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-base">
+    <p>© <bdi>2025</bdi> עולמות יחד · כל הזכויות שמורות</p>
+    <p>כְּזֹהַר הָרָקִיעַ · פרויקט היסטורי בלב נתיבות</p>
+    <p class="muted">התמונות להמחשה</p>
+  </div>
+</footer>
+
+<!-- mobile dock -->
+<aside class="dock" data-dock aria-label="תרומה מהירה">
+  <a class="dock-tel" href="tel:0585555530"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="sr-only">התקשרו 058-5555530</span></a>
+  <button class="dock-btn" type="button" data-open-donate>תרמו <span class="dock-sub">· בחירת מטרים</span></button>
+</aside>
+
+<!-- menu dialog (mobile): a compact clay panel anchored under the menu button -->
+<dialog class="menu-dialog" id="menu" aria-label="תפריט">
+  <div class="menu-inner">
+    <div class="menu-top">
+      <p class="menu-title" aria-hidden="true">ניווט</p>
+      <button class="icon-btn menu-close" type="button" data-close><svg aria-hidden="true"><use href="#i-close"/></svg><span class="sr-only">סגירת התפריט</span></button>
+    </div>
+    <nav aria-label="תפריט נייד">
+      <ul role="list">
+        <li><a href="#vision" data-close-nav>החזון</a></li>
+        <li><a href="#activities" data-close-nav>הפעילויות</a></li>
+        <li><a href="#partnership" data-close-nav>שותפות</a></li>
+        <li><a href="#benefits" data-close-nav>הטבות</a></li>
+        <li><a href="#donate" data-close-nav>תרומה</a></li>
+      </ul>
+    </nav>
+    <p class="menu-tel"><a href="tel:0585555530"><bdi>058-5555530</bdi></a><span aria-hidden="true">·</span><a href="tel:0535470052"><bdi>053-5470052</bdi></a></p>
+  </div>
+</dialog>
+
+<!-- donation sheet -->
+<dialog class="sheet" id="donate-sheet" aria-labelledby="sheet-title" data-lenis-prevent>
+  <form method="dialog" class="sheet-inner" data-sheet-form>
+    <div class="sheet-grip" aria-hidden="true"></div>
+    <header class="sheet-head">
+      <div>
+        <p class="eyebrow">שותפות · הוראת קבע ל-48 חודשים</p>
+        <h2 id="sheet-title" class="sheet-title">תרומה</h2>
+      </div>
+      <button class="icon-btn" type="button" data-close><svg aria-hidden="true"><use href="#i-close"/></svg><span class="sr-only">סגירה</span></button>
+    </header>
+
+    <fieldset class="sheet-tiers">
+      <legend class="sheet-legend">בחרו רמת שותפות</legend>
+      <label class="opt"><input type="radio" name="sheet-tier" value="100"><span class="opt-body"><span class="opt-name">מטר אחד</span><span class="opt-price"><bdi>₪100</bdi><small> / חודש</small></span><span class="opt-meta">סה״כ <bdi>₪4,800</bdi> · <span class="nw-md">לאחר החזר מס של עד 35% ≈ <bdi>₪65</bdi></span></span></span></label>
+      <label class="opt"><input type="radio" name="sheet-tier" value="180"><span class="opt-body"><span class="opt-name">מטר וחצי</span><span class="opt-price"><bdi>₪180</bdi><small> / חודש</small></span><span class="opt-meta">סה״כ <bdi>₪8,640</bdi> · <span class="nw-md">לאחר החזר מס של עד 35% ≈ <bdi>₪117</bdi></span></span></span></label>
+      <label class="opt"><input type="radio" name="sheet-tier" value="360" checked><span class="opt-body"><span class="opt-name">שלושה מטרים <span class="tier-badge tier-badge-inline">פופולרי</span></span><span class="opt-price"><bdi>₪360</bdi><small> / חודש</small></span><span class="opt-meta">סה״כ <bdi>₪17,280</bdi> · <span class="nw-md">לאחר החזר מס של עד 35% ≈ <bdi>₪234</bdi></span></span></span></label>
+      <label class="opt"><input type="radio" name="sheet-tier" value="560"><span class="opt-body"><span class="opt-name">היכל המייסדים</span><span class="opt-price"><bdi>₪560</bdi><small> / חודש</small></span><span class="opt-meta">סה״כ <bdi>₪26,880</bdi> · <span class="nw-md">לאחר החזר מס של עד 35% ≈ <bdi>₪364</bdi></span></span></span></label>
+      <label class="opt"><input type="radio" name="sheet-tier" value="1080"><span class="opt-body"><span class="opt-name">נבחרת המאה</span><span class="opt-price"><bdi>₪1,080</bdi><small> / חודש</small></span><span class="opt-meta">סה״כ <bdi>₪51,840</bdi> · <span class="nw-md">לאחר החזר מס של עד 35% ≈ <bdi>₪702</bdi></span></span></span></label>
+      <p class="sheet-note">ההחזר תלוי בחבות המס האישית.</p>
+    </fieldset>
+
+    <div class="dedication">
+      <label for="dedication-name" class="field-label">שם להקדשה <span class="muted">(תצוגה מקדימה בלבד — לא נשלח)</span></label>
+      <input id="dedication-name" class="field" type="text" autocomplete="name" maxlength="40" placeholder="לדוגמה: משפחת כהן">
+      <div class="plaque" aria-live="polite">
+        <span class="plaque-label">שמכם חקוק לנצח</span>
+        <span class="plaque-name" data-plaque-name>שמכם כאן</span>
+        <span class="plaque-tier" data-plaque-tier>שלושה מטרים</span>
+      </div>
+      <div class="cert" data-cert>
+        <div class="cert-actions">
+          <button class="btn btn-line btn-sm" type="button" data-cert-download aria-describedby="cert-note"><svg aria-hidden="true"><use href="#i-down"/></svg>הורדת תעודת הקדשה</button>
+          <button class="btn btn-line btn-sm" type="button" data-cert-share aria-describedby="cert-note"><svg aria-hidden="true"><use href="#i-share"/></svg>שיתוף בוואטסאפ</button>
+        </div>
+        <p class="cert-note" id="cert-note">התעודה נוצרת במכשיר שלכם בלבד — השם אינו נשלח ואינו נשמר בשום מקום. תעודה סמלית, אינה קבלה או אישור מס.</p>
+      </div>
+    </div>
+
+    <div class="sheet-actions">
+      <!-- Nedarim Plus pre-fill: the donation page's own script (Files/JavaScript5.js) reads Amount (monthly sum in keva mode),
+           Payment (number of charges) and KevaDefault=1 (selects הוראת קבע). Verified 2026-10 by loading the page with these
+           parameters: הוראת קבע selected, ₪360 × 48 = ₪17,280. main.js rewrites this href when the tier changes. -->
+      <a class="btn btn-solid btn-lg btn-block" href="https://www.matara.pro/nedarimplus/online/?mosad=5776132&amp;Amount=360&amp;Payment=48&amp;KevaDefault=1" target="_blank" rel="noopener" data-nedarim>המשך לתרומה מאובטחת <svg aria-hidden="true"><use href="#i-out"/></svg></a>
+      <p class="sheet-small">נפתח בלשונית חדשה באתר נדרים פלוס, עם הוראת קבע ממולאת מראש: <strong data-sheet-sum><bdi>₪360</bdi> לחודש</strong> × <bdi>48</bdi> חודשים</p>
+    </div>
+    <p class="sheet-alt">התרומה מתבצעת באתר נדרים פלוס (אשראי / ביט). מעדיפים טלפון? <a href="tel:0585555530"><bdi>058-5555530</bdi></a> · <a href="tel:0535470052"><bdi>053-5470052</bdi></a> · <a href="#donate" data-close-nav>העברה בנקאית</a></p>
+  </form>
+</dialog>
+
+<div class="toast" role="status" aria-live="polite" data-toast></div>
 </body>
 </html>
