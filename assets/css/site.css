@@ -567,7 +567,7 @@ dialog::backdrop { background: rgba(16, 15, 13, .58); backdrop-filter: blur(3px)
 .sheet { margin: 0; width: min(560px, 100vw); max-width: none; height: 100dvh; max-height: none; inset: 0 auto 0 0; overflow-y: auto; overscroll-behavior: contain; box-shadow: 0 0 60px rgba(0, 0, 0, .25); }
 .sheet[open] { animation: drawer-in .45s var(--ease); }
 @keyframes drawer-in { from { transform: translateX(-40px); opacity: 0; } }
-.sheet-inner { display: grid; gap: 1.75rem; padding: 28px clamp(20px, 3vw, 40px) 40px; }
+.sheet-inner { display: grid; gap: 1.75rem; padding: 28px clamp(20px, 3vw, 40px) calc(40px + env(safe-area-inset-bottom)); }
 .sheet-grip { display: none; }
 .sheet-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
 .sheet-head .eyebrow { margin-bottom: .5rem; }
@@ -611,7 +611,7 @@ dialog::backdrop { background: rgba(16, 15, 13, .58); backdrop-filter: blur(3px)
 .menu-dialog { margin: 0; width: 100vw; max-width: none; height: 100dvh; max-height: none; inset: 0; background: var(--bg); }
 .menu-dialog[open] { animation: fade .3s var(--ease); }
 @keyframes fade { from { opacity: 0; } }
-.menu-inner { display: flex; flex-direction: column; min-height: 100%; padding: 16px var(--gutter) 40px; }
+.menu-inner { display: flex; flex-direction: column; min-height: 100%; padding: calc(16px + env(safe-area-inset-top)) var(--gutter) calc(40px + env(safe-area-inset-bottom)); }
 .menu-close { align-self: flex-end; border-color: var(--line-strong); }
 .menu-inner ul { display: grid; gap: .25rem; margin-top: 2rem; list-style: none; padding: 0; }
 .menu-inner ul a { display: block; padding: .4rem 0; font-family: var(--f-display); font-size: 2.75rem; line-height: 1.2; text-decoration: none; border-bottom: 1px solid var(--line); }
