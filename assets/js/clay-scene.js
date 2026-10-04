@@ -1,7 +1,7 @@
 // Partnership: a clay miniature of the complex. Choosing a tier drops that many soft clay bricks
 // onto the donors' wall in front of the building (illustrative only, nothing is counted).
 import * as THREE from 'three';
-import { RoundedBoxGeometry } from '../vendor/three/addons/RoundedBoxGeometry.js';
+import { RoundedBoxGeometry } from 'three/addons/RoundedBoxGeometry.js';
 
 // same massing as the hero's building of light (building.js), in metres
 const VOL = [

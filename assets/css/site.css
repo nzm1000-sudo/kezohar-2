@@ -541,7 +541,7 @@ html.fx .hero-scroll { display: flex; opacity: var(--copy, 1); }
 .tier-benefits { display: grid; gap: .5rem; margin-top: 1.1rem; padding-top: 1.1rem; font-size: var(--fs-small); line-height: 1.55; position: relative; }
 .tier-benefits::before { content: ""; position: absolute; top: 0; inset-inline: 22%; height: 6px; border-radius: 999px; box-shadow: var(--clay-well); }
 .tier-benefits span { display: block; }
-.tier-benefits span::before { content: ""; display: block; width: 6px; height: 6px; margin: 0 auto .3rem; border-radius: 50%; background: var(--accent-solid); opacity: .75; }
+.tier-benefits span::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-inline-end: .45rem; vertical-align: .15em; border-radius: 50%; background: var(--accent-solid); opacity: .75; }
 .tier-cta { margin: 0 18px 20px; }
 .tier-badge { position: relative; margin: -.1rem 0 .15rem; padding: .15rem .75rem; font-size: var(--fs-xs); font-weight: 600; color: #fff; background: #4E5A40; border-radius: 999px; box-shadow: 4px 5px 10px rgba(60, 70, 40, .3), inset 2px 2px 3px rgba(255, 255, 255, .3), inset -2px -2px 4px rgba(0, 0, 0, .3); z-index: 1; }
 .tier-badge-inline { position: static; display: inline-block; margin-inline-start: .5rem; padding: .05rem .6rem; vertical-align: middle; font-family: var(--f-ui); box-shadow: none; }
@@ -591,6 +591,8 @@ html.fx .hero-scroll { display: flex; opacity: var(--copy, 1); }
 .method .btn { margin-top: auto; }
 .method-art { margin-bottom: .25rem; }
 .method-main { --clay-bg: #24211D; color: #F7F3EC; box-shadow: var(--clay-ink); }
+:root[data-theme="dark"] .method-main { --clay-bg: #2E2520; box-shadow: var(--clay-ink), 0 0 0 2px rgba(224, 162, 116, .55); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .method-main { --clay-bg: #2E2520; box-shadow: var(--clay-ink), 0 0 0 2px rgba(224, 162, 116, .55); } }
 .method-main > p { color: rgba(247, 243, 236, .82); }
 .method-main .tag { background: rgba(247, 243, 236, .08); color: #F0D3B6; box-shadow: inset 2px 2px 4px rgba(255, 255, 255, .12), inset -2px -2px 4px rgba(0, 0, 0, .4); }
 .method-main .method-art { filter: drop-shadow(0 16px 14px rgba(0, 0, 0, .5)); }
@@ -668,10 +670,11 @@ dialog::backdrop { background: rgba(16, 15, 13, .58); backdrop-filter: blur(4px)
 @keyframes drawer-in { from { transform: translateX(-60px); opacity: 0; } }
 .sheet-inner { display: grid; gap: 1.75rem; padding: 28px clamp(20px, 3vw, 40px) calc(40px + env(safe-area-inset-bottom)); }
 .sheet-grip { display: none; }
-.sheet-head { display: grid; grid-template-columns: 46px 1fr 46px; align-items: start; gap: .5rem; }
-.sheet-head > div { grid-column: 2; display: grid; justify-items: center; }
-.sheet-head .icon-btn { grid-column: 3; grid-row: 1; }
-.sheet-head .eyebrow { margin-bottom: .75rem; font-size: var(--fs-xs); }
+.sheet-head { position: relative; display: grid; justify-items: center; padding-top: 4px; }
+.sheet-head > div { display: grid; justify-items: center; padding-inline: 50px; }
+.sheet-head .icon-btn { position: absolute; top: 0; inset-inline-end: 0; }
+.sheet-head .eyebrow { margin-bottom: .75rem; font-size: var(--fs-xs); padding-inline: .9rem; }
+.sheet-head .eyebrow::before, .sheet-head .eyebrow::after { display: none; }
 .sheet-title { font-family: var(--f-display); font-weight: 400; font-size: 3rem; line-height: 1; }
 .sheet-tiers { display: grid; gap: 12px; border: 0; padding: 0; margin: 0; min-width: 0; }
 .sheet-legend { font-weight: 600; margin: 0 auto .75rem; padding: 0; }

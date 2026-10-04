@@ -57,6 +57,7 @@ function headerState() {
   const heroEnd = hero.offsetTop + hero.offsetHeight - header.offsetHeight;
   const over = y < heroEnd;
   if (over) header.dataset.over = 'hero'; else delete header.dataset.over;
+  if (over) navLinks.forEach((l) => l.removeAttribute('aria-current'));
   header.classList.toggle('is-solid', !over);
   header.classList.toggle('is-scrolled', y > 40);
 }
