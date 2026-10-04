@@ -121,7 +121,7 @@ const NAMES = { 100: 'מטר אחד', 180: 'מטר וחצי', 360: 'שלושה �
 const fmt = (n) => '₪' + Number(n).toLocaleString('en-US');
 let igniteScene = null;
 const igCircle = $('[data-ignite-circle]');
-const SVG_SEEDS = { 100: [70, 150, 22], 180: [130, 190, 30], 360: [190, 160, 46], 560: [308, 175, 62], 1080: [200, 140, 230] };
+const SVG_SEEDS = { 100: [60, 165, 24], 180: [110, 195, 32], 360: [180, 165, 46], 560: [330, 180, 58], 1080: [200, 160, 230] };
 function setTier(v, from) {
   v = String(v);
   const a = $(`input[name="tier"][value="${v}"]`); if (a && from !== 'section') a.checked = true;
@@ -146,14 +146,17 @@ const ded = $('#dedication-name'), plaque = $('[data-plaque-name]');
 ded.addEventListener('input', () => { plaque.textContent = ded.value.trim() || 'שמכם כאן'; });
 
 /* ---------- lazy 3D ---------- */
-function whenIdleOrInteract(fn) {
+function whenEngaged(fn) {
   let done = false;
   const go = () => { if (done) return; done = true; evs.forEach((e) => window.removeEventListener(e, go)); fn(); };
+  // The poster is a render of the scene's first frame, so nothing is lost by waiting for the
+  // visitor to engage: the 3D only boots on the first scroll / pointer / key interaction, or —
+  // if the visitor is already moving the pointer over the hero — once the browser is idle.
   const evs = ['pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll'];
   evs.forEach((e) => window.addEventListener(e, go, { passive: true, once: true }));
-  const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1800));
-  const kick = () => idle(go, { timeout: 3500 });
-  if (document.readyState === 'complete') kick(); else window.addEventListener('load', kick, { once: true });
+  const idle = window.requestIdleCallback || ((cb) => setTimeout(cb, 1200));
+  hero.addEventListener('pointermove', () => idle(go, { timeout: 2000 }), { once: true, passive: true });
+  if (window.scrollY > 0) go();
 }
 if (FX) {
   const posterMode = params.has('poster');
@@ -171,7 +174,7 @@ if (FX) {
       root.classList.remove('fx'); onScroll();
     }
   };
-  if (posterMode) loadHero(); else whenIdleOrInteract(loadHero);
+  if (posterMode) loadHero(); else whenEngaged(loadHero);
 
   const ig = $('[data-ignite]');
   const igIO = new IntersectionObserver(async ([e]) => {
@@ -189,7 +192,8 @@ if (FX) {
 function loadScript(src) {
   return new Promise((res, rej) => { const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = rej; document.head.append(s); });
 }
-if (MOTION && !params.has('nolenis')) {
+// Smooth scroll and the pinned horizontal chapter are desktop-only, so phones never download GSAP/Lenis.
+if (MOTION && !params.has('nolenis') && mq('(min-width: 1024px)').matches && !MOBILE) {
   (async () => {
     try {
       await loadScript('assets/vendor/gsap.min.js');

@@ -74,12 +74,13 @@
     </div>
   </div>
   <div class="wrap bar">
-    <a class="brand" href="#top" aria-label="כזוהר הרקיע — לראש העמוד">
+    <a class="brand" href="#top">
       <svg class="brand-mark" aria-hidden="true"><use href="#mark"/></svg>
       <span class="brand-text">
         <span class="brand-word">כזוהר הרקיע</span>
         <span class="brand-sub">עולמות יחד · נתיבות</span>
       </span>
+      <span class="sr-only">— לראש העמוד</span>
     </a>
     <nav class="nav" aria-label="ניווט ראשי">
       <ul>
@@ -324,17 +325,19 @@
         <p class="note-line"><svg aria-hidden="true"><use href="#i-check"/></svg> כל התרומות בפריסה נוחה של הוראת קבע ל-48 חודשים</p>
       </div>
       <div class="ignite" data-ignite>
-        <svg class="ignite-fallback" viewBox="0 0 400 260" aria-hidden="true" data-ignite-svg>
+        <svg class="ignite-fallback" viewBox="10 70 380 170" aria-hidden="true" data-ignite-svg>
           <defs>
             <radialGradient id="igGlow"><stop offset="0" stop-color="#E9A06A" stop-opacity=".95"/><stop offset=".6" stop-color="#A65A2E" stop-opacity=".35"/><stop offset="1" stop-color="#A65A2E" stop-opacity="0"/></radialGradient>
             <pattern id="igDots" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1" fill="currentColor"/></pattern>
           </defs>
           <g class="ig-building">
-            <path d="M30 210V128h196v82zM226 210V150h22v60zM248 210V72h120v138z" fill="url(#igDots)" opacity=".55"/>
-            <path d="M286 210v-52a22 22 0 0 1 44 0v52z" fill="var(--sky-2)"/>
+            <path d="M30 210V128h196v82zM226 210V150h22v60zM248 210V112h120v98z" fill="url(#igDots)" opacity=".45"/>
+            <path d="M30 210V128h196v82zM226 210V150h22v60zM248 210V112h120v98z" fill="none" stroke="currentColor" stroke-width="1" opacity=".75"/>
+            <g fill="#FFA968" opacity=".75"><rect x="44" y="150" width="4" height="30"/><rect x="58" y="150" width="4" height="30"/><rect x="112" y="150" width="4" height="30"/><rect x="128" y="150" width="4" height="30"/><rect x="144" y="150" width="4" height="30"/><rect x="160" y="150" width="4" height="30"/><rect x="176" y="150" width="4" height="30"/><rect x="192" y="150" width="4" height="30"/><rect x="208" y="150" width="4" height="30"/></g>
+            <path d="M318 210v-40a12 12 0 0 1 24 0v40z" fill="#FFA968" opacity=".55"/>
           </g>
           <circle class="ig-glow" cx="300" cy="170" r="30" fill="url(#igGlow)" data-ignite-circle/>
-          <path d="M10 210h380" stroke="currentColor" stroke-width="1" opacity=".5"/>
+          <path d="M10 210h380" stroke="currentColor" stroke-width="1" opacity=".35"/>
         </svg>
         <canvas class="ignite-canvas" aria-hidden="true"></canvas>
         <p class="ignite-caption" aria-live="polite"><span data-ignite-name>שלושה מטרים</span> · <span class="muted">המחשה</span></p>
@@ -640,9 +643,9 @@
     <div class="sheet-actions">
       <!-- TODO(org): Nedarim Plus — add the amount/installments parameter only after the organisation confirms the supported URL format. -->
       <a class="btn btn-solid btn-lg btn-block" href="https://www.matara.pro/nedarimplus/online/?mosad=5776132" target="_blank" rel="noopener" data-nedarim>המשך לתרומה מאובטחת <svg aria-hidden="true"><use href="#i-out"/></svg></a>
-      <p class="sheet-small">נפתח בלשונית חדשה באתר נדרים פלוס · אשראי / ביט. יש לבחור שם את הסכום החודשי: <strong data-sheet-sum><bdi>₪360</bdi></strong></p>
-      <p class="sheet-alt">מעדיפים טלפון? <a href="tel:0585555530"><bdi>058-5555530</bdi></a> · <a href="tel:0535470052"><bdi>053-5470052</bdi></a> · <a href="#donate" data-close-nav>העברה בנקאית</a></p>
+      <p class="sheet-small">נפתח בלשונית חדשה · יש לבחור שם את הסכום: <strong data-sheet-sum><bdi>₪360</bdi></strong></p>
     </div>
+    <p class="sheet-alt">התרומה מתבצעת באתר נדרים פלוס (אשראי / ביט). מעדיפים טלפון? <a href="tel:0585555530"><bdi>058-5555530</bdi></a> · <a href="tel:0535470052"><bdi>053-5470052</bdi></a> · <a href="#donate" data-close-nav>העברה בנקאית</a></p>
   </form>
 </dialog>
 

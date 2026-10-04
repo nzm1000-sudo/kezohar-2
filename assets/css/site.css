@@ -411,7 +411,7 @@ html.fx .hero-photo figcaption { opacity: var(--photo, 0); }
     linear-gradient(180deg, var(--sky-1), var(--sky-2) 50%, var(--sky-3));
 }
 .ignite-fallback, .ignite-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.ignite-fallback { padding: 8% 6% 14%; }
+.ignite-fallback { padding: 6% 6% 12%; }
 .ig-glow { transition: r .8s var(--ease), cx .8s var(--ease), cy .8s var(--ease); mix-blend-mode: screen; }
 .ignite-canvas { opacity: 0; transition: opacity 1s var(--ease); }
 .ignite.is-live .ignite-canvas { opacity: 1; }
@@ -588,8 +588,9 @@ dialog::backdrop { background: rgba(16, 15, 13, .58); backdrop-filter: blur(3px)
 .plaque-label { font-size: var(--fs-xs); color: #5E584F; }
 .plaque-name { font-family: var(--f-display); font-size: 2rem; line-height: 1.2; min-height: 1.2em; overflow-wrap: anywhere; }
 .plaque-tier { font-size: var(--fs-xs); color: #8F4B24; font-weight: 600; }
-.sheet-actions { display: grid; gap: .75rem; position: sticky; bottom: 0; margin: 0 calc(-1 * clamp(20px, 3vw, 40px)) -40px; padding: 16px clamp(20px, 3vw, 40px) calc(20px + env(safe-area-inset-bottom)); background: color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter: blur(10px); border-top: 1px solid var(--line); }
+.sheet-actions { display: grid; gap: .75rem; position: sticky; bottom: 0; margin: 0 calc(-1 * clamp(20px, 3vw, 40px)); padding: 14px clamp(20px, 3vw, 40px) calc(14px + env(safe-area-inset-bottom)); gap: .5rem; background: color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter: blur(10px); border-top: 1px solid var(--line); }
 .sheet-small, .sheet-alt { font-size: var(--fs-small); color: var(--muted); }
+.sheet-small { font-size: var(--fs-xs); text-align: center; }
 .sheet-alt a { color: var(--ink); font-weight: 500; }
 
 @media (max-width: 767px) {
