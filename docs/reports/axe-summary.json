@@ -1,0 +1,100 @@
+{
+  "tool": "axe-core via @axe-core/playwright",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa",
+    "best-practice"
+  ],
+  "date": "2026-10-04T16:45:42.826Z",
+  "runs": [
+    {
+      "name": "index light 1440",
+      "url": "http://localhost:8765/?force3d",
+      "width": 1440,
+      "scheme": "light",
+      "axeVersion": "4.13.0",
+      "violations": [],
+      "incompleteNeedsReview": [
+        {
+          "id": "color-contrast",
+          "nodes": 38
+        }
+      ],
+      "passes": 50,
+      "consoleIssues": []
+    },
+    {
+      "name": "index dark 1440",
+      "url": "http://localhost:8765/?force3d",
+      "width": 1440,
+      "scheme": "dark",
+      "axeVersion": "4.13.0",
+      "violations": [],
+      "incompleteNeedsReview": [
+        {
+          "id": "color-contrast",
+          "nodes": 38
+        }
+      ],
+      "passes": 50,
+      "consoleIssues": []
+    },
+    {
+      "name": "index light 375",
+      "url": "http://localhost:8765/?no3d",
+      "width": 375,
+      "scheme": "light",
+      "axeVersion": "4.13.0",
+      "violations": [],
+      "incompleteNeedsReview": [
+        {
+          "id": "color-contrast",
+          "nodes": 22
+        }
+      ],
+      "passes": 51,
+      "consoleIssues": []
+    },
+    {
+      "name": "index dark 375",
+      "url": "http://localhost:8765/?no3d",
+      "width": 375,
+      "scheme": "dark",
+      "axeVersion": "4.13.0",
+      "violations": [],
+      "incompleteNeedsReview": [
+        {
+          "id": "color-contrast",
+          "nodes": 22
+        }
+      ],
+      "passes": 51,
+      "consoleIssues": []
+    },
+    {
+      "name": "privacy",
+      "url": "http://localhost:8765/privacy.html",
+      "width": 1024,
+      "scheme": "light",
+      "axeVersion": "4.13.0",
+      "violations": [],
+      "incompleteNeedsReview": [],
+      "passes": 31,
+      "consoleIssues": []
+    },
+    {
+      "name": "accessibility dark",
+      "url": "http://localhost:8765/accessibility.html",
+      "width": 1024,
+      "scheme": "dark",
+      "axeVersion": "4.13.0",
+      "violations": [],
+      "incompleteNeedsReview": [],
+      "passes": 32,
+      "consoleIssues": []
+    }
+  ]
+}
