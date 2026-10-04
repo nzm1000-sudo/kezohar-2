@@ -111,7 +111,7 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     // slow, subtle camera drift while the building stands assembled
     const drift = assemble * (1 - orbit);
     const dx = (Math.sin(t * 0.093) * 0.9 + Math.sin(t * 0.041) * 0.5) * drift, dy = Math.sin(t * 0.067 + 1.3) * 0.3 * drift;
-    const lx = lerp(0, F.x, orbit);
+    const lx = lerp(1.6 * assemble, F.x, orbit); // the 3/4 turn brings the hall forward: recentre the mass
     camera.position.set(lx + state.cx * 2.2 * par + dx, lerp(lerp(7, 8.2, assemble), F.y, orbit) - state.cy * 1.0 * par + dy, d + Math.sin(t * 0.05) * 0.6 * drift);
     camera.lookAt(lx, lerp(lerp(6.5, 5.2, assemble), F.y, orbit), 0);
     renderer.render(scene, camera);
