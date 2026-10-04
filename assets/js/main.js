@@ -49,56 +49,73 @@ $$('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
   say('הועתק בהצלחה!');
 }));
 
-/* ---------- header ---------- */
+/* ---------- layout metrics (read on resize only, never inside the scroll path) ---------- */
 const header = $('[data-header]');
 const hero = $('.hero');
+const M = { top: 0, h: 0, vh: 0, head: 0 };
+function measure() { M.top = hero.offsetTop; M.h = hero.offsetHeight; M.vh = window.innerHeight; M.head = header.offsetHeight; }
+measure();
+
+/* ---------- header ---------- */
 function headerState() {
   const y = window.scrollY;
-  const heroEnd = hero.offsetTop + hero.offsetHeight - header.offsetHeight;
-  const over = y < heroEnd;
-  if (over) header.dataset.over = 'hero'; else delete header.dataset.over;
-  if (over) navLinks.forEach((l) => l.removeAttribute('aria-current'));
+  const over = y < M.top + M.h - M.head;
+  if (over) { if (header.dataset.over !== 'hero') { header.dataset.over = 'hero'; navLinks.forEach((l) => l.removeAttribute('aria-current')); } }
+  else if (header.dataset.over) delete header.dataset.over;
   header.classList.toggle('is-solid', !over);
-  header.classList.toggle('is-scrolled', y > 40);
+  header.classList.toggle('is-scrolled', y > 24);
 }
 const navLinks = $$('.nav a');
 const secIO = new IntersectionObserver((ents) => ents.forEach((e) => {
-  if (!e.isIntersecting) return;
-  navLinks.forEach((a) => a.toggleAttribute('aria-current', a.getAttribute('href') === '#' + e.target.id));
-  navLinks.forEach((a) => { if (a.hasAttribute('aria-current')) a.setAttribute('aria-current', 'true'); });
+  if (!e.isIntersecting || header.dataset.over) return;
+  navLinks.forEach((a) => { if (a.getAttribute('href') === '#' + e.target.id) a.setAttribute('aria-current', 'true'); else a.removeAttribute('aria-current'); });
 }), { rootMargin: '-45% 0px -50% 0px' });
 ['vision', 'activities', 'partnership', 'benefits', 'donate'].forEach((id) => { const el = document.getElementById(id); if (el) secIO.observe(el); });
 
 /* ---------- hero scroll choreography (CSS vars; 3D reads the same progress) ---------- */
 // The raw scroll position is only a target: every frame the shown progress eases toward it
 // (time-based, so it feels the same at 60 or 120 Hz). A flick of the wheel or a fast swipe glides
-// through the dust → building → photo story instead of snapping.
+// through the words → dust → building → photo story instead of snapping.
 const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 let heroScene = null, heroP = 0, heroT = 0, heroRaf = 0, heroLast = 0;
 const heroCopy = $('.hero-copy');
+const dustTitle = $('[data-dust-title]');
+const railDots = $$('.hero-rail b');
+const shown = {};
+const setVar = (k, v) => { if (shown[k] !== v) { shown[k] = v; hero.style.setProperty(k, v); } };
 function heroTarget() {
-  const r = hero.getBoundingClientRect();
-  const span = hero.offsetHeight - window.innerHeight;
-  return Math.min(1, Math.max(0, -r.top / span));
+  const span = M.h - M.vh;
+  return span > 0 ? Math.min(1, Math.max(0, (window.scrollY - M.top) / span)) : 0;
 }
 function heroApply(p) {
-  const copy = 1 - sm(0.015, 0.11, p);
-  const line = sm(0.14, 0.22, p) * (1 - sm(0.4, 0.48, p));
-  // a long, luxurious cross-fade: the photo eases in over nearly half the stage while the points thin out
-  const photo = sm(0.5, 0.97, p);
-  const blur = 1 - sm(0.52, 0.9, p);
-  hero.style.setProperty('--copy', copy.toFixed(3));
-  hero.style.setProperty('--line', line.toFixed(3));
-  hero.style.setProperty('--photo', photo.toFixed(4));
-  hero.style.setProperty('--blur', blur.toFixed(3));
-  heroCopy.toggleAttribute('data-hidden', copy < 0.02);
+  // the title hands over to its particle twin (hero-scene STAGE.textIn 1.2–6.5%); without the
+  // 3D it simply fades a little later. The rest of the copy leaves gently, after the title.
+  const dust = heroScene && heroScene.hasDust;
+  const title = 1 - (dust ? sm(0.02, 0.068, p) : sm(0.05, 0.14, p));
+  const copy = 1 - sm(0.07, 0.18, p);
+  const line = sm(0.22, 0.3, p) * (1 - sm(0.43, 0.51, p));
+  // a long, overlapping cross-fade: the photo arrives over ~37% of the stage while the points thin out
+  const photo = sm(0.58, 0.95, p);
+  const blur = 1 - sm(0.6, 0.92, p);
+  const halo = sm(0.74, 0.97, p);
+  setVar('--title', title.toFixed(3));
+  setVar('--copy', copy.toFixed(3));
+  setVar('--line', line.toFixed(3));
+  setVar('--photo', photo.toFixed(3));
+  setVar('--blur', blur.toFixed(3));
+  setVar('--halo', halo.toFixed(3));
+  setVar('--hp', p.toFixed(3));
+  setVar('--rail', (sm(0.004, 0.025, p) * (1 - sm(0.975, 0.999, p))).toFixed(3));
+  railDots.forEach((d) => d.classList.toggle('is-on', p >= parseFloat(d.style.getPropertyValue('--at')) - 0.005));
+  hero.classList.toggle('is-halo', halo > 0.005);
+  heroCopy.toggleAttribute('data-hidden', copy < 0.02 && title < 0.02);
   if (heroScene) heroScene.setProgress(p);
 }
 function heroTick(now) {
   const dt = Math.min(0.1, (now - (heroLast || now)) / 1000); heroLast = now;
-  const k = 1 - Math.exp(-dt * 3.2);
+  const k = 1 - Math.exp(-dt * 2.8);
   heroP += (heroT - heroP) * k;
-  if (Math.abs(heroT - heroP) < 0.0004) heroP = heroT;
+  if (Math.abs(heroT - heroP) < 0.0003) heroP = heroT;
   heroApply(heroP);
   heroRaf = heroP === heroT ? 0 : requestAnimationFrame(heroTick);
 }
@@ -108,18 +125,37 @@ function heroState() {
   if (TEST && TEST.instant) { heroP = heroT; heroApply(heroP); return; }
   if (!heroRaf) { heroLast = 0; heroRaf = requestAnimationFrame(heroTick); }
 }
-if (FX) { heroT = heroP = heroTarget(); heroApply(heroP); }
+// the golden aura sits behind the building of the photo: match the photo's cover-fit box
+const heroImg = $('.hero-photo-sharp img');
+function layoutHalo() {
+  if (!FX) return;
+  const W = hero.clientWidth, H = M.vh;
+  const op = getComputedStyle(heroImg).objectPosition.split(' ').map(parseFloat);
+  const ox = Number.isNaN(op[0]) ? 0.5 : op[0] / 100, oy = Number.isNaN(op[1]) ? 0.78 : op[1] / 100;
+  const s = Math.max(W / 1376, H / 768), w = 1376 * s, h = 768 * s;
+  setVar('--hx', ((W - w) * ox).toFixed(1) + 'px'); setVar('--hy', ((H - h) * oy).toFixed(1) + 'px');
+  setVar('--hw', w.toFixed(1) + 'px'); setVar('--hh', h.toFixed(1) + 'px');
+}
+if (FX) { layoutHalo(); heroT = heroP = heroTarget(); heroApply(heroP); }
 // keyboard users tabbing into hero CTAs: bring hero copy back into view
-heroCopy.addEventListener('focusin', () => { if (FX && heroP > 0.1) { window.scrollTo({ top: hero.offsetTop, behavior: 'auto' }); heroT = heroP = 0; heroApply(0); } });
+heroCopy.addEventListener('focusin', () => { if (FX && heroP > 0.06) { window.scrollTo({ top: M.top, behavior: 'auto' }); if (lenis) lenis.scrollTo(M.top, { immediate: true }); heroT = heroP = 0; heroApply(0); } });
 
 let ticking = false;
 function onScroll() {
   if (ticking) return; ticking = true;
   requestAnimationFrame(() => { ticking = false; headerState(); heroState(); });
 }
+function onResize() { measure(); layoutHalo(); onScroll(); }
 window.addEventListener('scroll', onScroll, { passive: true });
-window.addEventListener('resize', onScroll, { passive: true });
+window.addEventListener('resize', onResize, { passive: true });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
 onScroll();
+
+/* ---------- living title: pause its slow sheen while off screen ---------- */
+if (MOTION && 'IntersectionObserver' in window) {
+  const lio = new IntersectionObserver((ents) => ents.forEach((e) => e.target.classList.toggle('is-paused', !e.isIntersecting)));
+  $$('.lux').forEach((el) => lio.observe(el));
+}
 
 /* ---------- reveal ---------- */
 if (MOTION && 'IntersectionObserver' in window) {
@@ -133,17 +169,35 @@ if (MOTION && 'IntersectionObserver' in window) {
 let lenis = null;
 const menu = $('#menu');
 const sheet = $('#donate-sheet');
-function openDialog(d) { d.showModal(); if (lenis) lenis.stop(); document.body.style.overflow = 'hidden'; }
-function closed() { if (lenis) lenis.start(); document.body.style.overflow = ''; }
+const menuBtn = $('[data-open-menu]');
+function openDialog(d) { d.showModal(); if (lenis) lenis.stop(); document.body.style.overflow = 'hidden'; if (d === menu) menuBtn.setAttribute('aria-expanded', 'true'); }
+// the menu panel springs closed (CSS) before the dialog really closes
+function closeDialog(d) {
+  if (!d.open || d.classList.contains('is-closing')) return;
+  if (d !== menu || !MOTION) { d.close(); return; }
+  d.classList.add('is-closing');
+  let done = false;
+  const fin = () => { if (done) return; done = true; d.classList.remove('is-closing'); d.close(); };
+  d.addEventListener('animationend', fin, { once: true });
+  setTimeout(fin, 320);
+}
+function closed(e) { if (lenis) lenis.start(); document.body.style.overflow = ''; if (e.currentTarget === menu) { menuBtn.setAttribute('aria-expanded', 'false'); menuBtn.focus({ preventScroll: true }); } }
 [menu, sheet].forEach((d) => {
   d.addEventListener('close', closed);
-  d.addEventListener('click', (e) => { if (e.target === d) d.close(); });
+  d.addEventListener('cancel', (e) => { e.preventDefault(); closeDialog(d); }); // Esc
+  // backdrop click: the pointer landed outside the dialog's own box
+  d.addEventListener('click', (e) => {
+    if (e.target !== d) return;
+    const r = d.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) closeDialog(d);
+  });
 });
-$$('[data-close]').forEach((b) => b.addEventListener('click', () => b.closest('dialog').close()));
-$$('[data-close-nav]').forEach((a) => a.addEventListener('click', () => a.closest('dialog').close()));
-$('[data-open-menu]').addEventListener('click', () => openDialog(menu));
+$$('[data-close]').forEach((b) => b.addEventListener('click', () => closeDialog(b.closest('dialog'))));
+$$('[data-close-nav]').forEach((a) => a.addEventListener('click', () => { const d = a.closest('dialog'); d.classList.remove('is-closing'); d.close(); }));
+menuBtn.addEventListener('click', () => openDialog(menu));
 
 /* ---------- tiers (section ↔ sheet stay in sync) ---------- */
+const NEDARIM = 'https://www.matara.pro/nedarimplus/online/?mosad=5776132';
 const NAMES = { 100: 'מטר אחד', 180: 'מטר וחצי', 360: 'שלושה מטרים', 560: 'היכל המייסדים', 1080: 'נבחרת המאה' };
 const fmt = (n) => '₪' + Number(n).toLocaleString('en-US');
 let igniteScene = null;
@@ -162,6 +216,8 @@ function setTier(v, from) {
   const b = $(`input[name="sheet-tier"][value="${v}"]`); if (b && from !== 'sheet') b.checked = true;
   $('[data-plaque-tier]').textContent = NAMES[v];
   $('[data-sheet-sum]').innerHTML = `<bdi>${fmt(v)}</bdi> לחודש`;
+  // Nedarim Plus pre-fill (parameters read by the donation page itself): monthly sum, 48 charges, הוראת קבע
+  $('[data-nedarim]').href = `${NEDARIM}&Amount=${v}&Payment=48&KevaDefault=1`;
   $('[data-ignite-name]').textContent = NAMES[v];
   if (igniteScene) igniteScene.setTier(v); else swapArt(v);
 }
@@ -176,6 +232,34 @@ $$('[data-open-donate]').forEach((b) => b.addEventListener('click', () => {
 setTier($('input[name="tier"]:checked').value);
 const ded = $('#dedication-name'), plaque = $('[data-plaque-name]');
 ded.addEventListener('input', () => { plaque.textContent = ded.value.trim() || 'שמכם כאן'; });
+
+/* ---------- dedication certificate (drawn on the visitor's device; the name is never sent) ---------- */
+let certMod = null;
+async function makeCert() {
+  const name = ded.value.trim();
+  if (!name) { say('הקלידו שם להקדשה'); ded.focus(); return null; }
+  if (!certMod) certMod = await import('./certificate.js');
+  const v = $('input[name="sheet-tier"]:checked', sheet).value;
+  return certMod.drawCertificate({ name, tier: NAMES[v] });
+}
+$('[data-cert-download]').addEventListener('click', async () => {
+  const blob = await makeCert(); if (!blob) return;
+  const url = URL.createObjectURL(blob);
+  const a = Object.assign(document.createElement('a'), { href: url, download: 'תעודת-הקדשה-כזוהר-הרקיע.png' });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  say('התעודה נשמרה');
+});
+$('[data-cert-share]').addEventListener('click', async () => {
+  const site = location.href.split('#')[0];
+  const msg = 'כְּזֹהַר הָרָקִיעַ — קומפלקס רוחני-קהילתי בלב נתיבות. כל מטר שתתרמו ישא את שמכם לנצח:';
+  // open WhatsApp synchronously when files cannot be shared (popup blockers need the click's gesture)
+  const canFiles = !!(navigator.canShare && window.File) && navigator.canShare({ files: [new File([new Blob(['x'], { type: 'image/png' })], 'x.png', { type: 'image/png' })] });
+  if (!canFiles) { window.open('https://wa.me/?text=' + encodeURIComponent(msg + ' ' + site), '_blank', 'noopener'); return; }
+  const blob = await makeCert(); if (!blob) return;
+  const file = new File([blob], 'תעודת-הקדשה.png', { type: 'image/png' });
+  try { await navigator.share({ files: [file], text: msg + ' ' + site }); } catch (e) { /* the visitor closed the share sheet */ }
+});
 
 /* ---------- lazy 3D ---------- */
 function whenEngaged(fn) {
@@ -196,7 +280,7 @@ if (FX) {
     try {
       const { createHero } = await import('./hero-scene.js');
       heroScene = createHero($('.hero-canvas'), {
-        mobile: MOBILE, poster: posterMode, noGov: !!(TEST && TEST.noGov), photo: $('.hero-photo img'),
+        mobile: MOBILE, poster: posterMode, noGov: !!(TEST && TEST.noGov), photo: heroImg, title: dustTitle, tier: TEST && TEST.tier != null ? TEST.tier : null,
         onStop: () => { heroScene = null; },
       });
       heroScene.setProgress(heroP);
@@ -238,7 +322,9 @@ if (MOTION && !(TEST && TEST.noLenis) && mq('(min-width: 1024px)').matches && !M
     const { gsap, ScrollTrigger, Lenis } = window;
     gsap.registerPlugin(ScrollTrigger);
     if (!MOBILE) {
-      lenis = new Lenis({ lerp: 0.1, smoothWheel: true, anchors: { offset: -72 } });
+      // a calmer wheel: each notch travels ~25% less and glides a little longer (keyboard, anchors
+      // and the scrollbar keep native distances; phones never load Lenis; reduced motion skips it)
+      lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.75, smoothWheel: true, anchors: { offset: -72 } });
       lenis.on('scroll', () => { ScrollTrigger.update(); onScroll(); });
       gsap.ticker.add((t) => lenis.raf(t * 1000));
       gsap.ticker.lagSmoothing(0);

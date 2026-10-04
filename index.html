@@ -52,21 +52,17 @@
     <symbol id="i-moon" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 22.5A9 9 0 0 1 14.5 7a9 9 0 1 0 12 12 9 9 0 0 1-5.5 3.5z"/></g></symbol>
     <symbol id="i-close" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 9l14 14M23 9 9 23"/></g></symbol>
     <symbol id="i-menu" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M6 11h20M6 21h20"/></g></symbol>
+    <symbol id="i-down" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 5v15M10 14l6 6 6-6M7 26h18"/></g></symbol>
+    <symbol id="i-share" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4v16M10 10l6-6 6 6M9 15H7v12h18V15h-2"/></g></symbol>
     <symbol id="i-check" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.5l6 6L25 10"/></g></symbol>
 </svg>
 
-<header class="site-header" data-header>
-  <div class="topline">
-    <div class="wrap topline-inner">
-      <span>עמותה מוכרת · הטבת מס 35% לפי סעיף 46</span>
-      <a href="tel:0585555530" class="topline-tel"><bdi>058-5555530</bdi></a>
-    </div>
-  </div>
+<header class="site-header" data-header data-over="hero">
   <div class="wrap bar">
     <a class="brand" href="#top">
       <svg class="brand-mark" aria-hidden="true"><use href="#mark"/></svg>
       <span class="brand-text">
-        <span class="brand-word">כזוהר הרקיע</span>
+        <span class="brand-word lux-wrap"><span class="lux">כזוהר הרקיע</span></span>
         <span class="brand-sub">עולמות יחד · נתיבות</span>
       </span>
       <span class="sr-only">— לראש העמוד</span>
@@ -87,11 +83,12 @@
         <span class="sr-only">מצב לילה</span>
       </button>
       <button class="btn btn-solid btn-sm header-donate" type="button" data-open-donate>תרמו</button>
-      <button class="icon-btn menu-btn" type="button" data-open-menu aria-haspopup="dialog">
+      <button class="icon-btn menu-btn" type="button" data-open-menu aria-haspopup="dialog" aria-controls="menu" aria-expanded="false">
         <svg aria-hidden="true"><use href="#i-menu"/></svg><span class="sr-only">תפריט</span>
       </button>
     </div>
   </div>
+  <p class="topline"><span>עמותה מוכרת · הטבת מס 35% לפי סעיף 46</span> <a href="tel:0585555530" class="topline-tel"><bdi>058-5555530</bdi></a></p>
 </header>
 
 <main id="main">
@@ -106,15 +103,17 @@
     </picture>
     <canvas class="hero-canvas" aria-hidden="true"></canvas>
     <figure class="hero-photo">
-      <picture><source type="image/avif" srcset="assets/img/building-dawn-640.avif 640w, assets/img/building-dawn-1024.avif 1024w, assets/img/building-dawn-1376.avif 1376w" sizes="100vw"><img src="assets/img/building-dawn-1024.webp" srcset="assets/img/building-dawn-640.webp 640w, assets/img/building-dawn-1024.webp 1024w, assets/img/building-dawn-1376.webp 1376w" sizes="100vw" width="1376" height="768" alt="הדמיה: מבנה אבן ירושלמית בהיר בנגב בשעת זריחה — אגף ארוך בן שתי קומות עם חלונות צרים ואולם תפילה גבוה עם כניסה מקושתת" decoding="async"></picture>
+      <picture class="hero-photo-soft" aria-hidden="true"><source type="image/avif" srcset="assets/img/building-dawn-640.avif"><img src="assets/img/building-dawn-640.webp" width="640" height="357" alt="" decoding="async" loading="lazy"></picture>
+      <picture class="hero-photo-sharp"><source type="image/avif" srcset="assets/img/building-dawn-640.avif 640w, assets/img/building-dawn-1024.avif 1024w, assets/img/building-dawn-1376.avif 1376w" sizes="100vw"><img src="assets/img/building-dawn-1024.webp" srcset="assets/img/building-dawn-640.webp 640w, assets/img/building-dawn-1024.webp 1024w, assets/img/building-dawn-1376.webp 1376w" sizes="100vw" width="1376" height="768" alt="הדמיה: מבנה אבן ירושלמית בהיר בנגב בשעת זריחה — אגף ארוך בן שתי קומות עם חלונות צרים ואולם תפילה גבוה עם כניסה מקושתת" decoding="async"></picture>
     </figure>
-    <p class="tag tag-glass hero-caption">המחשה</p>
     <div class="hero-scrim" aria-hidden="true"></div>
+    <div class="hero-halo" aria-hidden="true"><div class="halo-in"><i class="halo-core"></i><i class="halo-rays"></i><i class="halo-bokeh"></i></div></div>
+    <p class="tag tag-glass hero-caption">המחשה</p>
 
     <div class="wrap hero-copy">
       <p class="hero-kicker"><span>בסיעתא דשמיא · התחלנו</span></p>
       <p class="hero-eyebrow">הזמנה לשותפות היסטורית</p>
-      <h1 id="hero-title" class="hero-title">כְּזֹהַר הָרָקִיעַ</h1>
+      <h1 id="hero-title" class="hero-title lux-wrap"><span class="lux" data-dust-title>כְּזֹהַר הָרָקִיעַ</span></h1>
       <p class="hero-sub">קומפלקס רוחני-קהילתי בלב נתיבות</p>
       <p class="hero-motto">מניחים אבן, בונים עתיד.</p>
       <p class="hero-lede">בית שבו הרוח והנתינה נפגשים ללא גבולות — עוגן ותמיכה לחיילים הלוחמים, לילדים עם צרכים מיוחדים, למשפחות ולכל מי שמחפש אוזן קשבת ולב&nbsp;פתוח.</p>
@@ -126,6 +125,7 @@
     </div>
     <p class="hero-line" aria-hidden="true"><span>כל מטר שתתרמו ישא את שמכם לנצח על קירות הקומפלקס.</span></p>
     <div class="hero-scroll" aria-hidden="true"><span>גללו</span><i></i></div>
+    <div class="hero-rail" aria-hidden="true"><i class="hero-rail-fill"></i><b style="--at: 0"></b><b style="--at: .3"></b><b style="--at: .62"></b><b style="--at: 1"></b></div>
   </div>
 </section>
 
@@ -150,7 +150,7 @@
     </div>
     <div class="vision-grid">
       <figure class="vision-figure clay reveal">
-        <picture class="frame"><source type="image/avif" srcset="assets/img/community-terrace-640.avif 640w, assets/img/community-terrace-1024.avif 1024w, assets/img/community-terrace-1376.avif 1376w, assets/img/community-terrace-1752.avif 1752w" sizes="(min-width: 1104px) 1056px, calc(100vw - 2 * var(--gutter) - 24px)"><img src="assets/img/community-terrace-1024.webp" srcset="assets/img/community-terrace-640.webp 640w, assets/img/community-terrace-1024.webp 1024w, assets/img/community-terrace-1376.webp 1376w, assets/img/community-terrace-1752.webp 1752w" sizes="(min-width: 1104px) 1056px, calc(100vw - 2 * var(--gutter) - 24px)" width="1752" height="898" alt="ערב קהילתי במרפסת אבן בשעת שקיעה: גברים עם כיפות יושבים יחד סביב שולחן עץ נמוך ומשוחחים לאור פנסים, ברקע עצי זית, מבנה אבן מואר ונוף הרים" loading="lazy" decoding="async"></picture>
+        <picture class="frame"><source type="image/avif" srcset="assets/img/community-terrace-640.avif 640w, assets/img/community-terrace-1024.avif 1024w, assets/img/community-terrace-1376.avif 1376w, assets/img/community-terrace-1752.avif 1752w" sizes="(min-width: 1104px) 1056px, calc(100vw - 48px)"><img src="assets/img/community-terrace-1024.webp" srcset="assets/img/community-terrace-640.webp 640w, assets/img/community-terrace-1024.webp 1024w, assets/img/community-terrace-1376.webp 1376w, assets/img/community-terrace-1752.webp 1752w" sizes="(min-width: 1104px) 1056px, calc(100vw - 48px)" width="1752" height="898" alt="ערב קהילתי במרפסת אבן בשעת שקיעה: גברים עם כיפות יושבים יחד סביב שולחן עץ נמוך ומשוחחים לאור פנסים, ברקע עצי זית, מבנה אבן מואר ונוף הרים" loading="lazy" decoding="async"></picture>
         <figcaption class="tag">המחשה</figcaption>
       </figure>
       <div class="vision-text clay">
@@ -200,7 +200,7 @@
           </div>
         </li>
         <li class="act clay">
-          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/soldier-home-480.avif 480w, assets/img/soldier-home-800.avif 800w, assets/img/soldier-home-1024.avif 1024w" sizes="(min-width: 1024px) 420px, calc(100vw - 2 * var(--gutter) - 24px)"><img class="pos-soldier" src="assets/img/soldier-home-800.webp" srcset="assets/img/soldier-home-480.webp 480w, assets/img/soldier-home-800.webp 800w, assets/img/soldier-home-1024.webp 1024w" sizes="(min-width: 1024px) 420px, calc(100vw - 2 * var(--gutter) - 24px)" width="1024" height="572" alt="חייל לוחם במדים ובציוד מלא עומד על התפר שבין שני עולמות: משמאל עמדת בטון ושדה קרב מאובק, ומימין חדר אירוח חם ומואר עם מיטה מוצעת שמחכה לו" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-bed-240.avif 240w, assets/img/clay/act-bed-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-bed-240.webp" srcset="assets/img/clay/act-bed-240.webp 240w, assets/img/clay/act-bed-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
+          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/soldier-home-480.avif 480w, assets/img/soldier-home-800.avif 800w, assets/img/soldier-home-1024.avif 1024w" sizes="(min-width: 1024px) 540px, calc(100vw - 48px)"><img class="pos-soldier" src="assets/img/soldier-home-800.webp" srcset="assets/img/soldier-home-480.webp 480w, assets/img/soldier-home-800.webp 800w, assets/img/soldier-home-1024.webp 1024w" sizes="(min-width: 1024px) 540px, calc(100vw - 48px)" width="1024" height="572" alt="חייל לוחם במדים ובציוד מלא עומד על התפר שבין שני עולמות: משמאל עמדת בטון ושדה קרב מאובק, ומימין חדר אירוח חם ומואר עם מיטה מוצעת שמחכה לו" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-bed-240.avif 240w, assets/img/clay/act-bed-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-bed-240.webp" srcset="assets/img/clay/act-bed-240.webp 240w, assets/img/clay/act-bed-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
           <div class="act-body">
             <div class="act-meta"><span class="act-num">02</span><span class="tag tag-accent">דגש מיוחד</span></div>
             <h3>חדרי אירוח פרימיום לחיילים לוחמים</h3>
@@ -216,7 +216,7 @@
           </div>
         </li>
         <li class="act clay">
-          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/mikveh-luxury-640.avif 640w, assets/img/mikveh-luxury-1024.avif 1024w, assets/img/mikveh-luxury-1376.avif 1376w" sizes="(min-width: 1024px) 420px, calc(100vw - 2 * var(--gutter) - 24px)"><img class="pos-mikveh" src="assets/img/mikveh-luxury-1024.webp" srcset="assets/img/mikveh-luxury-640.webp 640w, assets/img/mikveh-luxury-1024.webp 1024w, assets/img/mikveh-luxury-1376.webp 1376w" sizes="(min-width: 1024px) 420px, calc(100vw - 2 * var(--gutter) - 24px)" width="1376" height="768" alt="מקווה מפואר ושקט: בריכת טבילה מוארת עם מדרגות ומעקה נירוסטה, קירות אבן בהירים, קמרונות עם תאורה רכה וקיר פסיפס בגווני תכלת" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-mikveh-240.avif 240w, assets/img/clay/act-mikveh-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-mikveh-240.webp" srcset="assets/img/clay/act-mikveh-240.webp 240w, assets/img/clay/act-mikveh-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
+          <figure class="act-fig"><picture class="frame"><source type="image/avif" srcset="assets/img/mikveh-luxury-640.avif 640w, assets/img/mikveh-luxury-1024.avif 1024w, assets/img/mikveh-luxury-1376.avif 1376w" sizes="(min-width: 1024px) 540px, calc(100vw - 48px)"><img class="pos-mikveh" src="assets/img/mikveh-luxury-1024.webp" srcset="assets/img/mikveh-luxury-640.webp 640w, assets/img/mikveh-luxury-1024.webp 1024w, assets/img/mikveh-luxury-1376.webp 1376w" sizes="(min-width: 1024px) 540px, calc(100vw - 48px)" width="1376" height="768" alt="מקווה מפואר ושקט: בריכת טבילה מוארת עם מדרגות ומעקה נירוסטה, קירות אבן בהירים, קמרונות עם תאורה רכה וקיר פסיפס בגווני תכלת" loading="lazy" decoding="async"></picture><span class="act-badge clay-disc" aria-hidden="true"><picture class="clay-art"><source type="image/avif" srcset="assets/img/clay/act-mikveh-240.avif 240w, assets/img/clay/act-mikveh-480.avif 480w" sizes="(min-width: 1024px) 120px, 104px"><img src="assets/img/clay/act-mikveh-240.webp" srcset="assets/img/clay/act-mikveh-240.webp 240w, assets/img/clay/act-mikveh-480.webp 480w" sizes="(min-width: 1024px) 120px, 104px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture></span></figure>
           <div class="act-body">
             <div class="act-meta"><span class="act-num">04</span></div>
             <h3>מקוואות מפוארים לנשים ולגברים</h3>
@@ -478,7 +478,7 @@
         <picture class="clay-art method-art"><source type="image/avif" srcset="assets/img/clay/pay-card-240.avif 240w, assets/img/clay/pay-card-480.avif 480w" sizes="(min-width: 640px) 140px, 128px"><img src="assets/img/clay/pay-card-240.webp" srcset="assets/img/clay/pay-card-240.webp 240w, assets/img/clay/pay-card-480.webp 480w" sizes="(min-width: 640px) 140px, 128px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
         <h3>אשראי / ביט</h3>
         <p>תרומה מאובטחת ונוחה ישירות באתר — תוך דקות.</p>
-        <!-- TODO(org): confirm with Nedarim Plus whether an amount/months parameter may be appended to this URL. No parameters are invented here. -->
+        <!-- General link (no tier chosen here). The sheet's button pre-fills the tier: see data-nedarim below. -->
         <a class="btn btn-solid" href="https://www.matara.pro/nedarimplus/online/?mosad=5776132" target="_blank" rel="noopener">לתרומה מאובטחת <svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr-only">(נפתח בלשונית חדשה)</span></a>
         <p class="method-small">אשראי · ביט · דרך נדרים פלוס</p>
       </article>
@@ -536,7 +536,7 @@
   <div class="wrap footer-grid">
     <div class="footer-brand">
       <svg class="footer-mark" aria-hidden="true"><use href="#mark"/></svg>
-      <p class="footer-word">כְּזֹהַר הָרָקִיעַ</p>
+      <p class="footer-word lux-wrap"><span class="lux">כְּזֹהַר הָרָקִיעַ</span></p>
       <p>קומפלקס רוחני-קהילתי · נתיבות</p>
       <p class="muted">בנשיאות הרב שלום יוסף ברבי שליט״א — מקום שבו הרוח והנתינה נפגשים ללא גבולות.</p>
       <p class="footer-verse">כי לעולם חסדו</p>
@@ -559,6 +559,8 @@
         <li><a href="tel:0535470052"><bdi>053-5470052</bdi></a></li>
         <li>נתיבות, ישראל</li>
         <li>עמותה · סעיף 46</li>
+        <li><a href="accessibility.html">הצהרת נגישות</a></li>
+        <li><a href="privacy.html">מדיניות פרטיות</a></li>
       </ul>
     </div>
   </div>
@@ -575,10 +577,13 @@
   <button class="dock-btn" type="button" data-open-donate>תרמו <span class="dock-sub">· בחירת מטרים</span></button>
 </aside>
 
-<!-- menu dialog (mobile) -->
+<!-- menu dialog (mobile): a compact clay panel anchored under the menu button -->
 <dialog class="menu-dialog" id="menu" aria-label="תפריט">
   <div class="menu-inner">
-    <button class="icon-btn menu-close" type="button" data-close><svg aria-hidden="true"><use href="#i-close"/></svg><span class="sr-only">סגירה</span></button>
+    <div class="menu-top">
+      <p class="menu-title" aria-hidden="true">ניווט</p>
+      <button class="icon-btn menu-close" type="button" data-close><svg aria-hidden="true"><use href="#i-close"/></svg><span class="sr-only">סגירת התפריט</span></button>
+    </div>
     <nav aria-label="תפריט נייד">
       <ul role="list">
         <li><a href="#vision" data-close-nav>החזון</a></li>
@@ -588,7 +593,7 @@
         <li><a href="#donate" data-close-nav>תרומה</a></li>
       </ul>
     </nav>
-    <p class="menu-tel"><a href="tel:0585555530"><bdi>058-5555530</bdi></a> · <a href="tel:0535470052"><bdi>053-5470052</bdi></a></p>
+    <p class="menu-tel"><a href="tel:0585555530"><bdi>058-5555530</bdi></a><span aria-hidden="true">·</span><a href="tel:0535470052"><bdi>053-5470052</bdi></a></p>
   </div>
 </dialog>
 
@@ -622,12 +627,21 @@
         <span class="plaque-name" data-plaque-name>שמכם כאן</span>
         <span class="plaque-tier" data-plaque-tier>שלושה מטרים</span>
       </div>
+      <div class="cert" data-cert>
+        <div class="cert-actions">
+          <button class="btn btn-line btn-sm" type="button" data-cert-download aria-describedby="cert-note"><svg aria-hidden="true"><use href="#i-down"/></svg>הורדת תעודת הקדשה</button>
+          <button class="btn btn-line btn-sm" type="button" data-cert-share aria-describedby="cert-note"><svg aria-hidden="true"><use href="#i-share"/></svg>שיתוף בוואטסאפ</button>
+        </div>
+        <p class="cert-note" id="cert-note">התעודה נוצרת במכשיר שלכם בלבד — השם אינו נשלח ואינו נשמר בשום מקום. תעודה סמלית, אינה קבלה או אישור מס.</p>
+      </div>
     </div>
 
     <div class="sheet-actions">
-      <!-- TODO(org): Nedarim Plus — add the amount/installments parameter only after the organisation confirms the supported URL format. -->
-      <a class="btn btn-solid btn-lg btn-block" href="https://www.matara.pro/nedarimplus/online/?mosad=5776132" target="_blank" rel="noopener" data-nedarim>המשך לתרומה מאובטחת <svg aria-hidden="true"><use href="#i-out"/></svg></a>
-      <p class="sheet-small">נפתח בלשונית חדשה · יש לבחור שם את הסכום: <strong data-sheet-sum><bdi>₪360</bdi></strong></p>
+      <!-- Nedarim Plus pre-fill: the donation page's own script (Files/JavaScript5.js) reads Amount (monthly sum in keva mode),
+           Payment (number of charges) and KevaDefault=1 (selects הוראת קבע). Verified 2026-10 by loading the page with these
+           parameters: הוראת קבע selected, ₪360 × 48 = ₪17,280. main.js rewrites this href when the tier changes. -->
+      <a class="btn btn-solid btn-lg btn-block" href="https://www.matara.pro/nedarimplus/online/?mosad=5776132&amp;Amount=360&amp;Payment=48&amp;KevaDefault=1" target="_blank" rel="noopener" data-nedarim>המשך לתרומה מאובטחת <svg aria-hidden="true"><use href="#i-out"/></svg></a>
+      <p class="sheet-small">נפתח בלשונית חדשה באתר נדרים פלוס, עם הוראת קבע ממולאת מראש: <strong data-sheet-sum><bdi>₪360</bdi> לחודש</strong> × <bdi>48</bdi> חודשים</p>
     </div>
     <p class="sheet-alt">התרומה מתבצעת באתר נדרים פלוס (אשראי / ביט). מעדיפים טלפון? <a href="tel:0585555530"><bdi>058-5555530</bdi></a> · <a href="tel:0535470052"><bdi>053-5470052</bdi></a> · <a href="#donate" data-close-nav>העברה בנקאית</a></p>
   </form>

@@ -239,6 +239,7 @@ export function buildCloud(N, seed = 11) {
   g.setAttribute('aScale', new THREE.BufferAttribute(scale, 1));
   g.setAttribute('aPhase', new THREE.BufferAttribute(phase, 1));
   g.setAttribute('aKind', new THREE.BufferAttribute(kind, 1));
+  g.setAttribute('aText', new THREE.BufferAttribute(new Float32Array(N * 4), 4)); // filled by hero-scene (title dust)
   g.boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 4, 0), 80);
   // categories are generated in blocks; a deterministic shuffle makes any draw-range
   // reduction (FPS governor) keep an even random subset of every category
@@ -257,20 +258,26 @@ function permute(g, N, R) {
 }
 
 const VERT = /* glsl */`
-uniform float uTime, uAssemble, uDissolve, uSize, uPR, uRadius, uIgnite, uDepthRef, uFogNear, uFogFar;
+uniform float uTime, uAssemble, uDissolve, uSize, uPR, uRadius, uIgnite, uDepthRef, uFogNear, uFogFar, uTextIn, uTextPx;
 uniform vec3 uSeed, uFogColor;
-attribute vec3 aStart; attribute vec3 aColor; attribute vec3 aNormal;
+uniform mat4 uViewToLocal;
+attribute vec3 aStart; attribute vec3 aColor; attribute vec3 aNormal; attribute vec4 aText;
 attribute float aDelay; attribute float aScale; attribute float aPhase; attribute float aKind;
 varying vec3 vColor; varying float vAlpha;
 float ease(float t){ return t < .5 ? 4.*t*t*t : 1. - pow(-2.*t + 2., 3.) / 2.; }
 void main(){
-  float t = clamp((uAssemble - aDelay * .42) / .58, 0., 1.);
+  // "golden dust" twins of the hero title: their start is a view-space point placed exactly over
+  // a glyph pixel of the DOM title (re-projected every frame, so they stay pinned to the letters)
+  bool txt = aText.w > .5;
+  float dly = txt ? aDelay * .3 : aDelay;
+  float t = clamp((uAssemble - dly * .42) / .58, 0., 1.);
   float e = ease(t);
   vec3 drift = vec3(sin(uTime*.19 + aPhase*31.), cos(uTime*.15 + aPhase*17.), sin(uTime*.12 + aPhase*23.));
-  vec3 p = mix(aStart + drift * 1.4, position, e);
+  vec3 start = txt ? (uViewToLocal * vec4(aText.xyz, 1.)).xyz + drift * .012 : aStart + drift * 1.4;
+  vec3 p = mix(start, position, e);
   float mid = sin(e * 3.14159);
   float ang = aPhase * 6.2831 + uTime * .25;
-  p += vec3(cos(ang), .35 * sin(ang * 1.3), sin(ang)) * mid * 1.8;
+  p += vec3(cos(ang), .35 * sin(ang * 1.3), sin(ang)) * mid * (txt ? 1.2 : 1.8);
   p += drift * .008 * e;
   // dissolve: a slow, staggered release — each point drifts gently upward like warm dust in the light
   float d = clamp((uDissolve - aDelay * .45) / .55, 0., 1.);
@@ -297,7 +304,7 @@ void main(){
   float amp = mix(.34, glow ? .16 : (aKind > 1.5 ? .26 : .07), e);
   float tw = 1. - amp + amp * sin(uTime * (.7 + aPhase * 2.1) + aPhase * 50.);
   if (glow) tw *= .92 + .08 * sin(uTime * .6 + position.x * .4); // slow breathing light
-  vec3 dust = vec3(1., .66, .42) * (.45 + .6 * fract(aPhase * 3.7));
+  vec3 dust = txt ? vec3(1., .84, .58) * (.95 + .25 * fract(aPhase * 3.7)) : vec3(1., .66, .42) * (.45 + .6 * fract(aPhase * 3.7));
   vec3 col = mix(dust, aColor, smoothstep(.15, 1., t));
   if (uIgnite > 0.) {
     float g = (1. - smoothstep(uRadius - 1.1, uRadius, distance(position, uSeed))) * uIgnite;
@@ -305,10 +312,18 @@ void main(){
     vec3 on = glow ? aColor * 1.75 : aColor * 1.12 + vec3(.3, .14, .04);
     col = mix(off, on, g);
   }
-  col = mix(col, uFogColor, fog * .45);
+  col = mix(col, uFogColor, fog * .45 * (txt ? e : 1.));
   vColor = col;
-  vAlpha = tw * (1. - d * d * (3. - 2. * d)) * mix(.6, 1., e) * facing * near * (1. - fog * .5);
-  gl_PointSize = clamp(uSize * aScale * uPR * (30. / depth) * mix(1., sqrt(near), e), 1., 48.);
+  float a = tw * (1. - d * d * (3. - 2. * d)) * mix(.6, 1., e) * facing * near * (1. - fog * .5);
+  float size = clamp(uSize * aScale * uPR * (30. / depth) * mix(1., sqrt(near), e), 1., 48.);
+  if (txt) {
+    float k = smoothstep(0., .35, e);
+    float shimmer = .88 + .12 * sin(uTime * (.9 + aPhase * 1.7) + aPhase * 40.);
+    a = mix(uTextIn * shimmer, a, k);
+    size = mix(uTextPx * (.8 + .45 * fract(aPhase * 5.3)), size, k);
+  }
+  vAlpha = a;
+  gl_PointSize = size;
 }`;
 const FRAG = /* glsl */`
 uniform float uIntensity;
@@ -326,6 +341,7 @@ export function makeMaterial({ size = 2.2, pr = 1 } = {}) {
       uTime: { value: 0 }, uAssemble: { value: 0 }, uDissolve: { value: 0 }, uSize: { value: size }, uPR: { value: pr },
       uIntensity: { value: 1 }, uSeed: { value: new THREE.Vector3() }, uRadius: { value: 0 }, uIgnite: { value: 0 },
       uDepthRef: { value: 34 }, uFogNear: { value: 32 }, uFogFar: { value: 60 }, uFogColor: { value: new THREE.Color('#4a2a1a') },
+      uTextIn: { value: 0 }, uTextPx: { value: 3 }, uViewToLocal: { value: new THREE.Matrix4() },
     },
     vertexShader: VERT, fragmentShader: FRAG,
     transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
