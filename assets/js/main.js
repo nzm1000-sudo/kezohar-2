@@ -159,10 +159,10 @@ window.addEventListener('resize', onResize, { passive: true });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
 onScroll();
 
-/* ---------- living title: pause its slow sheen while off screen ---------- */
+/* ---------- living title: pause its slow tonal drift while off screen ---------- */
 if (MOTION && 'IntersectionObserver' in window) {
   const lio = new IntersectionObserver((ents) => ents.forEach((e) => e.target.classList.toggle('is-paused', !e.isIntersecting)));
-  $$('.lux').forEach((el) => lio.observe(el));
+  $$('.lux-wrap').forEach((el) => lio.observe(el));
 }
 
 /* ---------- reveal ---------- */

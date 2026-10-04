@@ -355,34 +355,42 @@ h3 { font-family: var(--f-display); font-weight: 400; font-size: var(--fs-h3); l
 
 /* ---------- "כזוהר הרקיע", living: a thin white edge, a faint oval sky-blue (תכלת) halo, and a
    glossy pearl → limestone → champagne → soft-copper → dawn-blush fill that drifts very slowly ---------- */
-.lux-wrap { position: relative; isolation: isolate; }
+/* Paint cost: the gradient fill and its glow are painted once and never animate. The slow tonal drift
+   is a second, differently-positioned copy of the same fill (a ::after grid-stacked exactly on the
+   word, hidden from assistive tech) whose opacity breathes — a compositor-only animation, so the big
+   title never repaints per frame. */
+.lux-wrap {
+  --lux-1: #FBF6EE; --lux-2: #EADCC6; --lux-3: #F3E2C4; --lux-sheen: #FFFDF8; --lux-4: #EBC3A2; --lux-5: #F4DAD0;
+  --lux-edge: rgba(255, 255, 255, .7); --lux-glow: rgba(182, 218, 240, .42); --lux-stroke: .5px;
+  position: relative; isolation: isolate; display: grid; justify-items: center;
+}
 .lux-wrap::before {
   content: ""; position: absolute; z-index: -1; left: 50%; top: 54%; width: 116%; height: 168%; transform: translate(-50%, -50%);
   border-radius: 50%; pointer-events: none;
   background: radial-gradient(closest-side, rgba(182, 218, 240, var(--halo-a, .2)), rgba(182, 218, 240, calc(var(--halo-a, .2) * .4)) 55%, rgba(182, 218, 240, 0) 100%);
 }
-.lux {
-  --lux-1: #FBF6EE; --lux-2: #EADCC6; --lux-3: #F3E2C4; --lux-sheen: #FFFDF8; --lux-4: #EBC3A2; --lux-5: #F4DAD0;
-  --lux-edge: rgba(255, 255, 255, .7); --lux-glow: rgba(182, 218, 240, .42);
-  display: inline-block; color: var(--lux-1); text-shadow: none;
-}
+.lux { display: inline-block; grid-area: 1 / 1; color: var(--lux-1); text-shadow: none; }
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .lux {
+  .lux, html.motion .lux-wrap::after {
     background-image: linear-gradient(105deg, var(--lux-1) 0%, var(--lux-2) 15%, var(--lux-3) 29%, var(--lux-sheen) 37%, var(--lux-4) 48%, var(--lux-5) 62%, var(--lux-2) 79%, var(--lux-1) 100%);
-    background-size: 320% 100%; background-position: 18% 50%;
+    background-size: 320% 100%; background-position: 12% 50%;
     -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
-    -webkit-text-stroke: .5px var(--lux-edge);
-    filter: drop-shadow(0 0 .6px var(--lux-glow)) drop-shadow(0 0 9px rgba(182, 218, 240, .14));
+    -webkit-text-stroke: var(--lux-stroke) var(--lux-edge);
   }
-  html.motion .lux { animation: lux-flow 17s ease-in-out infinite alternate; }
-  html.motion .lux.is-paused { animation-play-state: paused; }
+  .lux { filter: drop-shadow(0 0 .6px var(--lux-glow)) drop-shadow(0 0 9px rgba(182, 218, 240, .14)); }
+  html.motion .lux-wrap::after {
+    content: attr(data-lux); content: attr(data-lux) / "";
+    grid-area: 1 / 1; pointer-events: none; background-position: 88% 50%;
+    opacity: 0; will-change: opacity; animation: lux-drift 17s ease-in-out infinite;
+  }
+  html.motion .lux-wrap.is-paused::after { animation-play-state: paused; }
 }
-@keyframes lux-flow { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
-.hero-title .lux { -webkit-text-stroke-width: .8px; }
+@keyframes lux-drift { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+.hero-title.lux-wrap { --lux-stroke: .8px; }
 /* on the light, solid header: deeper glossy tones (copper-ink, walnut, basalt) with a pearl edge */
-:root[data-theme="light"] .site-header.is-solid .lux { --lux-1: #5A3822; --lux-2: #7A4A2B; --lux-3: #3F3027; --lux-sheen: #9C6038; --lux-4: #8F4B24; --lux-5: #6A4636; --lux-edge: rgba(255, 255, 255, .5); --lux-glow: rgba(120, 170, 200, .25); }
+:root[data-theme="light"] .site-header.is-solid .lux-wrap { --lux-1: #5A3822; --lux-2: #7A4A2B; --lux-3: #3F3027; --lux-sheen: #9C6038; --lux-4: #8F4B24; --lux-5: #6A4636; --lux-edge: rgba(255, 255, 255, .5); --lux-glow: rgba(120, 170, 200, .25); }
 @media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) .site-header.is-solid .lux { --lux-1: #5A3822; --lux-2: #7A4A2B; --lux-3: #3F3027; --lux-sheen: #9C6038; --lux-4: #8F4B24; --lux-5: #6A4636; --lux-edge: rgba(255, 255, 255, .5); --lux-glow: rgba(120, 170, 200, .25); }
+  :root:not([data-theme="dark"]) .site-header.is-solid .lux-wrap { --lux-1: #5A3822; --lux-2: #7A4A2B; --lux-3: #3F3027; --lux-sheen: #9C6038; --lux-4: #8F4B24; --lux-5: #6A4636; --lux-edge: rgba(255, 255, 255, .5); --lux-glow: rgba(120, 170, 200, .25); }
 }
 .site-header.is-solid .lux-wrap { --halo-a: .12; }
 .brand-word.lux-wrap::before { width: 124%; height: 190%; }
@@ -453,7 +461,7 @@ html.fx .hero-veil { display: block; position: absolute; inset: 0 0 auto; height
 /* once faded, the copy stays in the accessibility tree (the h1 remains the page heading); only the
    buttons leave the tab order, and the title's sheen stops */
 html.fx .hero-copy[data-hidden] .hero-ctas { visibility: hidden; }
-html.fx .hero-copy[data-hidden] .lux { animation-play-state: paused; }
+html.fx .hero-copy[data-hidden] .lux-wrap::after { animation-play-state: paused; }
 
 /* progress rail: a thin clay groove with four stations (words · dust · building · stone) */
 .hero-rail { display: none; }
@@ -928,7 +936,6 @@ html.motion.js .tier.reveal.is-in:has(.tier-input:checked) { transform: translat
 
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
-  .lux { animation: none !important; background-position: 22% 50% !important; }
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
   .clay:hover .clay-art, .act:hover .act-badge .clay-art, .btn:hover, .tier:hover, .icon-btn:hover, .copy:hover { transform: none; }
 }
@@ -936,7 +943,8 @@ html.motion.js .tier.reveal.is-in:has(.tier-input:checked) { transform: translat
 /* ---------- Forced colors ---------- */
 @media (forced-colors: active) {
   .clay, .btn, .tag, .eyebrow, .opt-body, .icon-btn, .copy, .menu-dialog, .menu-inner ul a { border: 1px solid CanvasText; }
-  .lux { background: none !important; color: CanvasText !important; -webkit-text-fill-color: CanvasText !important; -webkit-text-stroke: 0 !important; filter: none !important; animation: none !important; }
+  .lux { background: none !important; color: CanvasText !important; -webkit-text-fill-color: CanvasText !important; -webkit-text-stroke: 0 !important; filter: none !important; }
+  .lux-wrap::after { display: none !important; }
   .lux-wrap::before, .hero-halo, .hero-rail, .hero-lede::before { display: none !important; }
   .tier:has(.tier-input:checked), .opt input:checked + .opt-body { outline: 3px solid Highlight; }
 }
