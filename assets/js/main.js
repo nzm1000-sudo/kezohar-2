@@ -80,9 +80,15 @@ const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a)));
 let heroScene = null, heroP = 0, heroT = 0, heroRaf = 0, heroLast = 0;
 const heroCopy = $('.hero-copy');
 const dustTitle = $('[data-dust-title]');
-const railDots = $$('.hero-rail b');
-const shown = {};
-const setVar = (k, v) => { if (shown[k] !== v) { shown[k] = v; hero.style.setProperty(k, v); } };
+const railDots = $$('.hero-rail b').map((el) => ({ el, at: parseFloat(el.style.getPropertyValue('--at')), on: false }));
+const H = {
+  title: $('.hero-title'), rest: [...heroCopy.children].filter((el) => !el.classList.contains('hero-title')),
+  photo: $('.hero-photo'), sharp: $('.hero-photo-sharp'), scrim: $('.hero-scrim'), veil: $('.hero-veil'), halo: $('.hero-halo'),
+  line: $('.hero-line'), scroll: $('.hero-scroll'), rail: $('.hero-rail'), fill: $('.hero-rail-fill'),
+};
+// write a style only when it changes, straight onto the element that uses it
+const put = (el, prop, v) => { const c = el.__kz || (el.__kz = {}); if (c[prop] !== v) { c[prop] = v; el.style[prop] = v; } };
+function heroClear() { Object.values(H).flat().forEach((el) => { if (el && el.__kz) { Object.keys(el.__kz).forEach((k) => { el.style[k] = ''; }); el.__kz = null; } }); }
 function heroTarget() {
   const span = M.h - M.vh;
   return span > 0 ? Math.min(1, Math.max(0, (window.scrollY - M.top) / span)) : 0;
@@ -98,17 +104,20 @@ function heroApply(p) {
   const photo = sm(0.58, 0.95, p);
   const blur = 1 - sm(0.6, 0.92, p);
   const halo = sm(0.74, 0.97, p);
-  setVar('--title', title.toFixed(3));
-  setVar('--copy', copy.toFixed(3));
-  setVar('--line', line.toFixed(3));
-  setVar('--photo', photo.toFixed(3));
-  setVar('--blur', blur.toFixed(3));
-  setVar('--halo', halo.toFixed(3));
-  setVar('--hp', p.toFixed(3));
-  setVar('--rail', (sm(0.004, 0.025, p) * (1 - sm(0.975, 0.999, p))).toFixed(3));
-  railDots.forEach((d) => d.classList.toggle('is-on', p >= parseFloat(d.style.getPropertyValue('--at')) - 0.005));
-  hero.classList.toggle('is-halo', halo > 0.005);
-  heroCopy.toggleAttribute('data-hidden', copy < 0.02 && title < 0.02);
+  const f = (x) => x.toFixed(3);
+  put(H.title, 'opacity', f(title));
+  const co = f(copy), ct = `translateY(${((1 - copy) * -18).toFixed(1)}px)`;
+  H.rest.forEach((el) => { put(el, 'opacity', co); put(el, 'transform', ct); });
+  put(H.scroll, 'opacity', co);
+  put(H.line, 'opacity', f(line)); put(H.line, 'transform', `translateY(${((1 - line) * 16).toFixed(1)}px)`);
+  put(H.photo, 'opacity', f(photo)); put(H.sharp, 'opacity', f(1 - blur));
+  put(H.scrim, 'opacity', f(photo * 0.42)); put(H.veil, 'opacity', f(photo));
+  put(H.halo, 'opacity', f(halo));
+  put(H.rail, 'opacity', f(sm(0.004, 0.025, p) * (1 - sm(0.975, 0.999, p))));
+  put(H.fill, 'transform', `scaleY(${f(p)})`);
+  railDots.forEach((d) => { const on = p >= d.at - 0.005; if (on !== d.on) { d.on = on; d.el.classList.toggle('is-on', on); } });
+  const hOn = halo > 0.005; if (hOn !== H.halo.__on) { H.halo.__on = hOn; H.halo.classList.toggle('is-on', hOn); }
+  const hidden = copy < 0.02 && title < 0.02; if (hidden !== heroCopy.__hid) { heroCopy.__hid = hidden; heroCopy.toggleAttribute('data-hidden', hidden); }
   if (heroScene) heroScene.setProgress(p);
 }
 function heroTick(now) {
@@ -129,12 +138,11 @@ function heroState() {
 const heroImg = $('.hero-photo-sharp img');
 function layoutHalo() {
   if (!FX) return;
-  const W = hero.clientWidth, H = M.vh;
+  const W = hero.clientWidth, Hh = M.vh;
   const op = getComputedStyle(heroImg).objectPosition.split(' ').map(parseFloat);
   const ox = Number.isNaN(op[0]) ? 0.5 : op[0] / 100, oy = Number.isNaN(op[1]) ? 0.78 : op[1] / 100;
-  const s = Math.max(W / 1376, H / 768), w = 1376 * s, h = 768 * s;
-  setVar('--hx', ((W - w) * ox).toFixed(1) + 'px'); setVar('--hy', ((H - h) * oy).toFixed(1) + 'px');
-  setVar('--hw', w.toFixed(1) + 'px'); setVar('--hh', h.toFixed(1) + 'px');
+  const s = Math.max(W / 1376, Hh / 768), w = 1376 * s, h = 768 * s;
+  Object.assign(H.halo.style, { left: ((W - w) * ox).toFixed(1) + 'px', top: ((Hh - h) * oy).toFixed(1) + 'px', width: w.toFixed(1) + 'px', height: h.toFixed(1) + 'px' });
 }
 if (FX) { layoutHalo(); heroT = heroP = heroTarget(); heroApply(heroP); }
 // keyboard users tabbing into hero CTAs: bring hero copy back into view
@@ -185,6 +193,15 @@ function closed(e) { if (lenis) lenis.start(); document.body.style.overflow = ''
 [menu, sheet].forEach((d) => {
   d.addEventListener('close', closed);
   d.addEventListener('cancel', (e) => { e.preventDefault(); closeDialog(d); }); // Esc
+  // keep Tab inside the open dialog (wrap around instead of escaping to the browser UI)
+  d.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    const f = $$('a[href], button:not([disabled]), input:not([disabled]):not([type="radio"]), input[type="radio"]:checked', d).filter((el) => el.offsetParent !== null || el.getClientRects().length);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
   // backdrop click: the pointer landed outside the dialog's own box
   d.addEventListener('click', (e) => {
     if (e.target !== d) return;
@@ -245,7 +262,7 @@ async function makeCert() {
 $('[data-cert-download]').addEventListener('click', async () => {
   const blob = await makeCert(); if (!blob) return;
   const url = URL.createObjectURL(blob);
-  const a = Object.assign(document.createElement('a'), { href: url, download: 'תעודת-הקדשה-כזוהר-הרקיע.png' });
+  const a = Object.assign(document.createElement('a'), { href: url, download: 'kezohar-harakia-dedication.png' });
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
   say('התעודה נשמרה');
@@ -287,7 +304,7 @@ if (FX) {
       if (TEST) window.__hero = heroScene;
     } catch (err) {
       console.warn('3D disabled:', err && err.message);
-      root.classList.remove('fx'); onScroll();
+      root.classList.remove('fx'); heroClear(); onScroll();
     }
   };
   if (posterMode) loadHero(); else whenEngaged(loadHero);

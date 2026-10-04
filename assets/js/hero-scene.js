@@ -195,9 +195,9 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     const fps = frames / acc; frames = 0; acc = 0;
     if (fps >= 48 || level >= 3) return;
     if (fps < 22 && level >= 2) { level = 3; stop(true); return; }
-    level++;
+    level = fps < 15 ? 2 : level + 1; // very slow devices skip straight to the lightest setting
     const keep = level === 1 ? 0.7 : 0.48;
-    dpr = Math.max(1, dpr - (level === 1 ? 0.25 : 1));
+    dpr = level === 1 ? Math.max(1, dpr - 0.25) : 1;
     renderer.setPixelRatio(dpr); mat.uniforms.uPR.value = dpr; resize();
     geo.setDrawRange(0, Math.max(minDraw, Math.floor(N * keep)));
     warm = 0.6; // let the new setting settle before measuring again

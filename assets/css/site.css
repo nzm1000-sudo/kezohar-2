@@ -441,14 +441,15 @@ html.fx .hero-poster { display: block; }
    changes per frame (compositor work), never a filter on a full-screen image */
 .hero-photo-soft { display: none; }
 .hero-photo-soft img { filter: blur(14px) saturate(.78); transform: scale(1.07); }
-html.fx .hero-photo { opacity: var(--photo, 0); will-change: opacity; }
+html.fx .hero-photo { opacity: 0; will-change: opacity; }
 html.fx .hero-photo-soft { display: block; }
-html.fx .hero-photo-sharp { opacity: calc(1 - var(--blur, 0)); will-change: opacity; }
-html.fx .hero-scrim { opacity: calc(var(--photo, 0) * .42); }
+html.fx .hero-photo-sharp { opacity: 0; will-change: opacity; }
+html.fx .hero-scrim { opacity: 0; }
 /* once the bright photo is up, a soft dusk veil at the very top keeps the header legible */
-html.fx .hero-stage::after { content: ""; position: absolute; inset: 0 0 auto; height: 190px; pointer-events: none; opacity: var(--photo, 0); background: linear-gradient(180deg, rgba(16, 13, 11, .62), rgba(16, 13, 11, .3) 45%, rgba(16, 13, 11, 0)); }
-html.fx .hero-title { opacity: var(--title, 1); }
-html.fx .hero-copy > :not(.hero-title) { opacity: var(--copy, 1); transform: translateY(calc((1 - var(--copy, 1)) * -18px)); }
+.hero-veil { display: none; }
+html.fx .hero-veil { display: block; position: absolute; inset: 0 0 auto; height: 190px; pointer-events: none; opacity: 0; background: linear-gradient(180deg, rgba(16, 13, 11, .62), rgba(16, 13, 11, .3) 45%, rgba(16, 13, 11, 0)); }
+/* per-frame opacity / transform of the hero layers are written inline by main.js (only on change,
+   and only on the element that uses them, so no style invalidation fans out through the hero) */
 /* once faded, the copy stays in the accessibility tree (the h1 remains the page heading); only the
    buttons leave the tab order, and the title's sheen stops */
 html.fx .hero-copy[data-hidden] .hero-ctas { visibility: hidden; }
@@ -458,19 +459,22 @@ html.fx .hero-copy[data-hidden] .lux { animation-play-state: paused; }
 .hero-rail { display: none; }
 html.fx .hero-rail {
   display: block; position: absolute; inset-inline-end: clamp(12px, 2.2vw, 34px); top: 50%; width: 4px; height: clamp(96px, 20vh, 176px);
-  transform: translateY(-50%); border-radius: 999px; opacity: var(--rail, 0); pointer-events: none;
+  transform: translateY(-50%); border-radius: 999px; opacity: 0; pointer-events: none;
   background: rgba(247, 243, 236, .1); box-shadow: inset 1px 1px 2px rgba(0, 0, 0, .5), inset -1px -1px 1px rgba(255, 255, 255, .14);
 }
-.hero-rail-fill { position: absolute; inset: 0; border-radius: inherit; transform-origin: 50% 0; transform: scaleY(var(--hp, 0)); background: linear-gradient(180deg, #F6E3CC, #CF9466); box-shadow: 0 0 8px rgba(240, 190, 140, .45); }
+.hero-rail-fill { position: absolute; inset: 0; border-radius: inherit; transform-origin: 50% 0; transform: scaleY(0); background: linear-gradient(180deg, #F6E3CC, #CF9466); box-shadow: 0 0 8px rgba(240, 190, 140, .45); }
 .hero-rail b { position: absolute; left: 50%; top: calc(var(--at) * 100%); width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: #2B231D; box-shadow: inset 1px 1px 1px rgba(255, 255, 255, .22), 0 0 0 1px rgba(247, 243, 236, .22); transition: background-color .5s, box-shadow .5s; }
 .hero-rail b.is-on { background: #F0D3B6; box-shadow: inset -1px -1px 1px rgba(120, 70, 30, .4), 0 0 9px rgba(240, 190, 140, .75); }
 
 /* golden aura: layered glow, slow light rays and drifting bokeh, sitting exactly behind the
    building of the photo (the photo-sized box is masked by the building's silhouette) */
-.hero-halo { display: none; }
+.hero-halo, .hero-halo-clip { display: none; }
+/* the aura box is sized to the photo's cover crop (wider than a phone screen): a clipping layer keeps it
+   from ever widening the layout viewport */
+html.fx .hero-halo-clip { display: block; position: absolute; inset: 0; z-index: -1; overflow: hidden; contain: strict; pointer-events: none; }
 html.fx .hero-halo {
-  display: block; position: absolute; z-index: -1; left: var(--hx, 0px); top: var(--hy, 0px); width: var(--hw, 100%); height: var(--hh, 100%);
-  opacity: var(--halo, 0); pointer-events: none;
+  display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+  opacity: 0; pointer-events: none;
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1376 768' preserveAspectRatio='none'%3E%3Cpath fill-rule='evenodd' d='M0 0H1376V768H0Z M125 652V428H808V440H890V362H1270V652Z'/%3E%3C/svg%3E"), linear-gradient(180deg, #000 62%, transparent 90%);
   -webkit-mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; -webkit-mask-composite: source-in;
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1376 768' preserveAspectRatio='none'%3E%3Cpath fill-rule='evenodd' d='M0 0H1376V768H0Z M125 652V428H808V440H890V362H1270V652Z'/%3E%3C/svg%3E"), linear-gradient(180deg, #000 62%, transparent 90%);
@@ -495,12 +499,12 @@ html.fx .hero-halo {
 html.motion .halo-core { animation: halo-breathe 9s ease-in-out infinite alternate; }
 html.motion .halo-rays { animation: halo-turn 160s linear infinite; }
 html.motion .halo-bokeh { animation: halo-drift 24s ease-in-out infinite alternate; }
-.hero:not(.is-halo) .halo-in i { animation-play-state: paused; }
+.hero-halo:not(.is-on) .halo-in i { animation-play-state: paused; }
 @keyframes halo-breathe { from { opacity: .72; transform: translate(-50%, -50%) scale(.97); } to { opacity: 1; transform: translate(-50%, -50%) scale(1.03); } }
 @keyframes halo-turn { to { transform: translate(-50%, -50%) rotate(360deg); } }
 @keyframes halo-drift { from { transform: translate(1.5%, 2%); } to { transform: translate(-1.5%, -3%); } }
-html.fx .hero-line { opacity: var(--line, 0); transform: translateY(calc((1 - var(--line, 0)) * 16px)); }
-html.fx .hero-scroll { display: flex; opacity: var(--copy, 1); }
+html.fx .hero-line { opacity: 0; }
+html.fx .hero-scroll { display: flex; }
 
 @media (max-width: 767px) {
   .hero-stage { align-items: flex-end; }
