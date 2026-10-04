@@ -53,9 +53,10 @@ for (const [pkg, f] of fonts) fs.copyFileSync(fsrc(pkg, f), out('fonts', f));
   if (!SRC) return console.log('vendor/fonts/qr done (no image source folder given)');
   // ---------- photos ----------
   const map = {
-    '01': 'building-dawn', '02': 'building-night', '03': 'soldier-arrival', '04': 'soldier-reading',
-    '05': 'class-teacher', '06': 'class-boy', /* 07: synagogue-main comes from the previous site (640/1024/1200) */ '08': 'mikveh', '09': 'counseling',
-    '10': 'meals', '11': 'clinic', '12': 'beit-midrash', '13': 'community',
+    '01': 'building-dawn', '02': 'building-night', '03': 'soldier-arrival',
+    '05': 'class-teacher', '06': 'class-boy', /* 07: synagogue-main comes from the previous site (640/1024/1200) */ '09': 'counseling',
+    '10': 'meals', '11': 'clinic', '12': 'beit-midrash',
+    /* 04, 08, 13 were replaced by the client's photos: see tools/export-photos.cjs */
   };
   const widths = { wide: [640, 1024, 1376], photo: [480, 800, 1200] };
   for (const f of fs.readdirSync(SRC).filter((f) => /^\d\d-.*\.jpg$/.test(f)).sort()) {
