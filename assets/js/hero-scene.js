@@ -270,10 +270,14 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
   function start() { if (state.running || level === 3) return; state.running = true; clock.getDelta(); raf = requestAnimationFrame(frame); }
   function pause() { state.running = false; cancelAnimationFrame(raf); }
   function stop(fromGovernor) {
-    pause(); level = 3;
+    if (stopped) return;
+    pause(); level = 3; stopped = true;
     canvas.classList.remove('is-live');
     if (onStop) onStop(fromGovernor ? 'fps' : 'manual');
+    destroy(); // a stopped scene never restarts: free its GPU buffers, observers and listeners
   }
+  let stopped = false;
+  function destroy() { pause(); clearTimeout(rsT); ro.disconnect(); ground.geometry.dispose(); ground.material.dispose(); mass.userData.dispose(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('pointermove', onMove); window.removeEventListener('deviceorientation', onTilt); geo.dispose(); mat.dispose(); if (scene.background && scene.background.dispose) scene.background.dispose(); renderer.dispose(); }
 
   const io = new IntersectionObserver(([en]) => { state.visible = en.isIntersecting; sync(); }, { threshold: 0 });
   io.observe(canvas);
@@ -293,6 +297,6 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     // test runs only (main.js exposes this object on localhost): render one frame, optionally without the dissolve
     renderAt(p, t, { holdDissolve = false } = {}) { state.progress = p; state.holdDissolve = holdDissolve; render(t); state.holdDissolve = false; },
     stop,
-    destroy() { pause(); ro.disconnect(); ground.geometry.dispose(); ground.material.dispose(); mass.userData.dispose(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('pointermove', onMove); window.removeEventListener('deviceorientation', onTilt); geo.dispose(); mat.dispose(); renderer.dispose(); },
+    destroy,
   };
 }

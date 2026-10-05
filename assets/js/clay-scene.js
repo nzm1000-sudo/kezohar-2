@@ -300,7 +300,9 @@ export function createClay(canvas, { mobile = false, tier = '360', dark = false,
   }
   function start() { if (running || dead) return; running = true; clock.getDelta(); raf = requestAnimationFrame(frame); }
   function pause() { running = false; cancelAnimationFrame(raf); }
-  function stop() { pause(); dead = true; canvas.parentElement.classList.remove('is-live'); if (onStop) onStop(); }
+  function stop() { if (dead) return; pause(); dead = true; canvas.parentElement.classList.remove('is-live'); if (onStop) onStop(); destroy(); }
+  // a stopped scene never restarts: free its GPU buffers, observers and listeners
+  function destroy() { pause(); dead = true; io.disconnect(); ro.disconnect(); document.removeEventListener('visibilitychange', sync); canvas.removeEventListener('pointermove', onMove); canvas.removeEventListener('pointerdown', onDown); disposables.forEach((d) => d.dispose && d.dispose()); renderer.dispose(); }
   const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync(); });
   io.observe(canvas);
   const sync = () => (visible && !document.hidden ? start() : pause());
@@ -315,6 +317,6 @@ export function createClay(canvas, { mobile = false, tier = '360', dark = false,
     setTheme,
     // test runs only: advance the simulated clock in small steps, then draw one frame
     advance(sec) { for (let i = 0; i < sec * 60; i++) { clockT += 1 / 60; animate(); } render(); },
-    destroy() { pause(); io.disconnect(); ro.disconnect(); document.removeEventListener('visibilitychange', sync); canvas.removeEventListener('pointermove', onMove); canvas.removeEventListener('pointerdown', onDown); disposables.forEach((d) => d.dispose && d.dispose()); renderer.dispose(); },
+    destroy,
   };
 }
