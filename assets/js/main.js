@@ -368,7 +368,7 @@ if (MOTION && !(TEST && TEST.noLenis) && mq('(min-width: 1024px)').matches && !M
     if (!MOBILE) {
       // a calmer wheel: each notch travels ~25% less and glides a little longer (keyboard, anchors
       // and the scrollbar keep native distances; phones never load Lenis; reduced motion skips it)
-      lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.75, smoothWheel: true, anchors: { offset: -72 } });
+      lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.75, smoothWheel: true, anchors: true }); // Lenis already honours the page's scroll-padding-top (the header clearance)
       lenis.on('scroll', () => { ScrollTrigger.update(); onScroll(); });
       gsap.ticker.add((t) => lenis.raf(t * 1000));
       gsap.ticker.lagSmoothing(0);
