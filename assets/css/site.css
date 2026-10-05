@@ -870,11 +870,14 @@ html:not(.fx) .hero-copy { --hero-bottom: 64px; }
 /* every row is the same three-column grid: the label and the value sit on the card's centre line, and the
    round copy button always takes the same slot at the row's end (balanced by an equal empty slot at the
    start), so the three buttons stand on one vertical line whatever the length of the value */
-.bank > div { display: grid; justify-items: stretch; row-gap: .1rem; padding: .55rem .6rem .6rem; border-radius: var(--r-sm); box-shadow: var(--clay-well); }
-.bank dt { text-align: center; }
-.bank dd { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; column-gap: .5rem; min-height: 44px; }
-.bank dd > span { grid-column: 2; text-align: center; }
-.bank dd > .copy { grid-column: 3; }
+.bank > div {
+  position: relative; display: grid; align-content: center; justify-items: center; row-gap: .1rem; min-height: 64px;
+  /* equal room at both ends for the 44px button: the label + value stack stays on the card's centre line */
+  padding: .55rem calc(.6rem + 44px + .5rem); border-radius: var(--r-sm); box-shadow: var(--clay-well);
+}
+.bank dt, .bank dd > span { text-align: center; min-width: 0; }
+/* the copy button is centred on the whole row (label + value), not on the value line under the label */
+.bank dd > .copy { position: absolute; inset-inline-end: .6rem; top: 50%; margin-top: -22px; }
 .bank dt { font-size: var(--fs-xs); color: var(--muted); }
 .bank dd { font-weight: 600; font-size: 1.0625rem; }
 .copy { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--surface); cursor: pointer; color: var(--ink); box-shadow: var(--clay-1); transition: transform .45s var(--spring), box-shadow .2s, background-color .2s; }
