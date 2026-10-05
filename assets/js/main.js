@@ -149,10 +149,26 @@ if (FX) { layoutHalo(); heroT = heroP = heroTarget(); heroApply(heroP); }
 // keyboard users tabbing into hero CTAs: bring hero copy back into view
 heroCopy.addEventListener('focusin', () => { if (FX && heroP > 0.06) { window.scrollTo({ top: M.top, behavior: 'auto' }); if (lenis) lenis.scrollTo(M.top, { immediate: true }); heroT = heroP = 0; heroApply(0); } });
 
+/* ---------- back to top ---------- */
+const toTop = $('[data-to-top]');
+function toTopState() {
+  const y = window.scrollY, on = toTop.classList.contains('is-on');
+  // a little hysteresis: shows past the first screen, hides again only near the top
+  if (!on && y > M.vh) toTop.classList.add('is-on');
+  else if (on && y < M.vh * 0.6) toTop.classList.remove('is-on');
+}
+toTop.addEventListener('click', (e) => {
+  if (lenis) lenis.scrollTo(0, { duration: 1.4 });
+  else window.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' });
+  // keyboard and screen-reader activation (no pointer): continue from the top of the page, at the skip link
+  if (e.detail === 0) $('.skip-link').focus({ preventScroll: true });
+  else toTop.blur();
+});
+
 let ticking = false;
 function onScroll() {
   if (ticking) return; ticking = true;
-  requestAnimationFrame(() => { ticking = false; headerState(); heroState(); });
+  requestAnimationFrame(() => { ticking = false; headerState(); heroState(); toTopState(); });
 }
 function onResize() { measure(); layoutHalo(); onScroll(); }
 window.addEventListener('scroll', onScroll, { passive: true });

@@ -920,6 +920,27 @@ html.motion .tier-royal.is-paused .royal-frame, html.motion .tier-royal.is-pause
   .dock-sub { font-weight: 400; }
 }
 
+/* ---------- Back to top: a small round clay pebble with an up arrow ----------
+   It rests at the inline-end edge (left in RTL), in line with the hero's progress rail: above the
+   activities' progress groove on desktop, above the dock (and the safe area) on phones. Hidden near the
+   top and while a dialog is open. */
+.to-top {
+  position: fixed; z-index: 45; inset-inline-end: clamp(16px, 2.2vw, 34px); bottom: calc(4.5vh + 26px);
+  display: grid; place-items: center; width: 46px; height: 46px; padding: 0; border: 0; border-radius: 50%;
+  color: var(--accent); background-color: color-mix(in srgb, var(--surface) 92%, transparent); background-image: var(--grain);
+  box-shadow: var(--clay-1); backdrop-filter: blur(10px); cursor: pointer; -webkit-tap-highlight-color: transparent;
+  opacity: 0; visibility: hidden; transform: translateY(12px) scale(.86);
+  transition: opacity .35s var(--ease), transform .5s var(--spring), visibility 0s .35s, box-shadow .25s var(--ease);
+}
+.to-top svg { width: 22px; height: 22px; transition: transform .45s var(--spring); }
+.to-top.is-on { opacity: 1; visibility: visible; transform: none; transition: opacity .35s var(--ease), transform .5s var(--spring), visibility 0s, box-shadow .25s var(--ease); }
+.to-top:hover svg { transform: translateY(-2px); }
+.to-top:active { transform: scale(.92); box-shadow: var(--clay-press); transition-duration: .12s; }
+body:has(dialog[open]) .to-top { opacity: 0; visibility: hidden; }
+@media (max-width: 767px) {
+  .to-top { inset-inline-end: calc(var(--dock-gap) + 4px); bottom: calc(var(--dock-h) + var(--dock-gap) + var(--sp-3) + env(safe-area-inset-bottom)); width: 44px; height: 44px; }
+}
+
 /* ---------- Dialogs ---------- */
 dialog { color: var(--ink); background: var(--bg); border: 0; padding: 0; text-align: center; }
 dialog::backdrop { background: rgba(16, 15, 13, .58); backdrop-filter: blur(4px); }
@@ -1054,7 +1075,7 @@ html.motion.js .tier.reveal.is-in:has(.tier-input:checked) { transform: translat
 
 /* ---------- Forced colors ---------- */
 @media (forced-colors: active) {
-  .clay, .btn, .tag, .eyebrow, .opt-body, .icon-btn, .copy, .menu-dialog, .menu-inner ul a { border: 1px solid CanvasText; }
+  .clay, .btn, .tag, .eyebrow, .opt-body, .icon-btn, .copy, .menu-dialog, .menu-inner ul a, .to-top { border: 1px solid CanvasText; }
   .lux { background: none !important; color: CanvasText !important; -webkit-text-fill-color: CanvasText !important; -webkit-text-stroke: 0 !important; filter: none !important; }
   .lux-wrap::after { display: none !important; }
   .lux-wrap::before, .hero-halo, .hero-rail, .hero-lede::before { display: none !important; }
