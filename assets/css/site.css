@@ -98,7 +98,7 @@
 
   /* layout */
   --wrap: 1320px;
-  --gutter: clamp(16px, 4.2vw, 64px);
+  --gutter: clamp(20px, 4.2vw, 64px); /* 20px on phones: text never runs to the glass edge */
   --sec: clamp(88px, 5rem + 6vw, 184px);
   --r-sm: 18px;
   --r: 28px;
@@ -841,12 +841,74 @@ html:not(.fx) .hero-copy { --hero-bottom: 64px; }
 .footer-base::before { content: ""; position: absolute; top: 0; inset-inline: 20%; height: 8px; border-radius: 999px; box-shadow: inset 3px 3px 6px rgba(0, 0, 0, .55), inset -2px -2px 5px rgba(255, 236, 214, .06); }
 @media (max-width: 899px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-brand { grid-column: 1 / -1; order: 0; } }
 
+/* ---------- "נבחרת המאה": the royal tier ----------
+   A double gold frame (a burnished outer band whose light slowly travels round, a fine inner hairline),
+   filigree in the four corners, a small crown over the name, a champagne tint, a soft golden glow and,
+   every few seconds, a faint sheen drifting across. Only the band's angle repaints (a 2.5px ring) and
+   the sheen is a transform; both stop off screen, under reduced motion and in forced colours. */
+@property --royal-a { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+.tier-royal {
+  --gold-ink: #7A5A22;
+  --clay-bg: color-mix(in srgb, var(--surface) 90%, #EBD08C 10%);
+  isolation: isolate;
+  box-shadow: var(--clay-2), 0 0 0 1px rgba(184, 145, 63, .3), 0 22px 48px -14px rgba(176, 132, 52, .45), 0 0 34px rgba(233, 207, 134, .26);
+}
+.tier-royal::after {
+  content: ""; position: absolute; inset: 8px; z-index: 2; pointer-events: none;
+  border-radius: calc(var(--r) - 8px); border: 1px solid rgba(184, 145, 63, .5);
+  box-shadow: inset 0 0 0 3px rgba(233, 207, 134, .1);
+}
+.tier-royal .tier-card, .tier-royal .tier-cta { position: relative; z-index: 3; } /* the clay art rests over the frame */
+.tier-royal .tier-cta { margin: 0 26px 26px; }
+.royal-frame {
+  position: absolute; inset: 0; z-index: 2; padding: 2.5px; border-radius: inherit; pointer-events: none;
+  background: conic-gradient(from var(--royal-a), #7A5A22, #E9CF86 10%, #FFF3CC 16%, #C9A24E 26%, #8A6A2B 38%, #F1DA97 52%, #B8913F 64%, #7A5A22 76%, #F6E3A6 88%, #7A5A22);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.royal-corner { position: absolute; z-index: 2; width: 42px; height: 42px; pointer-events: none; filter: drop-shadow(0 1px 1px rgba(122, 90, 34, .25)); }
+.rc-tl { top: 4px; left: 4px; }
+.rc-tr { top: 4px; right: 4px; transform: scaleX(-1); }
+.rc-bl { bottom: 4px; left: 4px; transform: scaleY(-1); }
+.rc-br { bottom: 4px; right: 4px; transform: scale(-1); }
+.royal-glint { position: absolute; inset: 0; z-index: 0; overflow: hidden; border-radius: inherit; pointer-events: none; }
+.royal-glint i { position: absolute; top: -10%; bottom: -10%; left: -45%; width: 40%; opacity: 0; background: linear-gradient(100deg, rgba(255, 240, 200, 0) 0%, rgba(255, 236, 190, .42) 50%, rgba(255, 240, 200, 0) 100%); transform: skewX(-14deg); }
+.royal-crown { display: block; width: 38px; height: 27px; margin: -.2rem auto .1rem; filter: drop-shadow(0 2px 3px rgba(122, 90, 34, .3)) drop-shadow(0 0 8px rgba(233, 207, 134, .5)); }
+.tier-royal .tier-name { color: color-mix(in srgb, var(--ink) 82%, #7A5A22); }
+.tier-royal:has(.tier-input:checked) { --clay-bg: color-mix(in srgb, var(--tint-warm) 88%, #EBD08C 12%); box-shadow: var(--clay-press), 0 0 0 3px var(--accent-solid), 0 0 36px rgba(233, 207, 134, .4); }
+html.motion .royal-frame { animation: royal-turn 16s linear infinite; }
+html.motion .royal-glint i { animation: royal-sweep 9s var(--ease) infinite 1.5s; }
+html.motion .tier-royal.is-paused .royal-frame, html.motion .tier-royal.is-paused .royal-glint i { animation-play-state: paused; }
+@keyframes royal-turn { to { --royal-a: 360deg; } }
+@keyframes royal-sweep { 0%, 58% { opacity: 0; transform: translateX(0) skewX(-14deg); } 62% { opacity: 1; } 96% { opacity: 1; } 100% { opacity: 0; transform: translateX(380%) skewX(-14deg); } }
+/* dark clay: a deeper, warmer gold */
+:root[data-theme="dark"] .tier-royal { --clay-bg: color-mix(in srgb, var(--surface) 90%, #8A6A2B 10%); box-shadow: var(--clay-2), 0 0 0 1px rgba(201, 162, 78, .35), 0 22px 48px -14px rgba(0, 0, 0, .6), 0 0 36px rgba(201, 162, 78, .2); }
+:root[data-theme="dark"] .tier-royal .tier-name { color: #F1DA97; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .tier-royal { --clay-bg: color-mix(in srgb, var(--surface) 90%, #8A6A2B 10%); box-shadow: var(--clay-2), 0 0 0 1px rgba(201, 162, 78, .35), 0 22px 48px -14px rgba(0, 0, 0, .6), 0 0 36px rgba(201, 162, 78, .2); }
+  :root:not([data-theme="light"]) .tier-royal .tier-name { color: #F1DA97; }
+}
+
+/* the same nobility, lighter, in the donation sheet: a still gold hairline, a small crown, a warm glow */
+.opt-royal .opt-body { position: relative; background-color: color-mix(in srgb, var(--surface) 90%, #EBD08C 10%); box-shadow: var(--clay-1), 0 8px 22px -10px rgba(176, 132, 52, .45); }
+.opt-royal .opt-body::before {
+  content: ""; position: absolute; inset: 0; padding: 1.5px; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(120deg, #8A6A2B, #F6E3A6 22%, #C9A24E 45%, #FFF3CC 60%, #B8913F 80%, #7A5A22);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.opt-crown { display: inline-block; width: 24px; height: 17px; margin-inline-end: .4rem; vertical-align: -.1em; filter: drop-shadow(0 0 5px rgba(233, 207, 134, .55)); }
+.opt-royal input:checked + .opt-body { background-color: color-mix(in srgb, var(--tint-warm) 88%, #EBD08C 12%); }
+:root[data-theme="dark"] .opt-royal .opt-body { background-color: color-mix(in srgb, var(--surface) 90%, #8A6A2B 10%); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .opt-royal .opt-body { background-color: color-mix(in srgb, var(--surface) 90%, #8A6A2B 10%); } }
+
 /* ---------- Dock (mobile sticky donate): a floating clay pill ---------- */
 .dock { display: none; }
 @media (max-width: 767px) {
-  body { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+  /* the page's dark footer runs on beneath the floating dock, so its last line clears it */
+  .footer:not(.doc-footer) { padding-bottom: calc(var(--dock-h) + var(--dock-gap) + var(--sp-6) + env(safe-area-inset-bottom)); }
   .dock {
-    position: fixed; inset: auto 10px calc(10px + env(safe-area-inset-bottom)) 10px; z-index: 40; display: flex; gap: 8px; padding: 8px;
+    position: fixed; inset: auto var(--dock-gap) calc(var(--dock-gap) + env(safe-area-inset-bottom)) var(--dock-gap); z-index: 40; display: flex; gap: 8px; padding: 8px;
     border-radius: 999px; background-color: color-mix(in srgb, var(--surface) 92%, transparent); background-image: var(--grain);
     box-shadow: var(--clay-2); backdrop-filter: blur(14px);
   }
@@ -976,7 +1038,7 @@ html.motion .menu-dialog[open] li { animation: menu-item .5s var(--spring) both;
 /* ---------- Toast ---------- */
 .toast { position: fixed; bottom: 28px; inset-inline-start: 50%; transform: translate(50%, 20px) scale(.9); z-index: 60; padding: .75rem 1.4rem; background: #4E5A40; color: #fff; border-radius: 999px; font-weight: 600; opacity: 0; pointer-events: none; box-shadow: 8px 10px 22px rgba(40, 50, 30, .35), inset 2px 2px 4px rgba(255, 255, 255, .3), inset -3px -3px 6px rgba(0, 0, 0, .3); transition: opacity .3s, transform .5s var(--spring); }
 .toast.is-on { opacity: 1; transform: translate(50%, 0) scale(1); }
-@media (max-width: 767px) { .toast { bottom: calc(100px + env(safe-area-inset-bottom)); } }
+@media (max-width: 767px) { .toast { bottom: calc(var(--dock-h) + var(--dock-gap) + var(--sp-4) + env(safe-area-inset-bottom)); } }
 
 /* ---------- Reveal: clay "plops" into place ---------- */
 html.motion.js .reveal { opacity: 0; transform: translateY(32px) scale(.96); transition: opacity .9s var(--ease), transform 1s var(--spring); }
@@ -987,6 +1049,7 @@ html.motion.js .tier.reveal.is-in:has(.tier-input:checked) { transform: translat
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
   .clay:hover .clay-art, .act:hover .act-badge .clay-art, .btn:hover, .tier:hover, .icon-btn:hover, .copy:hover { transform: none; }
+  .royal-frame, .royal-glint i { animation: none !important; }
 }
 
 /* ---------- Forced colors ---------- */
@@ -996,6 +1059,9 @@ html.motion.js .tier.reveal.is-in:has(.tier-input:checked) { transform: translat
   .lux-wrap::after { display: none !important; }
   .lux-wrap::before, .hero-halo, .hero-rail, .hero-lede::before { display: none !important; }
   .tier:has(.tier-input:checked), .opt input:checked + .opt-body { outline: 3px solid Highlight; }
+  .royal-frame, .royal-glint, .royal-corner, .tier-royal::after, .opt-royal .opt-body::before { display: none !important; }
+  .tier-royal { border-width: 3px; border-style: double; }
+  .royal-crown, .opt-crown { filter: none; }
 }
 
 /* ---------- Secondary pages: accessibility statement, privacy policy ---------- */
