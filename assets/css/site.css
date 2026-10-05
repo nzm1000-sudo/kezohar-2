@@ -577,6 +577,12 @@ html:not(.fx) .hero-copy { --hero-bottom: 64px; }
   /* the caption tucks under the header pill, small, at the inline-start edge */
   .hero-caption { bottom: auto; top: calc(var(--header-h) + 8px + var(--sp-2)); inset-inline-start: max(var(--gutter), 20px); }
 }
+/* portrait screens (phones, tablets held upright) get the portrait renders: the whole building, edge to
+   edge, with the render's sky continued above it and a soft desert foreground below (tools/portrait-renders.cjs).
+   hero-scene.js and main.js read the same media query and geometry for the 3D's last frame and the aura. */
+@media (max-aspect-ratio: 4/5) {
+  .hero-photo img { object-position: 50% 92%; }
+}
 @media (max-width: 380px) {
   .hero-copy { padding-inline: var(--gutter); }
   .hero-ctas .btn { flex-basis: 8rem; font-size: .9375rem; padding-inline: .75rem; }
@@ -829,6 +835,18 @@ html:not(.fx) .hero-copy { --hero-bottom: 64px; }
 .finale-copy { display: grid; justify-items: center; text-align: center; padding-block: clamp(120px, 14vh, 180px) 64px; }
 .finale-copy .display-1 em { color: #F0D3B6; }
 .finale-copy .lede { margin: 1.5rem auto 2.25rem; color: rgba(247, 243, 236, .9); max-width: 34ch; }
+/* portrait screens: the portrait night render, anchored at the bottom, keeps the whole building in view.
+   The section is tall enough that the heading, lede and button sit in the sky above the roofs — clear of
+   the header pill on top and, on phones, of the floating dock below the building. */
+@media (max-aspect-ratio: 4/5) {
+  .finale { min-height: max(100svh, 46rem); }
+  .finale-fig img { object-position: 50% 100%; }
+}
+@media (max-aspect-ratio: 4/5) and (max-width: 767px) {
+  .finale-copy { padding-block: calc(var(--header-h) + 8px + var(--sp-7)) var(--sp-7); }
+  .finale-copy .lede { margin: var(--sp-5) auto var(--sp-6); }
+  .finale-fig figcaption { bottom: calc(var(--dock-h) + var(--dock-gap) + var(--sp-3) + env(safe-area-inset-bottom)); inset-inline: max(var(--gutter), 20px) auto; } /* clear of the back-to-top button */
+}
 
 /* ---------- Footer ---------- */
 .footer { background: #141311; color: #EFE7DA; padding-block: clamp(64px, 7vw, 112px) 32px; text-align: center; }

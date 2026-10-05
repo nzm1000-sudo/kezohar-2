@@ -141,15 +141,19 @@ function heroState() {
   if (TEST && TEST.instant) { heroP = heroT; heroApply(heroP); return; }
   if (!heroRaf) { heroLast = 0; heroRaf = requestAnimationFrame(heroTick); }
 }
-// the golden aura sits behind the building of the photo: match the photo's cover-fit box
+// the golden aura sits behind the building of the photo: match the photo's cover-fit box. On portrait
+// screens the photo is the portrait render (tools/portrait-renders.cjs): the 1376×768 frame is scaled by
+// 900/1256 (sideways) and 550/768 (down), shifted 60 px left and placed 1040 px down a 900×1950 picture.
 const heroImg = $('.hero-photo-sharp img');
+const PORTRAIT = mq('(max-aspect-ratio: 4/5)');
 function layoutHalo() {
   if (!FX) return;
   const W = hero.clientWidth, Hh = M.vh;
   const op = getComputedStyle(heroImg).objectPosition.split(' ').map(parseFloat);
   const ox = Number.isNaN(op[0]) ? 0.5 : op[0] / 100, oy = Number.isNaN(op[1]) ? 0.78 : op[1] / 100;
-  const s = Math.max(W / 1376, Hh / 768), w = 1376 * s, h = 768 * s;
-  Object.assign(H.halo.style, { left: ((W - w) * ox).toFixed(1) + 'px', top: ((Hh - h) * oy).toFixed(1) + 'px', width: w.toFixed(1) + 'px', height: h.toFixed(1) + 'px' });
+  const P = PORTRAIT.matches ? { w: 900, h: 1950, x: -60 * 900 / 1256, y: 1040, bw: 1376 * 900 / 1256, bh: 550 } : { w: 1376, h: 768, x: 0, y: 0, bw: 1376, bh: 768 };
+  const s = Math.max(W / P.w, Hh / P.h), l = (W - P.w * s) * ox + P.x * s, t = (Hh - P.h * s) * oy + P.y * s;
+  Object.assign(H.halo.style, { left: l.toFixed(1) + 'px', top: t.toFixed(1) + 'px', width: (P.bw * s).toFixed(1) + 'px', height: (P.bh * s).toFixed(1) + 'px' });
 }
 if (FX) { layoutHalo(); heroT = heroP = heroTarget(); heroApply(heroP); }
 // keyboard users tabbing into hero CTAs: bring hero copy back into view
