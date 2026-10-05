@@ -93,8 +93,8 @@
   /* the hero's vertical rhythm unit grows with the screen's height, so short laptops and tall phones
      keep the same proportions between kicker, title, lines and buttons */
   --hr: clamp(8px, 1.65vh, 18px);
-  /* the mobile dock: 54px controls + 2×8px padding, floating 10px above the safe area */
-  --dock-h: 70px; --dock-gap: 10px;
+  /* the mobile dock: 44px controls + 2×4px padding, floating 14px above the safe area */
+  --dock-h: 52px; --dock-gap: 14px;
   /* iOS Safari reports env(safe-area-inset-bottom) as 0 while its toolbar shows and 34px once it slides
      away, which moved the whole hero copy (and the title under its golden dust) mid-scroll. The bottom
      inset is only needed when the large and small viewports are the same (no toolbar: home-screen app),
@@ -973,16 +973,18 @@ html.motion .tier-royal.is-paused .royal-frame, html.motion .tier-royal.is-pause
   .footer:not(.doc-footer) { padding-bottom: calc(var(--dock-h) + var(--dock-gap) + var(--sp-6) + env(safe-area-inset-bottom)); }
   /* keyboard focus scrolled into view stops above the floating dock, never under it */
   html:has(.dock) { scroll-padding-bottom: calc(var(--dock-h) + var(--dock-gap) * 2 + env(safe-area-inset-bottom)); }
+  /* a small, quiet pill centred above the home indicator: a softer copper, a fine hairline, a low shadow */
   .dock {
-    position: fixed; inset: auto var(--dock-gap) calc(var(--dock-gap) + env(safe-area-inset-bottom)) var(--dock-gap); z-index: 40; display: flex; gap: 8px; padding: 8px;
-    border-radius: 999px; background-color: color-mix(in srgb, var(--surface) 92%, transparent); background-image: var(--grain);
-    box-shadow: var(--clay-2); backdrop-filter: blur(14px);
+    position: fixed; inset: auto 0 calc(var(--dock-gap) + env(safe-area-inset-bottom)) 0; margin-inline: auto; width: min(80vw, 21rem);
+    z-index: 40; display: flex; gap: 4px; padding: 4px;
+    border-radius: 999px; background-color: color-mix(in srgb, var(--surface) 84%, transparent);
+    box-shadow: 0 0 0 1px rgba(110, 76, 44, .12), 0 6px 18px rgba(40, 24, 12, .16); backdrop-filter: blur(14px) saturate(1.1);
   }
-  .dock-tel { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; color: var(--ink); flex: none; background: var(--surface); box-shadow: var(--clay-1); transition: transform .4s var(--spring); }
-  .dock-tel:active { transform: scale(.92); box-shadow: var(--clay-press); }
-  .dock-tel svg { width: 24px; height: 24px; }
-  .dock-btn { flex: 1; min-height: 54px; border: 0; border-radius: 999px; background: var(--btn-bg); color: #fff; font-weight: 600; font-size: 1.0625rem; cursor: pointer; box-shadow: var(--clay-copper); transition: transform .4s var(--spring); }
-  .dock-btn:active { transform: scale(.97); box-shadow: var(--clay-copper-press); }
+  .dock-tel { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--ink); flex: none; background: transparent; transition: transform .4s var(--spring), background-color .2s; }
+  .dock-tel:active { transform: scale(.92); background: color-mix(in srgb, var(--ink) 8%, transparent); }
+  .dock-tel svg { width: 19px; height: 19px; }
+  .dock-btn { flex: 1; min-height: 44px; border: 0; border-radius: 999px; background: #94593A; color: #fff; font-weight: 600; font-size: .9375rem; letter-spacing: .01em; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255, 222, 196, .28), 0 2px 6px rgba(90, 44, 18, .2); transition: transform .4s var(--spring); }
+  .dock-btn:active { transform: scale(.97); box-shadow: inset 0 2px 5px rgba(50, 20, 6, .3); }
   .dock-sub { font-weight: 400; }
 }
 
