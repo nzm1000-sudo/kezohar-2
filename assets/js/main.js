@@ -52,8 +52,12 @@ $$('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
 /* ---------- layout metrics (read on resize only, never inside the scroll path) ---------- */
 const header = $('[data-header]');
 const hero = $('.hero');
-const M = { top: 0, h: 0, vh: 0, head: 0 };
-function measure() { M.top = hero.offsetTop; M.h = hero.offsetHeight; M.vh = window.innerHeight; M.head = header.offsetHeight; }
+const stage = $('.hero-stage');
+// vh: the sticky stage's height (100svh), not innerHeight. On iOS innerHeight grows and shrinks with the
+// toolbar while the stage (and the 720vh hero, in lvh) keep their size: using innerHeight changed the
+// scroll span mid-scroll and the whole sequence lurched when the toolbar collapsed.
+const M = { top: 0, h: 0, vh: 0, w: 0, head: 0 };
+function measure() { M.top = hero.offsetTop; M.h = hero.offsetHeight; M.vh = stage.offsetHeight || window.innerHeight; M.w = hero.clientWidth; M.head = header.offsetHeight; }
 measure();
 
 /* ---------- header ---------- */
@@ -63,6 +67,7 @@ function headerState() {
   if (over) { if (header.dataset.over !== 'hero') { header.dataset.over = 'hero'; navLinks.forEach((l) => l.removeAttribute('aria-current')); } }
   else if (header.dataset.over) delete header.dataset.over;
   header.classList.toggle('is-solid', !over);
+  if (over !== root.__over) { root.__over = over; root.classList.toggle('over-hero', over); }
   header.classList.toggle('is-scrolled', y > 24);
 }
 const navLinks = $$('.nav a');
@@ -74,8 +79,13 @@ const secIO = new IntersectionObserver((ents) => ents.forEach((e) => {
 
 /* ---------- hero scroll choreography (CSS vars; 3D reads the same progress) ---------- */
 // The raw scroll position is only a target: every frame the shown progress eases toward it
-// (time-based, so it feels the same at 60 or 120 Hz). A flick of the wheel or a fast swipe glides
-// through the words → dust → building → photo story instead of snapping.
+// (time-based, so it feels the same at 60 or 120 Hz). With a wheel (desktop, on top of Lenis) the ease is
+// long, so a flick glides through the words → dust → building → photo story instead of snapping. With a
+// finger the native scroll already carries its own momentum: a second, long ease on top of it made the
+// scene trail ~6% of the hero behind the finger and keep drifting after the page had stopped. On touch
+// the ease is only a light de-jitter (~70 ms), so the sequence tracks the finger.
+const TOUCH = mq('(pointer: coarse)').matches;
+const HERO_RATE = TOUCH ? 14 : 2.8;
 const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const WIPE_SOFT = 0.2; // = hero-scene.js WIPE_SOFT (the soft band of the title's dissolve front)
 let heroScene = null, heroP = 0, heroT = 0, heroRaf = 0, heroLast = 0;
@@ -120,13 +130,14 @@ function heroApply(p) {
   const f = (x) => x.toFixed(3);
   put(H.title, 'opacity', f(title));
   const mask = wipe > 0.0005 && title > 0 ? `linear-gradient(to left, transparent ${((wipe - WIPE_SOFT) * 100).toFixed(2)}%, #000 ${(wipe * 100).toFixed(2)}%)` : '';
-  if (mask !== H.title.__mask) { H.title.__mask = mask; if (mask) H.title.style.setProperty('--wipe', mask); else H.title.style.removeProperty('--wipe'); }
+  if (mask !== H.title.__mask) {
+    // while the front sweeps, the title repaints every frame: its glow filters are dropped meanwhile (CSS .is-wiping)
+    if (!mask !== !H.title.__mask) H.title.classList.toggle('is-wiping', !!mask);
+    H.title.__mask = mask; if (mask) H.title.style.setProperty('--wipe', mask); else H.title.style.removeProperty('--wipe');
+  }
   const haloA = dust ? (0.17 * (1 - Math.min(1, wipe))).toFixed(3) : '';
   if (haloA !== H.title.__halo) { H.title.__halo = haloA; if (haloA) H.title.style.setProperty('--halo-a', haloA); else H.title.style.removeProperty('--halo-a'); }
-  for (const [els, v] of [[H.outer, outer], [H.mid, mid], [H.inner, inner]]) {
-    const o = f(v), t = `translateY(${((1 - v) * -14).toFixed(1)}px)`;
-    els.forEach((el) => { put(el, 'opacity', o); put(el, 'transform', t); });
-  }
+  fadeUp(H.outer, outer); fadeUp(H.mid, mid); fadeUp(H.inner, inner);
   put(H.scroll, 'opacity', f(outer));
   put(H.line, 'opacity', f(line)); put(H.line, 'transform', `translateY(${((1 - line) * 16).toFixed(1)}px)`);
   put(H.photo, 'opacity', f(photo)); put(H.sharp, 'opacity', f(1 - blur));
@@ -140,19 +151,33 @@ function heroApply(p) {
   const hidden = inner < 0.02 && title < 0.02; if (hidden !== heroCopy.__hid) { heroCopy.__hid = hidden; heroCopy.toggleAttribute('data-hidden', hidden); }
   if (heroScene) heroScene.setProgress(p, wipe);
 }
-function heroTick(now) {
+function fadeUp(els, v) {
+  const o = v.toFixed(3), t = `translateY(${((1 - v) * -14).toFixed(1)}px)`;
+  for (let i = 0; i < els.length; i++) { put(els[i], 'opacity', o); put(els[i], 'transform', t); }
+}
+// One animation loop: while the 3D scene runs, it calls heroStep at the top of each of its frames (so the
+// DOM layers and the particles always show the same progress, written before the frame is drawn). When
+// there is no running scene (before it boots, off screen, no WebGL) heroTick keeps its own rAF.
+const heroLive = () => !!(heroScene && heroScene.running);
+function heroStep(now) {
+  if (heroP === heroT) { heroLast = now; return; }
   const dt = Math.min(0.1, (now - (heroLast || now)) / 1000); heroLast = now;
-  const k = 1 - Math.exp(-dt * 2.8);
+  const k = 1 - Math.exp(-dt * HERO_RATE);
   heroP += (heroT - heroP) * k;
   if (Math.abs(heroT - heroP) < 0.0003) heroP = heroT;
   heroApply(heroP);
-  heroRaf = heroP === heroT ? 0 : requestAnimationFrame(heroTick);
+}
+function heroTick(now) {
+  heroRaf = 0;
+  if (heroLive()) return; // the scene's loop has taken over
+  heroStep(now);
+  if (heroP !== heroT) heroRaf = requestAnimationFrame(heroTick);
 }
 function heroState() {
   if (!FX || !root.classList.contains('fx')) return;
   heroT = heroTarget();
   if (TEST && TEST.instant) { heroP = heroT; heroApply(heroP); return; }
-  if (!heroRaf) { heroLast = 0; heroRaf = requestAnimationFrame(heroTick); }
+  if (!heroRaf && !heroLive()) { heroLast = 0; heroRaf = requestAnimationFrame(heroTick); }
 }
 // the golden aura sits behind the building of the photo: match the photo's cover-fit box. On portrait
 // screens the photo is the portrait render (tools/portrait-renders.cjs): the 1376×768 frame is scaled by
@@ -161,7 +186,7 @@ const heroImg = $('.hero-photo-sharp img');
 const PORTRAIT = mq('(max-aspect-ratio: 4/5)');
 function layoutHalo() {
   if (!FX) return;
-  const W = hero.clientWidth, Hh = M.vh;
+  const W = M.w, Hh = M.vh;
   const op = getComputedStyle(heroImg).objectPosition.split(' ').map(parseFloat);
   const ox = Number.isNaN(op[0]) ? 0.5 : op[0] / 100, oy = Number.isNaN(op[1]) ? 0.78 : op[1] / 100;
   const P = PORTRAIT.matches ? { w: 900, h: 1950, x: -60 * 900 / 1256, y: 1040, bw: 1376 * 900 / 1256, bh: 550 } : { w: 1376, h: 768, x: 0, y: 0, bw: 1376, bh: 768 };
@@ -193,7 +218,20 @@ function onScroll() {
   if (ticking) return; ticking = true;
   requestAnimationFrame(() => { ticking = false; headerState(); heroState(); toTopState(); });
 }
-function onResize() { measure(); layoutHalo(); onScroll(); }
+// iOS fires resize (and visualViewport resize) many times while its toolbar slides; the hero is sized in
+// svh/lvh, so nothing in it changes then. Re-measure once per frame at most, and only re-lay the halo
+// when the stage really changed size.
+let resizeRaf = 0;
+function onResize() {
+  if (resizeRaf) return;
+  resizeRaf = requestAnimationFrame(() => {
+    resizeRaf = 0;
+    const w = M.w, vh = M.vh;
+    measure();
+    if (M.w !== w || M.vh !== vh) layoutHalo();
+    onScroll();
+  });
+}
 window.addEventListener('scroll', onScroll, { passive: true });
 window.addEventListener('resize', onResize, { passive: true });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
@@ -338,10 +376,13 @@ if (FX) {
   const loadHero = async () => {
     try {
       const { createHero } = await import('./hero-scene.js');
-      heroScene = createHero($('.hero-canvas'), {
+      const sc = await createHero($('.hero-canvas'), {
         mobile: MOBILE, poster: posterMode, noGov: !!(TEST && TEST.noGov), photo: heroImg, title: dustTitle, tier: TEST && TEST.tier != null ? TEST.tier : null,
-        onStop: () => { heroScene = null; },
+        onStop: () => { heroScene = null; onScroll(); },
+        onFrame: (now) => { if (heroScene) heroStep(now); },
       });
+      if (!sc) return;
+      heroScene = sc;
       heroApply(heroP);
       if (TEST) window.__hero = heroScene;
     } catch (err) {
