@@ -35,22 +35,37 @@ function pickTier(renderer, mobile) {
   return score >= 1 ? 2 : score >= -1 ? 1 : 0;
 }
 
+// iPhone / iPad Safari (iPadOS reports a Mac): a phone GPU behind a 3× screen — start one step lighter
+const IOS = /iP(hone|od|ad)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+// hand the main thread back between the heavy start-up steps, so a scroll that has already begun keeps
+// its frames (the DOM side of the hero keeps easing) instead of freezing for the whole boot
+const breathe = () => new Promise((r) => { if (window.scheduler && scheduler.yield) scheduler.yield().then(r); else setTimeout(r, 0); });
+
 // noGov: disables the FPS governor (only passed by local test runs on software GL).
 // photo: the <img> of the dawn render the scene dissolves into; its cover-fit crop sets the final framing.
 // title: the hero title element whose glyphs become the first particles.
-export function createHero(canvas, { mobile = false, poster = false, noGov = false, photo = null, title = null, tier: forceTier = null, onStop } = {}) {
+// onFrame(now): called at the top of every rendered frame, so main.js eases the scroll progress and writes
+// the DOM side in the same animation frame that draws it (one loop, no frame of lag between them).
+export async function createHero(canvas, { mobile = false, poster = false, noGov = false, photo = null, title = null, tier: forceTier = null, onStop, onFrame = null } = {}) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance', preserveDrawingBuffer: poster });
-  const tier = forceTier != null ? forceTier : pickTier(renderer, mobile);
-  const COUNTS = mobile ? [7000, 11000, 15000] : [12000, 21000, 30000];
+  // reading the shader logs back forces a synchronous compile; only local test runs want the check
+  renderer.debug.checkShaderErrors = noGov || poster;
+  let tier = forceTier != null ? forceTier : pickTier(renderer, mobile);
+  if (forceTier == null && IOS && mobile) tier = Math.min(tier, 1);
+  // phones draw noticeably fewer points (each a little larger): the fill rate of additive points is what
+  // a phone GPU runs out of first
+  const COUNTS = mobile ? [6000, 8500, 11000] : [12000, 21000, 30000];
   const DPRS = [1, 1.25, 1.5];
   const N = COUNTS[tier];
   let dpr = Math.min(window.devicePixelRatio || 1, DPRS[tier]);
   renderer.setPixelRatio(dpr);
+  if (!poster) await breathe();
 
   const scene = new THREE.Scene();
   scene.background = skyTexture();
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 400);
   const geo = buildCloud(N);
+  if (!poster) await breathe();
   // fewer points → each a little larger, so the building keeps the same luminous body
   const mat = makeMaterial({ size: (mobile ? 2.3 : 2.7) * ((mobile ? 15000 : 30000) / N) ** 0.3, pr: dpr });
   const gain = mobile ? 0.92 : 1.32;
@@ -97,6 +112,7 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     return { x: group.position.x - (sx - w / 2) / ppu, y: (sy - h / 2) / ppu, z, shift: 0 };
   }
 
+  let stopped = false;
   const state = { progress: 0, mx: 0, my: 0, cx: 0, cy: 0, running: false, visible: true, dist: 34, baseSize: mat.uniforms.uSize.value, dust: false };
   const clock = new THREE.Clock();
 
@@ -218,16 +234,24 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     state.dust = n > 200;
   }
   // re-sample on the next frame whenever the canvas or the title changes size (rotation, a new font
-  // size, fonts arriving); pure moves of the title are followed every frame without re-sampling
+  // size, fonts arriving)
   const resample = () => { cancelAnimationFrame(rsRaf); rsRaf = requestAnimationFrame(() => { sampleTitle(); }); };
   const ro = new ResizeObserver(() => { resize(); resample(); });
   ro.observe(canvas);
   if (title) ro.observe(title);
-  const vv = window.visualViewport;
-  if (vv) vv.addEventListener('resize', resample, { passive: true });
   window.addEventListener('orientationchange', resample, { passive: true });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!stopped) resample(); });
-  // where the title is now, relative to where it was sampled (canvas pixels)
+  // Where the title is now, relative to where it was sampled (canvas pixels). The title stands still inside
+  // the sticky stage while the visitor scrolls, so its offset is NOT read every frame (two layout reads
+  // per frame, right after main.js wrote styles = a forced layout per frame). It is re-read once after
+  // something that could move it settles: a resize (iOS toolbar / visual viewport) or the end of a scroll.
+  let followDue = true, followT = 0;
+  const markFollow = () => { clearTimeout(followT); followT = setTimeout(() => { followDue = true; }, 120); };
+  const vv = window.visualViewport;
+  if (vv) vv.addEventListener('resize', markFollow, { passive: true });
+  window.addEventListener('resize', markFollow, { passive: true });
+  const scrollEnd = 'onscrollend' in window ? 'scrollend' : 'scroll';
+  window.addEventListener(scrollEnd, markFollow, { passive: true });
   function followTitle() {
     if (!state.ref || !title) return;
     const lr = title.getBoundingClientRect(), cr = canvas.getBoundingClientRect();
@@ -235,7 +259,8 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     if (Math.abs(lr.width - state.ref.w) > 1 || Math.abs(lr.height - state.ref.h) > 1) resample();
     tu.uTextShift.value.set(dx, dy);
   }
-  sampleTitle();
+  if (!poster) await breathe();
+  await sampleTitle();
 
   // ---------- pointer / gyro parallax (slow, gentle, time-based) ----------
   const onMove = (e) => { state.mx = (e.clientX / window.innerWidth) * 2 - 1; state.my = (e.clientY / window.innerHeight) * 2 - 1; };
@@ -267,8 +292,9 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
 
   const vtl = mat.uniforms.uViewToLocal.value;
   let raf = 0;
-  function frame() {
+  function frame(now) {
     raf = requestAnimationFrame(frame);
+    if (onFrame) onFrame(now);
     const dt = Math.min(clock.getDelta(), 0.1);
     render(clock.elapsedTime, dt);
     govern(dt);
@@ -285,7 +311,7 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     u.uWipe.value = wipe;
     u.uLift.value = state.noLift ? 0 : 1;
     u.uTextMap.value.set(state.w, state.h, state.half * camera.aspect * TEXT_DEPTH, state.half * TEXT_DEPTH);
-    if (state.dust && wipe > 0 && assemble < 0.99) followTitle();
+    if (followDue && state.dust && wipe > 0 && assemble < 0.99) { followDue = false; followTitle(); }
     u.uIntensity.value = lerp(1.35, gain, assemble);
     ground.material.uniforms.uOpacity.value = assemble * assemble * (1 - dissolve);
     mass.userData.material.uniforms.uOpacity.value = sm(0.55, 1, assemble) * (1 - sm(0, 0.55, dissolve)) * 0.94;
@@ -325,8 +351,7 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     if (onStop) onStop(fromGovernor ? 'fps' : 'manual');
     destroy(); // a stopped scene never restarts: free its GPU buffers, observers and listeners
   }
-  let stopped = false;
-  function destroy() { pause(); cancelAnimationFrame(rsRaf); ro.disconnect(); if (vv) vv.removeEventListener('resize', resample); window.removeEventListener('orientationchange', resample); ground.geometry.dispose(); ground.material.dispose(); mass.userData.dispose(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('pointermove', onMove); window.removeEventListener('deviceorientation', onTilt); geo.dispose(); mat.dispose(); if (scene.background && scene.background.dispose) scene.background.dispose(); renderer.dispose(); }
+  function destroy() { pause(); cancelAnimationFrame(rsRaf); clearTimeout(followT); ro.disconnect(); if (vv) vv.removeEventListener('resize', markFollow); window.removeEventListener('resize', markFollow); window.removeEventListener(scrollEnd, markFollow); window.removeEventListener('orientationchange', resample); ground.geometry.dispose(); ground.material.dispose(); mass.userData.dispose(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('pointermove', onMove); window.removeEventListener('deviceorientation', onTilt); geo.dispose(); mat.dispose(); if (scene.background && scene.background.dispose) scene.background.dispose(); renderer.dispose(); }
 
   const io = new IntersectionObserver(([en]) => { state.visible = en.isIntersecting; sync(); }, { threshold: 0 });
   io.observe(canvas);
@@ -334,13 +359,20 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
   document.addEventListener('visibilitychange', onVis);
   function sync() { if (state.visible && !document.hidden) start(); else pause(); }
 
-  if (poster) { render(4.2); } else { sync(); }
+  if (poster) { render(4.2); } else {
+    // compile the shaders before the first frame is due (in parallel where the browser can), so the first
+    // rendered frame is not also a long synchronous compile
+    try { if (renderer.compileAsync) await renderer.compileAsync(scene, camera); } catch (e) { /* compiled on first draw */ }
+    if (stopped) return null;
+    sync();
+  }
   requestAnimationFrame(() => canvas.classList.add('is-live'));
 
   return {
     // wipe: the position of the dissolve front (main.js computes it once for the CSS mask and the dust)
     setProgress(p, wipe) { state.progress = p; state.wipe = wipe; },
     get hasDust() { return state.dust; },
+    get running() { return state.running; },
     get points() { return { N, tier, drawn: Math.min(N, geo.drawRange.count), dpr, level, text: state.textN || 0 }; },
     resample: sampleTitle,
     // test runs only (main.js exposes this object on localhost): render one frame, optionally without the dissolve
