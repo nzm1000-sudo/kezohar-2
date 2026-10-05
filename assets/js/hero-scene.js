@@ -5,12 +5,16 @@ import { buildCloud, makeMass, makeMaterial, makeGroundGlow, setDepth, skyTextur
 
 const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const lerp = (a, b, t) => a + (b - a) * t;
-const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2); // the shader's ease()
 
 // Stage map (fractions of the 720vh hero; main.js drives the DOM side with matching numbers):
-//   the words leave 0.4–6.4% · only then the title → dust 7–12% · dust gathers 15–44% · hold ·
+//   the words leave 0.4–6.4% · only then the title → dust 7–12% (a front sweeping the letters) · dust gathers 15–44% · hold ·
 //   orbit 50–71% · dissolve 67–99% (photo 60–95%)
 export const STAGE = { textIn: [0.07, 0.12], assemble: [0.15, 0.44], orbit: [0.5, 0.71], dissolve: [0.67, 0.99] };
+// The title's dissolve front: 0 = all white letters, 1 + WIPE_SOFT (+ the noise) = all dust. The front runs
+// from the title's right edge (where Hebrew starts) to its left edge; WIPE_SOFT is the width of the
+// soft band where a stroke is part letter, part dust. main.js uses the same numbers for the CSS mask.
+export const WIPE_SOFT = 0.2;
+export const wipeAt = (p) => sm(...STAGE.textIn, p) * (1 + WIPE_SOFT + 0.04);
 
 // Device capability → quality tier (0 low, 1 mid, 2 high). Cheap signals first; the runtime governor
 // below then corrects with real frame times.
@@ -109,29 +113,44 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     camera.updateProjectionMatrix();
   }
   resize();
-  let rsT = 0, lastW = 0, lastH = 0;
-  const ro = new ResizeObserver(() => {
-    resize();
-    // phones resize the viewport as the URL bar slides; only re-sample on a real layout change
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    if (Math.abs(w - lastW) > 2 || Math.abs(h - lastH) > 80) { clearTimeout(rsT); rsT = setTimeout(sampleTitle, 220); }
-  });
-  ro.observe(canvas);
-
   // ---------- title → golden dust ----------
-  // Draw each word of the title with its own computed font onto an offscreen canvas, exactly where
-  // the browser laid it out, sample the glyph pixels and turn them into view-space start points.
-  const TEXT_DEPTH = 18;
+  // Each word of the title is drawn with its own computed font onto an offscreen canvas, exactly where
+  // the browser laid it out (its baseline is read from the DOM itself, never guessed from font metrics),
+  // and the glyph pixels become the dust's start points. They are stored in canvas pixels and turned
+  // into view-space points in the shader with the *current* canvas size, plus the distance the title
+  // has moved since it was sampled (read every frame while the dust is on the letters). So when a
+  // phone's toolbar slides away and the layout shifts (iOS: env(safe-area-inset-bottom) changes, the
+  // viewport grows), the dust stays on the white letters instead of becoming a ghost copy beside them.
+  const TEXT_DEPTH = 18; // = the shader's view-space depth of the title plane
+  const tu = mat.uniforms;
+  let sampling = 0, rsRaf = 0;
+  function baselineOffset(word) {
+    // distance from the top of a word's text box to its baseline, measured on a hidden twin line
+    // (a zero-height inline-block sits exactly on the baseline in every engine)
+    const host = title.parentNode;
+    if (!host) return NaN;
+    const m = document.createElement('span'), probe = document.createElement('i');
+    m.setAttribute('aria-hidden', 'true');
+    m.style.cssText = 'position:absolute;inset-inline-start:0;top:0;visibility:hidden;white-space:nowrap;pointer-events:none;margin:0;padding:0;border:0';
+    probe.style.cssText = 'display:inline-block;width:0;height:0;margin:0;padding:0;border:0;vertical-align:baseline';
+    m.append(document.createTextNode(word), probe);
+    host.append(m);
+    const r = document.createRange(); r.selectNodeContents(m.firstChild);
+    const d = probe.getBoundingClientRect().top - r.getBoundingClientRect().top;
+    m.remove();
+    return d;
+  }
   async function sampleTitle() {
     if (!title || !textIdx.length) return;
     const node = title.firstChild;
     if (!node || node.nodeType !== 3) return;
+    const token = ++sampling;
     const cs = getComputedStyle(title);
     const font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
     try { await document.fonts.load(font, node.data); } catch (e) { /* draw with what is there */ }
-    const cr = canvas.getBoundingClientRect(), W = Math.round(cr.width), H = Math.round(cr.height);
-    if (!W || !H) return;
-    lastW = canvas.clientWidth; lastH = canvas.clientHeight;
+    if (token !== sampling) return; // a newer sample is on its way
+    const cr = canvas.getBoundingClientRect(), W = cr.width, H = cr.height;
+    if (W < 2 || H < 2) return;
     const words = [];
     let i = 0;
     for (const w of node.data.split(' ')) {
@@ -143,20 +162,25 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
       i += w.length + 1;
     }
     if (!words.length) return;
-    const x0 = Math.max(0, Math.floor(Math.min(...words.map((o) => o.rc.left)) - cr.left - 8));
-    const y0 = Math.max(0, Math.floor(Math.min(...words.map((o) => o.rc.top)) - cr.top - 8));
-    const x1 = Math.min(W, Math.ceil(Math.max(...words.map((o) => o.rc.right)) - cr.left + 8));
-    const y1 = Math.min(H, Math.ceil(Math.max(...words.map((o) => o.rc.bottom)) - cr.top + 8));
+    const lr = title.getBoundingClientRect();
+    const x0 = Math.floor(Math.min(...words.map((o) => o.rc.left)) - cr.left - 8);
+    const y0 = Math.floor(Math.min(...words.map((o) => o.rc.top)) - cr.top - 24);
+    const x1 = Math.ceil(Math.max(...words.map((o) => o.rc.right)) - cr.left + 8);
+    const y1 = Math.ceil(Math.max(...words.map((o) => o.rc.bottom)) - cr.top + 24);
     const bw = x1 - x0, bh = y1 - y0;
     if (bw < 4 || bh < 4) return;
     const cv = document.createElement('canvas'); cv.width = bw; cv.height = bh;
     const g = cv.getContext('2d', { willReadFrequently: true });
     g.font = font; g.direction = 'rtl'; g.textAlign = 'right'; g.textBaseline = 'alphabetic'; g.fillStyle = '#fff';
+    if ('letterSpacing' in g && cs.letterSpacing !== 'normal') g.letterSpacing = cs.letterSpacing;
+    let base = baselineOffset(words[0].w);
     for (const { w, rc } of words) {
-      const m = g.measureText(w);
-      const asc = m.fontBoundingBoxAscent || m.actualBoundingBoxAscent * 1.15, desc = m.fontBoundingBoxDescent || m.actualBoundingBoxDescent;
-      const y = rc.top - cr.top - y0 + (rc.height - (asc + desc)) / 2 + asc;
-      g.fillText(w, rc.right - cr.left - x0, y);
+      if (!Number.isFinite(base)) { // fallback: centre the font's box in the text box
+        const m = g.measureText(w);
+        const asc = m.fontBoundingBoxAscent || m.actualBoundingBoxAscent * 1.15, desc = m.fontBoundingBoxDescent || m.actualBoundingBoxDescent;
+        base = (rc.height - (asc + desc)) / 2 + asc;
+      }
+      g.fillText(w, rc.right - cr.left - x0, rc.top - cr.top - y0 + base);
     }
     const data = g.getImageData(0, 0, bw, bh).data;
     let ink = 0;
@@ -169,25 +193,47 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     for (let y = step / 2; y < bh; y += step) for (let x = step / 2; x < bw; x += step) {
       const sx = Math.min(bw - 1, Math.max(0, Math.round(x + (rnd() - 0.5) * step * 0.7)));
       const sy = Math.min(bh - 1, Math.max(0, Math.round(y + (rnd() - 0.5) * step * 0.7)));
-      if (data[(sy * bw + sx) * 4 + 3] > 110) smp.push(sx + x0, sy + y0);
+      if (data[(sy * bw + sx) * 4 + 3] > 110) smp.push(sx + x0 + 0.5, sy + y0 + 0.5);
     }
     const n = Math.min(want, smp.length / 2);
     const arr = textAttr.array;
     arr.fill(0);
-    const fx = state.half * camera.aspect * TEXT_DEPTH, fy = state.half * TEXT_DEPTH;
+    // the wipe coordinate: 0 at the title box's right edge (where Hebrew starts) → 1 at its left edge,
+    // the same box the CSS mask of the white letters spans (a little noise makes the front organic)
+    const lx = lr.left - cr.left, lw = Math.max(1, lr.width);
     for (let k = 0; k < n; k++) {
       // samples are in reading order; take an even spread when there are more samples than particles
       const j = Math.floor((k * smp.length / 2) / n) * 2;
       const o = textIdx[k] * 4;
-      arr[o] = (smp[j] / W * 2 - 1) * fx;
-      arr[o + 1] = (1 - smp[j + 1] / H * 2) * fy;
-      arr[o + 2] = -TEXT_DEPTH;
+      arr[o] = smp[j];
+      arr[o + 1] = smp[j + 1];
+      arr[o + 2] = Math.min(1, Math.max(0, (lx + lw - smp[j]) / lw + (rnd() - 0.5) * 0.07));
       arr[o + 3] = 1;
     }
     textAttr.needsUpdate = true;
-    mat.uniforms.uTextPx.value = Math.min(4.2, Math.max(1.6, step * 1.25)) * dpr;
+    tu.uTextPx.value = Math.min(4.2, Math.max(1.6, step * 1.25)) * dpr;
+    state.ref = { x: lr.left - cr.left, y: lr.top - cr.top, w: lr.width, h: lr.height };
+    tu.uTextShift.value.set(0, 0);
     state.textN = n;
     state.dust = n > 200;
+  }
+  // re-sample on the next frame whenever the canvas or the title changes size (rotation, a new font
+  // size, fonts arriving); pure moves of the title are followed every frame without re-sampling
+  const resample = () => { cancelAnimationFrame(rsRaf); rsRaf = requestAnimationFrame(() => { sampleTitle(); }); };
+  const ro = new ResizeObserver(() => { resize(); resample(); });
+  ro.observe(canvas);
+  if (title) ro.observe(title);
+  const vv = window.visualViewport;
+  if (vv) vv.addEventListener('resize', resample, { passive: true });
+  window.addEventListener('orientationchange', resample, { passive: true });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!stopped) resample(); });
+  // where the title is now, relative to where it was sampled (canvas pixels)
+  function followTitle() {
+    if (!state.ref || !title) return;
+    const lr = title.getBoundingClientRect(), cr = canvas.getBoundingClientRect();
+    const dx = lr.left - cr.left - state.ref.x, dy = lr.top - cr.top - state.ref.y;
+    if (Math.abs(lr.width - state.ref.w) > 1 || Math.abs(lr.height - state.ref.h) > 1) resample();
+    tu.uTextShift.value.set(dx, dy);
   }
   sampleTitle();
 
@@ -233,10 +279,13 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     const u = mat.uniforms;
     const tt = t * 0.7; // all ambient motion runs a little slower
     u.uTime.value = tt; u.uAssemble.value = assemble; u.uDissolve.value = dissolve;
-    u.uTextIn.value = state.dust ? sm(...STAGE.textIn, p) : 0;
-    // how much of the dust title still stands on the letters (the slowest particle: delay 1 → .3)
-    const te = ease(Math.min(1, Math.max(0, (assemble - 0.126) / 0.58)));
-    state.titleA = u.uTextIn.value * (1 - sm(0, 0.35, te));
+    // the white letters erode (CSS mask, main.js) along the same front that gives birth to their dust
+    const wipe = state.wipe != null ? state.wipe : wipeAt(p);
+    u.uTextIn.value = state.dust ? 1 : 0;
+    u.uWipe.value = wipe;
+    u.uLift.value = state.noLift ? 0 : 1;
+    u.uTextMap.value.set(state.w, state.h, state.half * camera.aspect * TEXT_DEPTH, state.half * TEXT_DEPTH);
+    if (state.dust && wipe > 0 && assemble < 0.99) followTitle();
     u.uIntensity.value = lerp(1.35, gain, assemble);
     ground.material.uniforms.uOpacity.value = assemble * assemble * (1 - dissolve);
     mass.userData.material.uniforms.uOpacity.value = sm(0.55, 1, assemble) * (1 - sm(0, 0.55, dissolve)) * 0.94;
@@ -277,7 +326,7 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     destroy(); // a stopped scene never restarts: free its GPU buffers, observers and listeners
   }
   let stopped = false;
-  function destroy() { pause(); clearTimeout(rsT); ro.disconnect(); ground.geometry.dispose(); ground.material.dispose(); mass.userData.dispose(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('pointermove', onMove); window.removeEventListener('deviceorientation', onTilt); geo.dispose(); mat.dispose(); if (scene.background && scene.background.dispose) scene.background.dispose(); renderer.dispose(); }
+  function destroy() { pause(); cancelAnimationFrame(rsRaf); ro.disconnect(); if (vv) vv.removeEventListener('resize', resample); window.removeEventListener('orientationchange', resample); ground.geometry.dispose(); ground.material.dispose(); mass.userData.dispose(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('pointermove', onMove); window.removeEventListener('deviceorientation', onTilt); geo.dispose(); mat.dispose(); if (scene.background && scene.background.dispose) scene.background.dispose(); renderer.dispose(); }
 
   const io = new IntersectionObserver(([en]) => { state.visible = en.isIntersecting; sync(); }, { threshold: 0 });
   io.observe(canvas);
@@ -289,13 +338,13 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
   requestAnimationFrame(() => canvas.classList.add('is-live'));
 
   return {
-    setProgress(p) { state.progress = p; },
+    // wipe: the position of the dissolve front (main.js computes it once for the CSS mask and the dust)
+    setProgress(p, wipe) { state.progress = p; state.wipe = wipe; },
     get hasDust() { return state.dust; },
-    get dustTitle() { return state.titleA || 0; },
     get points() { return { N, tier, drawn: Math.min(N, geo.drawRange.count), dpr, level, text: state.textN || 0 }; },
     resample: sampleTitle,
     // test runs only (main.js exposes this object on localhost): render one frame, optionally without the dissolve
-    renderAt(p, t, { holdDissolve = false } = {}) { state.progress = p; state.holdDissolve = holdDissolve; render(t); state.holdDissolve = false; },
+    renderAt(p, t, { holdDissolve = false, wipe = null, noLift = false } = {}) { state.progress = p; state.wipe = wipe; state.holdDissolve = holdDissolve; state.noLift = noLift; render(t); state.holdDissolve = false; state.noLift = false; },
     stop,
     destroy,
   };
