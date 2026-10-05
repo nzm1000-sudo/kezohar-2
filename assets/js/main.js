@@ -77,6 +77,7 @@ const secIO = new IntersectionObserver((ents) => ents.forEach((e) => {
 // (time-based, so it feels the same at 60 or 120 Hz). A flick of the wheel or a fast swipe glides
 // through the words → dust → building → photo story instead of snapping.
 const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+const WIPE_SOFT = 0.2; // = hero-scene.js WIPE_SOFT (the soft band of the title's dissolve front)
 let heroScene = null, heroP = 0, heroT = 0, heroRaf = 0, heroLast = 0;
 const heroCopy = $('.hero-copy');
 const dustTitle = $('[data-dust-title]');
@@ -91,7 +92,10 @@ const H = {
 };
 // write a style only when it changes, straight onto the element that uses it
 const put = (el, prop, v) => { const c = el.__kz || (el.__kz = {}); if (c[prop] !== v) { c[prop] = v; el.style[prop] = v; } };
-function heroClear() { Object.values(H).flat().forEach((el) => { if (el && el.__kz) { Object.keys(el.__kz).forEach((k) => { el.style[k] = ''; }); el.__kz = null; } }); }
+function heroClear() {
+  Object.values(H).flat().forEach((el) => { if (el && el.__kz) { Object.keys(el.__kz).forEach((k) => { el.style[k] = ''; }); el.__kz = null; } });
+  ['--wipe', '--halo-a'].forEach((k) => H.title.style.removeProperty(k)); H.title.__mask = H.title.__halo = null;
+}
 function heroTarget() {
   const span = M.h - M.vh;
   return span > 0 ? Math.min(1, Math.max(0, (window.scrollY - M.top) / span)) : 0;
@@ -101,7 +105,12 @@ function heroApply(p) {
   // hug the title last), and only once they are all gone does the title hand over to its particle
   // twin (hero-scene STAGE.textIn 7–12%). Without the 3D the title simply fades at the same moment.
   const dust = heroScene && heroScene.hasDust;
-  const title = 1 - (dust ? sm(0.072, 0.118, p) : sm(0.072, 0.15, p));
+  // With the 3D the title is not faded but eroded: a soft front sweeps the letters from right to left
+  // (a CSS mask), and the scene gives birth to each dust particle on the stroke the moment the front
+  // uncovers it (same numbers: hero-scene WIPE_SOFT / wipeAt). Each stroke is either white letter or
+  // dust in the same spot — never both side by side.
+  const wipe = dust ? sm(0.07, 0.12, p) * (1 + WIPE_SOFT + 0.04) : 0;
+  const title = dust ? (wipe >= 1 + WIPE_SOFT + 0.039 ? 0 : 1) : 1 - sm(0.072, 0.15, p);
   const outer = 1 - sm(0.004, 0.044, p), mid = 1 - sm(0.014, 0.054, p), inner = 1 - sm(0.024, 0.064, p);
   const line = sm(0.3, 0.37, p) * (1 - sm(0.5, 0.57, p));
   // a long, overlapping cross-fade: the photo arrives over ~35% of the stage while the points thin out
@@ -110,6 +119,10 @@ function heroApply(p) {
   const halo = sm(0.75, 0.97, p);
   const f = (x) => x.toFixed(3);
   put(H.title, 'opacity', f(title));
+  const mask = wipe > 0.0005 && title > 0 ? `linear-gradient(to left, transparent ${((wipe - WIPE_SOFT) * 100).toFixed(2)}%, #000 ${(wipe * 100).toFixed(2)}%)` : '';
+  if (mask !== H.title.__mask) { H.title.__mask = mask; if (mask) H.title.style.setProperty('--wipe', mask); else H.title.style.removeProperty('--wipe'); }
+  const haloA = dust ? (0.17 * (1 - Math.min(1, wipe))).toFixed(3) : '';
+  if (haloA !== H.title.__halo) { H.title.__halo = haloA; if (haloA) H.title.style.setProperty('--halo-a', haloA); else H.title.style.removeProperty('--halo-a'); }
   for (const [els, v] of [[H.outer, outer], [H.mid, mid], [H.inner, inner]]) {
     const o = f(v), t = `translateY(${((1 - v) * -14).toFixed(1)}px)`;
     els.forEach((el) => { put(el, 'opacity', o); put(el, 'transform', t); });
@@ -125,7 +138,7 @@ function heroApply(p) {
   railDots.forEach((d) => { const on = p >= d.at - 0.005; if (on !== d.on) { d.on = on; d.el.classList.toggle('is-on', on); } });
   const hOn = halo > 0.005; if (hOn !== H.halo.__on) { H.halo.__on = hOn; H.halo.classList.toggle('is-on', hOn); }
   const hidden = inner < 0.02 && title < 0.02; if (hidden !== heroCopy.__hid) { heroCopy.__hid = hidden; heroCopy.toggleAttribute('data-hidden', hidden); }
-  if (heroScene) heroScene.setProgress(p);
+  if (heroScene) heroScene.setProgress(p, wipe);
 }
 function heroTick(now) {
   const dt = Math.min(0.1, (now - (heroLast || now)) / 1000); heroLast = now;
@@ -329,7 +342,7 @@ if (FX) {
         mobile: MOBILE, poster: posterMode, noGov: !!(TEST && TEST.noGov), photo: heroImg, title: dustTitle, tier: TEST && TEST.tier != null ? TEST.tier : null,
         onStop: () => { heroScene = null; },
       });
-      heroScene.setProgress(heroP);
+      heroApply(heroP);
       if (TEST) window.__hero = heroScene;
     } catch (err) {
       console.warn('3D disabled:', err && err.message);
