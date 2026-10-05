@@ -707,6 +707,8 @@ html:not(.fx) .hero-copy { --hero-bottom: 64px; }
 .partner-head .lede { margin-top: 1.25rem; }
 .note-line { display: inline-flex; gap: .6rem; align-items: center; margin-top: 1.5rem; padding: .5rem 1.2rem; border-radius: 999px; font-size: var(--fs-small); font-weight: 500; color: var(--sage-ink); background: var(--tint-sage); box-shadow: var(--clay-1); }
 .note-line svg, .tax-band svg { width: 22px; height: 22px; flex: none; }
+/* phones: the line wraps, so the check stands centred above it and the band becomes a soft rounded slab */
+@media (max-width: 639px) { .tax-band { flex-direction: column; gap: .4rem; padding: 1rem 1.5rem 1.1rem; border-radius: 28px; } }
 /* the clay diorama: 3D clay building (three.js) over a static clay fallback */
 .ignite {
   position: relative; width: 100%; aspect-ratio: 21 / 9; overflow: hidden; border-radius: var(--r-lg);
@@ -814,8 +816,14 @@ html:not(.fx) .hero-copy { --hero-bottom: 64px; }
 .phones a:hover { color: var(--accent); }
 .qr { width: 160px; height: 160px; padding: 10px; border-radius: var(--r-sm); background: #F7F3EC; box-shadow: var(--clay-well); }
 .bank { display: grid; gap: .6rem; width: 100%; margin-top: auto; }
-.bank > div { display: grid; grid-template-columns: 1fr; justify-items: center; gap: .15rem; padding: .6rem .75rem; border-radius: var(--r-sm); box-shadow: var(--clay-well); }
-.bank dd { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; }
+/* every row is the same three-column grid: the label and the value sit on the card's centre line, and the
+   round copy button always takes the same slot at the row's end (balanced by an equal empty slot at the
+   start), so the three buttons stand on one vertical line whatever the length of the value */
+.bank > div { display: grid; justify-items: stretch; row-gap: .1rem; padding: .55rem .6rem .6rem; border-radius: var(--r-sm); box-shadow: var(--clay-well); }
+.bank dt { text-align: center; }
+.bank dd { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; column-gap: .5rem; min-height: 44px; }
+.bank dd > span { grid-column: 2; text-align: center; }
+.bank dd > .copy { grid-column: 3; }
 .bank dt { font-size: var(--fs-xs); color: var(--muted); }
 .bank dd { font-weight: 600; font-size: 1.0625rem; }
 .copy { display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--surface); cursor: pointer; color: var(--ink); box-shadow: var(--clay-1); transition: transform .45s var(--spring), box-shadow .2s, background-color .2s; }
@@ -824,7 +832,7 @@ html:not(.fx) .hero-copy { --hero-bottom: 64px; }
 .copy svg { width: 18px; height: 18px; }
 .copy.is-done { background: #4E5A40; color: #fff; animation: pop .5s var(--squish); }
 @keyframes pop { 40% { transform: scale(1.18, .86); } 70% { transform: scale(.95, 1.05); } }
-.tax-band { display: flex; align-items: center; justify-content: center; gap: .6rem; width: fit-content; max-width: 100%; margin: 2.5rem auto 0; padding: .9rem 1.6rem; border-radius: 999px; font-weight: 500; color: var(--sage-ink); text-align: center; background: var(--tint-sage); background-image: var(--grain); box-shadow: var(--clay-2); }
+.tax-band { display: flex; align-items: center; justify-content: center; gap: .6rem; width: fit-content; max-width: 100%; margin: 2.5rem auto 0; padding: .9rem 1.6rem; border-radius: 999px; text-wrap: balance; font-weight: 500; color: var(--sage-ink); text-align: center; background: var(--tint-sage); background-image: var(--grain); box-shadow: var(--clay-2); }
 
 /* ---------- Finale ---------- */
 .finale { position: relative; min-height: min(100vh, 960px); display: flex; align-items: flex-start; justify-content: center; color: #F7F3EC; background: var(--sky-1); isolation: isolate; overflow: hidden; }
