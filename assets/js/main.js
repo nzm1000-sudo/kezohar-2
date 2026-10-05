@@ -84,7 +84,7 @@ const railDots = $$('.hero-rail b').map((el) => ({ el, at: parseFloat(el.style.g
 const H = {
   title: $('.hero-title'), rest: [...heroCopy.children].filter((el) => !el.classList.contains('hero-title')),
   photo: $('.hero-photo'), sharp: $('.hero-photo-sharp'), scrim: $('.hero-scrim'), veil: $('.hero-veil'), halo: $('.hero-halo'),
-  line: $('.hero-line'), scroll: $('.hero-scroll'), rail: $('.hero-rail'), fill: $('.hero-rail-fill'),
+  line: $('.hero-line'), scroll: $('.hero-scroll'), rail: $('.hero-rail'), fill: $('.hero-rail-fill'), caption: $('.hero-caption'),
 };
 // write a style only when it changes, straight onto the element that uses it
 const put = (el, prop, v) => { const c = el.__kz || (el.__kz = {}); if (c[prop] !== v) { c[prop] = v; el.style[prop] = v; } };
@@ -111,6 +111,7 @@ function heroApply(p) {
   put(H.scroll, 'opacity', co);
   put(H.line, 'opacity', f(line)); put(H.line, 'transform', `translateY(${((1 - line) * 16).toFixed(1)}px)`);
   put(H.photo, 'opacity', f(photo)); put(H.sharp, 'opacity', f(1 - blur));
+  put(H.caption, 'opacity', f(photo)); // "המחשה" arrives with the photo it labels
   put(H.scrim, 'opacity', f(photo * 0.42)); put(H.veil, 'opacity', f(photo));
   put(H.halo, 'opacity', f(halo));
   put(H.rail, 'opacity', f(sm(0.004, 0.025, p) * (1 - sm(0.975, 0.999, p))));
