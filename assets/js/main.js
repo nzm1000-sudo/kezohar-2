@@ -428,6 +428,7 @@ if (MOTION && !(TEST && TEST.noLenis) && mq('(min-width: 1024px)').matches && !M
       lenis.on('scroll', () => { ScrollTrigger.update(); onScroll(); });
       gsap.ticker.add((t) => lenis.raf(t * 1000));
       gsap.ticker.lagSmoothing(0);
+      if (TEST) window.__lenis = lenis;
     }
     const section = $('#activities');
     const mm = gsap.matchMedia();
@@ -435,16 +436,44 @@ if (MOTION && !(TEST && TEST.noLenis) && mq('(min-width: 1024px)').matches && !M
       section.classList.add('is-horizontal');
       const track = $('[data-act-track]'), pin = $('.act-pin'), bar = $('.act-progress');
       const dist = () => Math.max(0, track.scrollWidth - window.innerWidth);
-      const tw = gsap.to(track, {
-        x: () => dist(), ease: 'none',
+      // The release used to be a lurch: the pin let go at full scroll speed straight down while the cards
+      // were still sliding sideways (a 0.7 s scrub lag behind Lenis' own easing), so the eye saw the row
+      // stop dead and the page drop at once. Now the last stretch of the pin is a turn: the sideways glide
+      // eases out while the row starts to rise with an ease-in, reaching exactly the scroll's own speed at
+      // the moment the pin lets go — position and speed are continuous through the release. The track
+      // follows Lenis 1:1 (Lenis is already the smoothing; no second lag on top of it).
+      const turn = () => Math.round(Math.min(window.innerHeight * 0.38, 340));
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
         scrollTrigger: {
-          trigger: pin, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: 0.7, invalidateOnRefresh: true, anticipatePin: 1,
+          trigger: pin, start: 'top top', end: () => '+=' + (dist() + turn() / 2), pin: true, scrub: true, invalidateOnRefresh: true,
           onUpdate: (s) => bar.style.setProperty('--act', s.progress.toFixed(4)),
         },
       });
-      return () => { tw.scrollTrigger && tw.scrollTrigger.kill(); tw.kill(); gsap.set(track, { clearProps: 'transform' }); section.classList.remove('is-horizontal'); };
+      // durations are in scroll pixels: dist − turn/2 straight, then the turn (length `turn`, covering turn/2 sideways and turn/2 up)
+      tl.fromTo(track, { x: 0, y: 0 }, { x: () => Math.max(0, dist() - turn() / 2), duration: Math.max(1, dist() - turn() / 2) })
+        .to(track, { x: () => dist(), ease: 'power1.out', duration: turn() })
+        .to([track, bar], { y: () => -turn() / 2, ease: 'power1.in', duration: turn() }, '<');
+      // the row (and its progress groove) ends turn/2 higher in its pinned frame; the next section tucks up
+      // by the same amount, so no empty band opens below the cards (it starts rising into view half-way
+      // through the turn, always below the groove)
+      const tuck = () => { section.style.marginBottom = -turn() / 2 + 'px'; };
+      tuck(); ScrollTrigger.addEventListener('refreshInit', tuck);
+      return () => { ScrollTrigger.removeEventListener('refreshInit', tuck); section.style.marginBottom = ''; tl.scrollTrigger && tl.scrollTrigger.kill(); tl.kill(); gsap.set([track, bar], { clearProps: 'transform' }); section.classList.remove('is-horizontal'); };
     });
     // in-page anchors after pin spacers exist
     ScrollTrigger.refresh();
+    // Anything above the pin that changes height after this (web fonts, late images, the hero's layout)
+    // moves where the pin starts and ends: refresh once it settles, so the pin never engages or lets go
+    // at a stale scroll position (a jump). ScrollTrigger itself already refreshes on load and resize.
+    let stT = 0;
+    const later = () => { clearTimeout(stT); stT = setTimeout(() => ScrollTrigger.refresh(), 200); };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(later);
+    const seen = new Map(); // ResizeObserver reports each box once when observed: only a new height is a change
+    const ro = new ResizeObserver((ents) => ents.forEach((e) => {
+      const h = Math.round(e.contentRect.height), was = seen.get(e.target); seen.set(e.target, h);
+      if (was != null && was !== h) later();
+    }));
+    ['.hero', '.stats', '#vision'].forEach((sel) => { const el = $(sel); if (el) ro.observe(el); });
   })();
 }

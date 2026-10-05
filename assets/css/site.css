@@ -726,6 +726,9 @@ html:not(.fx) .hero-copy { --hero-bottom: 64px; }
 .activities.is-horizontal .act { flex: 0 0 clamp(330px, 26vw, 420px); }
 .activities.is-horizontal .act:nth-child(even) { margin-top: 6vh; }
 .activities.is-horizontal .act-fig > picture img { aspect-ratio: auto; height: min(32vh, 340px); }
+/* the next section tucks up under the end of the pin (main.js: the row's closing turn); it paints above the
+   section's own background so the colour boundary stays just below the progress groove */
+.activities.is-horizontal + .moments { position: relative; }
 .activities.is-horizontal .act-progress { display: block; position: absolute; bottom: 4.5vh; inset-inline: var(--gutter); height: 10px; border-radius: 999px; box-shadow: var(--clay-well); }
 .activities.is-horizontal .act-progress i { position: absolute; inset: 2px; border-radius: 999px; background: var(--accent-solid); box-shadow: inset 2px 2px 3px rgba(255, 214, 180, .5), inset -2px -2px 3px rgba(70, 28, 8, .35); transform: scaleX(var(--act, 0)); transform-origin: right; }
 
