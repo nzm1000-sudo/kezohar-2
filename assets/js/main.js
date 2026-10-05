@@ -84,7 +84,7 @@ const railDots = $$('.hero-rail b').map((el) => ({ el, at: parseFloat(el.style.g
 const H = {
   title: $('.hero-title'), rest: [...heroCopy.children].filter((el) => !el.classList.contains('hero-title')),
   photo: $('.hero-photo'), sharp: $('.hero-photo-sharp'), scrim: $('.hero-scrim'), veil: $('.hero-veil'), halo: $('.hero-halo'),
-  line: $('.hero-line'), scroll: $('.hero-scroll'), rail: $('.hero-rail'), fill: $('.hero-rail-fill'),
+  line: $('.hero-line'), scroll: $('.hero-scroll'), rail: $('.hero-rail'), fill: $('.hero-rail-fill'), caption: $('.hero-caption'),
 };
 // write a style only when it changes, straight onto the element that uses it
 const put = (el, prop, v) => { const c = el.__kz || (el.__kz = {}); if (c[prop] !== v) { c[prop] = v; el.style[prop] = v; } };
@@ -111,6 +111,7 @@ function heroApply(p) {
   put(H.scroll, 'opacity', co);
   put(H.line, 'opacity', f(line)); put(H.line, 'transform', `translateY(${((1 - line) * 16).toFixed(1)}px)`);
   put(H.photo, 'opacity', f(photo)); put(H.sharp, 'opacity', f(1 - blur));
+  put(H.caption, 'opacity', f(photo)); // "המחשה" arrives with the photo it labels
   put(H.scrim, 'opacity', f(photo * 0.42)); put(H.veil, 'opacity', f(photo));
   put(H.halo, 'opacity', f(halo));
   put(H.rail, 'opacity', f(sm(0.004, 0.025, p) * (1 - sm(0.975, 0.999, p))));
@@ -148,10 +149,26 @@ if (FX) { layoutHalo(); heroT = heroP = heroTarget(); heroApply(heroP); }
 // keyboard users tabbing into hero CTAs: bring hero copy back into view
 heroCopy.addEventListener('focusin', () => { if (FX && heroP > 0.06) { window.scrollTo({ top: M.top, behavior: 'auto' }); if (lenis) lenis.scrollTo(M.top, { immediate: true }); heroT = heroP = 0; heroApply(0); } });
 
+/* ---------- back to top ---------- */
+const toTop = $('[data-to-top]');
+function toTopState() {
+  const y = window.scrollY, on = toTop.classList.contains('is-on');
+  // a little hysteresis: shows past the first screen, hides again only near the top
+  if (!on && y > M.vh) toTop.classList.add('is-on');
+  else if (on && y < M.vh * 0.6) toTop.classList.remove('is-on');
+}
+toTop.addEventListener('click', (e) => {
+  if (lenis) lenis.scrollTo(0, { duration: 1.4 });
+  else window.scrollTo({ top: 0, behavior: MOTION ? 'smooth' : 'auto' });
+  // keyboard and screen-reader activation (no pointer): continue from the top of the page, at the skip link
+  if (e.detail === 0) $('.skip-link').focus({ preventScroll: true });
+  else toTop.blur();
+});
+
 let ticking = false;
 function onScroll() {
   if (ticking) return; ticking = true;
-  requestAnimationFrame(() => { ticking = false; headerState(); heroState(); });
+  requestAnimationFrame(() => { ticking = false; headerState(); heroState(); toTopState(); });
 }
 function onResize() { measure(); layoutHalo(); onScroll(); }
 window.addEventListener('scroll', onScroll, { passive: true });
@@ -159,10 +176,10 @@ window.addEventListener('resize', onResize, { passive: true });
 if (document.fonts && document.fonts.ready) document.fonts.ready.then(onResize);
 onScroll();
 
-/* ---------- living title: pause its slow tonal drift while off screen ---------- */
+/* ---------- living title (and the royal tier's gold): pause the slow drift while off screen ---------- */
 if (MOTION && 'IntersectionObserver' in window) {
   const lio = new IntersectionObserver((ents) => ents.forEach((e) => e.target.classList.toggle('is-paused', !e.isIntersecting)));
-  $$('.lux-wrap').forEach((el) => lio.observe(el));
+  $$('.lux-wrap, .tier-royal').forEach((el) => lio.observe(el));
 }
 
 /* ---------- reveal ---------- */
