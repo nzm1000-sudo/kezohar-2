@@ -118,11 +118,29 @@ export async function drawCertificate({ name, tier }) {
   g.lineWidth = 18; g.strokeStyle = 'rgba(110, 76, 44, .16)'; rrect(g, px + 96, 706, pw - 180, 230, 40); g.stroke();
   g.strokeStyle = 'rgba(255, 255, 255, .6)'; rrect(g, px + 84, 694, pw - 180, 230, 40); g.stroke();
   g.restore();
-  const size = fitFont(g, name, DISPLAY, 132, 52, pw - 260);
-  const ny = 815 + size * 0.36;
-  g.fillStyle = 'rgba(255, 255, 255, .85)'; g.fillText(name, cx + 2, ny + 2);
-  g.fillStyle = 'rgba(110, 76, 44, .35)'; g.fillText(name, cx - 1.5, ny - 1.5);
-  g.fillStyle = '#2A2622'; g.fillText(name, cx, ny);
+  // one line when it fits at a generous size; a long name breaks into two balanced lines at a space;
+  // a single very long word is condensed (fillText's maxWidth) so it never runs out of the well
+  const NW = pw - 260;
+  let lines = [name], size = fitFont(g, name, DISPLAY, 132, 72, NW);
+  const words = name.split(/\s+/);
+  if (g.measureText(name).width > NW && words.length > 1) {
+    let best = null;
+    for (let i = 1; i < words.length; i++) {
+      const a = words.slice(0, i).join(' '), b = words.slice(i).join(' ');
+      g.font = `400 100px ${DISPLAY}`; const m = Math.max(g.measureText(a).width, g.measureText(b).width);
+      if (!best || m < best.m) best = { m, l: [a, b] };
+    }
+    lines = best.l;
+    const longer = lines.reduce((x, y) => (g.measureText(x).width >= g.measureText(y).width ? x : y));
+    size = fitFont(g, longer, DISPLAY, 84, 44, NW);
+  } else if (g.measureText(name).width > NW) size = fitFont(g, name, DISPLAY, 72, 44, NW);
+  const lh = size * 1.08;
+  lines.forEach((ln, i) => {
+    const ny = 815 + size * 0.36 + (i - (lines.length - 1) / 2) * lh;
+    g.fillStyle = 'rgba(255, 255, 255, .85)'; g.fillText(ln, cx + 2, ny + 2, NW);
+    g.fillStyle = 'rgba(110, 76, 44, .35)'; g.fillText(ln, cx - 1.5, ny - 1.5, NW);
+    g.fillStyle = '#2A2622'; g.fillText(ln, cx, ny, NW);
+  });
 
   // tier: a copper clay pill
   g.font = `600 34px ${UI}`;

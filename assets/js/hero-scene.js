@@ -5,10 +5,12 @@ import { buildCloud, makeMass, makeMaterial, makeGroundGlow, setDepth, skyTextur
 
 const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const lerp = (a, b, t) => a + (b - a) * t;
+const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2); // the shader's ease()
 
-// Stage map (fractions of the 640vh hero; main.js drives the DOM side with matching numbers):
-//   title → dust 1.2–6.5% · dust gathers 10–40% · hold · orbit 48–70% · dissolve 66–99% (photo 58–95%)
-export const STAGE = { textIn: [0.012, 0.065], assemble: [0.1, 0.4], orbit: [0.48, 0.7], dissolve: [0.66, 0.99] };
+// Stage map (fractions of the 720vh hero; main.js drives the DOM side with matching numbers):
+//   the words leave 0.4–6.4% · only then the title → dust 7–12% · dust gathers 15–44% · hold ·
+//   orbit 50–71% · dissolve 67–99% (photo 60–95%)
+export const STAGE = { textIn: [0.07, 0.12], assemble: [0.15, 0.44], orbit: [0.5, 0.71], dissolve: [0.67, 0.99] };
 
 // Device capability → quality tier (0 low, 1 mid, 2 high). Cheap signals first; the runtime governor
 // below then corrects with real frame times.
@@ -67,15 +69,28 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
   // Where the building sits in the 1376×768 dawn render: centre x, ground line y, px per metre
   // (20 m wide wing-to-hall = 1143 px). The final camera reproduces the photo's cover-fit crop.
   const PHOTO = { w: 1376, h: 768, cx: 696.5, base: 645, ppu: 57.15 };
+  // portrait screens show the portrait render instead (the same picture on a 900×1950 canvas: crop x 60,
+  // scale 900/1256 sideways and 550/768 down, placed 1040 px down — tools/portrait-renders.cjs)
+  const PS = 900 / 1256, PSY = 550 / 768;
+  const PHOTO_PORTRAIT = { w: 900, h: 1950, cx: (696.5 - 60) * PS, base: 1040 + 645 * PSY, ppu: 57.15 * PS };
+  const portraitMq = window.matchMedia('(max-aspect-ratio: 4/5)');
+  const EYE = (645 - 555) / 57.15; // the render's horizon sits 90 px above its ground line
   function photoPose(w, h) {
+    const PHOTO_ = portraitMq.matches ? PHOTO_PORTRAIT : PHOTO;
     let ox = 0.5, oy = 0.78;
     if (photo) {
       const op = getComputedStyle(photo).objectPosition.split(' ').map(parseFloat);
       if (op.length === 2 && op.every((v) => !Number.isNaN(v))) { ox = op[0] / 100; oy = op[1] / 100; }
     }
-    const s = Math.max(w / PHOTO.w, h / PHOTO.h), ppu = PHOTO.ppu * s;
-    const sx = (w - PHOTO.w * s) * ox + PHOTO.cx * s, sy = (h - PHOTO.h * s) * oy + PHOTO.base * s;
-    return { x: group.position.x - (sx - w / 2) / ppu, y: (sy - h / 2) / ppu, z: 2.2 + h / (2 * state.half * ppu) };
+    const s = Math.max(w / PHOTO_.w, h / PHOTO_.h), ppu = PHOTO_.ppu * s;
+    const sx = (w - PHOTO_.w * s) * ox + PHOTO_.cx * s, sy = (h - PHOTO_.h * s) * oy + PHOTO_.base * s;
+    const z = 2.2 + h / (2 * state.half * ppu);
+    // The portrait picture puts the building low in a tall frame. Raising the camera to line the ground
+    // up would look down onto the roofs (their tops and the dark mass would show above the photo's roof
+    // line). Instead the camera stays at the render's eye height (its horizon: 1.57 m) and the lens is
+    // shifted (an off-axis view) so the ground line still lands where the photo has it.
+    if (PHOTO_ === PHOTO_PORTRAIT) return { x: group.position.x - (sx - w / 2) / ppu, y: EYE, z, shift: sy - EYE * ppu - h / 2 };
+    return { x: group.position.x - (sx - w / 2) / ppu, y: (sy - h / 2) / ppu, z, shift: 0 };
   }
 
   const state = { progress: 0, mx: 0, my: 0, cx: 0, cy: 0, running: false, visible: true, dist: 34, baseSize: mat.uniforms.uSize.value, dust: false };
@@ -84,10 +99,11 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
   function resize() {
     const w = canvas.clientWidth || window.innerWidth, h = canvas.clientHeight || window.innerHeight;
     renderer.setSize(w, h, false);
+    state.w = w; state.h = h; state.shift = null; // re-apply the lens shift for the new size
     camera.aspect = w / h;
     const half = THREE.MathUtils.degToRad(camera.fov / 2);
     state.half = Math.tan(half);
-    state.dist = Math.max(30, (camera.aspect < 1 ? 11.6 : 14) / state.half / camera.aspect);          // assembled framing (≈28 units wide)
+    state.dist = Math.max(30, (camera.aspect < 0.8 ? 12.8 : camera.aspect < 1 ? 11.6 : 14) / state.half / camera.aspect); // assembled framing (≈28 units wide; tall screens keep a margin round the 3/4 view)
     state.final = photoPose(w, h);                                        // final framing = the photo
     mat.uniforms.uSize.value = state.baseSize * (state.dist / 30);
     camera.updateProjectionMatrix();
@@ -218,6 +234,9 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     const tt = t * 0.7; // all ambient motion runs a little slower
     u.uTime.value = tt; u.uAssemble.value = assemble; u.uDissolve.value = dissolve;
     u.uTextIn.value = state.dust ? sm(...STAGE.textIn, p) : 0;
+    // how much of the dust title still stands on the letters (the slowest particle: delay 1 → .3)
+    const te = ease(Math.min(1, Math.max(0, (assemble - 0.126) / 0.58)));
+    state.titleA = u.uTextIn.value * (1 - sm(0, 0.35, te));
     u.uIntensity.value = lerp(1.35, gain, assemble);
     ground.material.uniforms.uOpacity.value = assemble * assemble * (1 - dissolve);
     mass.userData.material.uniforms.uOpacity.value = sm(0.55, 1, assemble) * (1 - sm(0, 0.55, dissolve)) * 0.94;
@@ -227,7 +246,10 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     const swing = Math.sin(orbit * Math.PI) * 0.38;
     group.rotation.y = lerp(-0.62, -0.42, assemble) * (1 - orbit) + swing + Math.sin(tt * 0.08) * 0.02 * (1 - orbit) + (1 - assemble) * tt * 0.004;
     const F = state.final;
-    const d = lerp(state.dist * lerp(1.08, 1, assemble), F.z, orbit);
+    // on tall screens the swing of the orbit shows the side walls too: step back a little mid-turn so the
+    // whole building (wing to hall) stays inside the frame all the way to the photo
+    const back = camera.aspect < 0.8 ? 1 + 0.14 * Math.sin(orbit * Math.PI) : 1;
+    const d = lerp(state.dist * lerp(1.08, 1, assemble), F.z, orbit) * back;
     setDepth(mat, d); // depth cues are relative to the current framing
     const par = 1 - orbit; // pointer parallax fades out so the last frame lines up with the photo
     const drift = assemble * (1 - orbit);
@@ -235,6 +257,11 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     const lx = lerp(1.6 * assemble, F.x, orbit); // the 3/4 turn brings the hall forward: recentre the mass
     camera.position.set(lx + state.cx * 1.3 * par + dx, lerp(lerp(7, 8.2, assemble), F.y, orbit) - state.cy * 0.6 * par + dy, d + Math.sin(tt * 0.05) * 0.6 * drift);
     camera.lookAt(lx, lerp(lerp(6.5, 5.2, assemble), F.y, orbit), 0);
+    const shift = F.shift * orbit;
+    if (state.shift == null || Math.abs(shift - state.shift) > 0.01) {
+      state.shift = shift;
+      if (Math.abs(shift) > 0.01) camera.setViewOffset(state.w, state.h, 0, -shift, state.w, state.h); else camera.clearViewOffset();
+    }
     camera.updateMatrixWorld(); group.updateMatrixWorld();
     vtl.copy(group.matrixWorld).invert().multiply(camera.matrixWorld);
     renderer.render(scene, camera);
@@ -243,10 +270,14 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
   function start() { if (state.running || level === 3) return; state.running = true; clock.getDelta(); raf = requestAnimationFrame(frame); }
   function pause() { state.running = false; cancelAnimationFrame(raf); }
   function stop(fromGovernor) {
-    pause(); level = 3;
+    if (stopped) return;
+    pause(); level = 3; stopped = true;
     canvas.classList.remove('is-live');
     if (onStop) onStop(fromGovernor ? 'fps' : 'manual');
+    destroy(); // a stopped scene never restarts: free its GPU buffers, observers and listeners
   }
+  let stopped = false;
+  function destroy() { pause(); clearTimeout(rsT); ro.disconnect(); ground.geometry.dispose(); ground.material.dispose(); mass.userData.dispose(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('pointermove', onMove); window.removeEventListener('deviceorientation', onTilt); geo.dispose(); mat.dispose(); if (scene.background && scene.background.dispose) scene.background.dispose(); renderer.dispose(); }
 
   const io = new IntersectionObserver(([en]) => { state.visible = en.isIntersecting; sync(); }, { threshold: 0 });
   io.observe(canvas);
@@ -260,11 +291,12 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
   return {
     setProgress(p) { state.progress = p; },
     get hasDust() { return state.dust; },
+    get dustTitle() { return state.titleA || 0; },
     get points() { return { N, tier, drawn: Math.min(N, geo.drawRange.count), dpr, level, text: state.textN || 0 }; },
     resample: sampleTitle,
     // test runs only (main.js exposes this object on localhost): render one frame, optionally without the dissolve
     renderAt(p, t, { holdDissolve = false } = {}) { state.progress = p; state.holdDissolve = holdDissolve; render(t); state.holdDissolve = false; },
     stop,
-    destroy() { pause(); ro.disconnect(); ground.geometry.dispose(); ground.material.dispose(); mass.userData.dispose(); io.disconnect(); document.removeEventListener('visibilitychange', onVis); window.removeEventListener('pointermove', onMove); window.removeEventListener('deviceorientation', onTilt); geo.dispose(); mat.dispose(); renderer.dispose(); },
+    destroy,
   };
 }

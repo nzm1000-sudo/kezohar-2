@@ -3,12 +3,17 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/RoundedBoxGeometry.js';
 
-// same massing as the hero's building of light (building.js), in metres
+// the hero's building (building.js) grown into a taller clay model, in metres: a three-storey long wing,
+// a timber link and a four-storey prayer hall. Every storey is FLOOR_H tall and the cornice bands of
+// wing and hall share the same heights, so the façades read as one exact grid.
+const FLOOR_H = 1.5;
 const VOL = [
-  { x0: -10, x1: 1.95, h: 3.9, z0: -2, z1: 2.2 },   // long wing
-  { x0: 1.95, x1: 3.95, h: 3.7, z0: -1.2, z1: 1.7 }, // link
-  { x0: 3.95, x1: 10, h: 5.05, z0: -3.6, z1: 2.2 },  // prayer hall
+  { x0: -10, x1: 1.95, h: 3 * FLOOR_H + 0.2, z0: -2, z1: 2.2, floors: 3 },     // long wing
+  { x0: 1.95, x1: 3.95, h: 3 * FLOOR_H - 0.3, z0: -1.2, z1: 1.7, floors: 0 },  // link (a step lower)
+  { x0: 3.95, x1: 10, h: 4 * FLOOR_H + 0.3, z0: -3.6, z1: 2.2, floors: 4 },    // prayer hall
 ];
+const WING = VOL[0], LINK = VOL[1], HALL = VOL[2];
+const WING_CX = (WING.x0 + WING.x1) / 2, HALL_CX = (HALL.x0 + HALL.x1) / 2, HALL_CZ = (HALL.z0 + HALL.z1) / 2;
 const S = 0.42; // building scale inside the diorama
 
 // what each tier places on the wall
@@ -23,21 +28,33 @@ const PLAN = {
 const LIGHT = { hemiSky: '#FFF3E4', hemiGround: '#C79F7C', hemi: 1.55, key: '#FFE4C8', keyI: 2.3, fill: 0.45, glow: 0.55, shadow: 0.22 };
 const DARK = { hemiSky: '#B9A792', hemiGround: '#3A2A20', hemi: 0.55, key: '#FFC48E', keyI: 1.5, fill: 0.18, glow: 2.2, shadow: 0.42 };
 
-function noiseTexture() {
-  // a fine, irregular bump so every surface reads as hand-pressed clay (fingerprints, not plastic)
-  const c = document.createElement('canvas'); c.width = c.height = 128;
-  const x = c.getContext('2d'), d = x.createImageData(128, 128);
-  for (let i = 0; i < d.data.length; i += 4) { const v = 118 + Math.random() * 20; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
-  x.putImageData(d, 0, 0);
-  x.globalAlpha = 0.18; x.strokeStyle = '#000';
-  for (let i = 0; i < 14; i++) { x.beginPath(); x.arc(Math.random() * 128, Math.random() * 128, 6 + Math.random() * 18, 0, Math.PI * (0.6 + Math.random())); x.stroke(); }
-  const t = new THREE.CanvasTexture(c); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(2, 2);
+function clayTexture(maxAniso) {
+  // a soft, large-scale hand-pressed relief: broad thumb dents and gentle swells, no pixel noise
+  // (per-pixel noise reads as speckle on a phone). Seeded, tileable (every blob is drawn with its wraps).
+  const N = 512, c = document.createElement('canvas'); c.width = c.height = N;
+  const x = c.getContext('2d');
+  x.fillStyle = 'rgb(128,128,128)'; x.fillRect(0, 0, N, N);
+  let seed = 11; const R = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const blob = (cx, cy, r, v, a) => {
+    for (const ox of [-N, 0, N]) for (const oy of [-N, 0, N]) {
+      const g = x.createRadialGradient(cx + ox, cy + oy, 0, cx + ox, cy + oy, r);
+      g.addColorStop(0, `rgba(${v},${v},${v},${a})`); g.addColorStop(1, `rgba(${v},${v},${v},0)`);
+      x.fillStyle = g; x.fillRect(cx + ox - r, cy + oy - r, r * 2, r * 2);
+    }
+  };
+  for (let i = 0; i < 70; i++) blob(R() * N, R() * N, 40 + R() * 90, R() < 0.5 ? 255 : 0, 0.05 + R() * 0.05); // swells and hollows
+  for (let i = 0; i < 26; i++) blob(R() * N, R() * N, 14 + R() * 18, 0, 0.1);                            // thumb dents
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.generateMipmaps = true; t.minFilter = THREE.LinearMipmapLinearFilter;
+  t.anisotropy = Math.min(8, maxAniso);
   return t;
 }
 
 export function createClay(canvas, { mobile = false, tier = '360', dark = false, noGov = false, onStop } = {}) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !mobile, alpha: true, powerPreference: 'low-power' });
-  const dpr = Math.min(window.devicePixelRatio || 1, mobile ? 1.5 : 2);
+  // MSAA everywhere (the clay edges are long straight lines that stair-step without it); phones render at
+  // up to 2× — the diorama is small and mostly still, and the governor below still guards the frame rate
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'low-power' });
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
   renderer.setPixelRatio(dpr);
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
@@ -45,13 +62,13 @@ export function createClay(canvas, { mobile = false, tier = '360', dark = false,
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(28, 2, 0.1, 200);
-  const bump = noiseTexture();
+  const bump = clayTexture(renderer.capabilities.getMaxAnisotropy());
   const disposables = [bump];
-  const mat = (color, o = {}) => { const m = new THREE.MeshStandardMaterial({ color, roughness: 0.88, metalness: 0, bumpMap: bump, bumpScale: 0.6, ...o }); disposables.push(m); return m; };
+  const mat = (color, o = {}) => { const m = new THREE.MeshStandardMaterial({ color, roughness: 0.86, metalness: 0, bumpMap: bump, bumpScale: 0.35, ...o }); disposables.push(m); return m; };
   const geoCache = new Map();
   const rbox = (w, h, d, r) => {
     const k = [w, h, d, r].map((v) => v.toFixed(3)).join();
-    if (!geoCache.has(k)) { const g = new RoundedBoxGeometry(w, h, d, mobile ? 3 : 4, Math.min(r, w / 2, h / 2, d / 2) * 0.999); geoCache.set(k, g); disposables.push(g); }
+    if (!geoCache.has(k)) { const g = new RoundedBoxGeometry(w, h, d, 4, Math.min(r, w / 2, h / 2, d / 2) * 0.999); geoCache.set(k, g); disposables.push(g); }
     return geoCache.get(k);
   };
   const mesh = (g, m, shadow = true) => { const o = new THREE.Mesh(g, m); o.castShadow = shadow; o.receiveShadow = true; return o; };
@@ -60,9 +77,9 @@ export function createClay(canvas, { mobile = false, tier = '360', dark = false,
   const hemi = new THREE.HemisphereLight(LIGHT.hemiSky, LIGHT.hemiGround, LIGHT.hemi);
   const key = new THREE.DirectionalLight(LIGHT.key, LIGHT.keyI);
   key.position.set(-7, 11, 9); key.castShadow = true;
-  key.shadow.mapSize.set(mobile ? 512 : 1024, mobile ? 512 : 1024);
-  key.shadow.radius = 5; key.shadow.bias = -0.0008; key.shadow.normalBias = 0.02;
-  Object.assign(key.shadow.camera, { left: -8, right: 8, top: 7, bottom: -5, near: 1, far: 40 });
+  key.shadow.mapSize.set(mobile ? 1024 : 2048, mobile ? 1024 : 2048);
+  key.shadow.radius = 4; key.shadow.bias = -0.0006; key.shadow.normalBias = 0.06; // no acne on the rounded edges
+  Object.assign(key.shadow.camera, { left: -8, right: 8, top: 8, bottom: -5, near: 1, far: 40 });
   const fill = new THREE.DirectionalLight('#D4DCEB', LIGHT.fill); fill.position.set(8, 4, 6);
   scene.add(hemi, key, fill);
 
@@ -93,28 +110,38 @@ export function createClay(canvas, { mobile = false, tier = '360', dark = false,
   const squishy = []; // parts that respond to a poke
   for (const v of VOL) {
     const w = (v.x1 - v.x0) * S, h = v.h * S, d = (v.z1 - v.z0) * S;
-    const m = mesh(rbox(w, h, d, 0.22), M.stone); m.position.set((v.x0 + v.x1) / 2 * S, h / 2, (v.z0 + v.z1) / 2 * S);
-    const cap = mesh(rbox(w + 0.08, 0.14, d + 0.08, 0.07), M.stoneTop); cap.position.set(m.position.x, h + 0.04, m.position.z);
+    const m = mesh(rbox(w, h, d, 0.2), M.stone); m.position.set((v.x0 + v.x1) / 2 * S, h / 2, (v.z0 + v.z1) / 2 * S);
+    const cap = mesh(rbox(w + 0.1, 0.14, d + 0.1, 0.07), M.stoneTop); cap.position.set(m.position.x, h + 0.03, m.position.z);
     bld.add(m, cap); squishy.push(m);
+    // cornice bands between the storeys, at the same heights on the wing and the hall
+    for (let f = 1; f < v.floors; f++) {
+      const band = mesh(rbox(w + 0.06, 0.07, d + 0.06, 0.035), M.stoneTop, false); band.position.set(m.position.x, f * FLOOR_H * S, m.position.z);
+      m.add(band); band.position.sub(m.position);
+    }
   }
   const front = (z1) => z1 * S + 0.02;
-  // window slits along the long wing, copper-amber light pressed into the clay
-  const slitG = rbox(0.12, 0.6, 0.08, 0.05);
-  [-9.19, -8.43, -5.22, -4.51, -3.81, -3.12, -2.42, -1.72, -1.03, -0.33, 0.39, 1.09].forEach((c) => {
-    const s = mesh(slitG, M.glow, false); s.position.set(c * S, 2.62 * S, front(2.2)); bld.add(s);
-  });
-  // timber panels at ground level + the link's tall timber screen
-  [[-7.83, -5.95], [-5.85, -3.9], [-3.8, -1.75], [-1.65, -0.22]].forEach(([a, b]) => {
-    const p = mesh(rbox((b - a) * S - 0.06, 1.4 * S, 0.1, 0.05), M.wood, false); p.position.set((a + b) / 2 * S, 0.78 * S, front(2.2)); bld.add(p);
-  });
-  const screen = mesh(rbox(1.8 * S, 3.4 * S, 0.1, 0.06), M.wood, false); screen.position.set(2.95 * S, 1.8 * S, front(1.7)); bld.add(screen);
-  // hall: tall side slits + an arched, glowing portal
-  [-2.4, -0.7, 1.0].forEach((c) => { const s = mesh(rbox(0.08, 1.4, 0.13, 0.04), M.glow, false); s.position.set(10 * S + 0.02, 2.6 * S, c * S); bld.add(s); });
-  const portal = new THREE.Group(); portal.position.set(7.1 * S, 0, front(2.2));
-  const pw = 1.92 * S;
-  const pFrame = mesh(rbox(pw + 0.22, 3.3 * S + 0.12, 0.12, 0.06), M.stoneTop, false); pFrame.position.y = 3.3 * S / 2;
+  // window slits: one exact grid on every storey of the wing — nine columns, 1.1 m apart, mirrored about
+  // the façade's centre line — each slit centred in its storey
+  const SLIT_H = 0.9, slitG = rbox(0.12, SLIT_H * S, 0.08, 0.05);
+  for (let f = 0; f < WING.floors; f++) for (let i = -4; i <= 4; i++) {
+    const sl = mesh(slitG, M.glow, false); sl.position.set((WING_CX + i * 1.1) * S, (f + 0.55) * FLOOR_H * S, front(WING.z1)); bld.add(sl);
+  }
+  // the link: one tall timber screen, centred
+  const screen = mesh(rbox(1.6 * S, (LINK.h - 0.6) * S, 0.1, 0.06), M.wood, false); screen.position.set((LINK.x0 + LINK.x1) / 2 * S, (LINK.h - 0.6) / 2 * S + 0.05, front(LINK.z1)); bld.add(screen);
+  // hall front: the arched portal centred on the façade in the ground storeys, three slits per upper storey
+  for (let f = 2; f < HALL.floors; f++) for (const dx of [-1.8, 0, 1.8]) {
+    const sl = mesh(slitG, M.glow, false); sl.position.set((HALL_CX + dx) * S, (f + 0.55) * FLOOR_H * S, front(HALL.z1)); bld.add(sl);
+  }
+  // hall side: three slits per storey, mirrored about the side wall's centre
+  const sideG = rbox(0.08, SLIT_H * S, 0.12, 0.04);
+  for (let f = 1; f < HALL.floors; f++) for (const dz of [-1.7, 0, 1.7]) {
+    const sl = mesh(sideG, M.glow, false); sl.position.set(HALL.x1 * S + 0.02, (f + 0.55) * FLOOR_H * S, (HALL_CZ + dz) * S); bld.add(sl);
+  }
+  const portal = new THREE.Group(); portal.position.set(HALL_CX * S, 0, front(HALL.z1));
+  const pw = 1.92 * S, PH = 2 * FLOOR_H - 0.12; // the frame stops just under the second cornice
+  const pFrame = mesh(rbox(pw + 0.22, PH * S, 0.12, 0.06), M.stoneTop, false); pFrame.position.y = PH * S / 2;
   const pDoor = mesh(rbox(0.62 * 2 * S, 2.1 * S, 0.1, 0.05), M.portal, false); pDoor.position.set(0, 2.1 * S / 2, 0.04);
-  const arcG = new THREE.CylinderGeometry(0.62 * S, 0.62 * S, 0.1, 24, 1, false, 0, Math.PI); disposables.push(arcG);
+  const arcG = new THREE.CylinderGeometry(0.62 * S, 0.62 * S, 0.1, 32, 1, false, 0, Math.PI); disposables.push(arcG);
   const pArc = mesh(arcG, M.portal, false); pArc.rotation.set(Math.PI / 2, 0, -Math.PI / 2); pArc.position.set(0, 2.1 * S, 0.04);
   portal.add(pFrame, pDoor, pArc); bld.add(portal);
 
@@ -161,7 +188,7 @@ export function createClay(canvas, { mobile = false, tier = '360', dark = false,
         const sp = mesh(spikeG, M.copper); sp.position.set(Math.cos(a) * 0.42, 0.24, Math.sin(a) * 0.42); o.add(sp);
         const b = mesh(ballG, M.copper); b.position.set(Math.cos(a) * 0.42, 0.42, Math.sin(a) * 0.42); o.add(b);
       }
-      o.userData.h = 0.5; o.userData.home = new THREE.Vector3(bld.position.x + 7 * S, FLOOR + 5.05 * S + 0.22, bld.position.z + -0.7 * S);
+      o.userData.h = 0.5; o.userData.home = new THREE.Vector3(bld.position.x + HALL_CX * S, FLOOR + HALL.h * S + 0.21, bld.position.z + HALL_CZ * S); // centred on the hall roof
     } else {
       const s = slots[id];
       o = mesh(rbox(s.w, BH, BD, 0.11), s.mat); o.userData.h = BH; o.userData.home = new THREE.Vector3(s.x, s.y, s.z);
@@ -222,7 +249,8 @@ export function createClay(canvas, { mobile = false, tier = '360', dark = false,
     const w = canvas.clientWidth, h = canvas.clientHeight; if (!w || !h) return;
     renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
     const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-    view.dist = Math.max(13, 6.0 / (t * Math.min(camera.aspect, 2.4)), 3.95 / t);
+    // fit the plinth and trees sideways and the taller hall (with its crown) upright, at any panel shape
+    view.dist = Math.max(13, 7.4 / (t * Math.min(camera.aspect, 2.4)), 5.1 / t);
   }
   resize();
   const ro = new ResizeObserver(resize); ro.observe(canvas);
@@ -259,7 +287,7 @@ export function createClay(canvas, { mobile = false, tier = '360', dark = false,
     const yaw = -0.36 + view.cx * 0.12 + Math.sin(t * 0.12) * 0.05;
     const pitch = 0.36 - view.cy * 0.05 + Math.sin(t * 0.09) * 0.015;
     camera.position.set(Math.sin(yaw) * view.dist * Math.cos(pitch), Math.sin(pitch) * view.dist + 1.4, Math.cos(yaw) * view.dist * Math.cos(pitch));
-    camera.lookAt(0, 1.55, 0.6);
+    camera.lookAt(0, 1.75, 0.6);
     renderer.render(scene, camera);
   }
   function frame() {
@@ -272,7 +300,9 @@ export function createClay(canvas, { mobile = false, tier = '360', dark = false,
   }
   function start() { if (running || dead) return; running = true; clock.getDelta(); raf = requestAnimationFrame(frame); }
   function pause() { running = false; cancelAnimationFrame(raf); }
-  function stop() { pause(); dead = true; canvas.parentElement.classList.remove('is-live'); if (onStop) onStop(); }
+  function stop() { if (dead) return; pause(); dead = true; canvas.parentElement.classList.remove('is-live'); if (onStop) onStop(); destroy(); }
+  // a stopped scene never restarts: free its GPU buffers, observers and listeners
+  function destroy() { pause(); dead = true; io.disconnect(); ro.disconnect(); document.removeEventListener('visibilitychange', sync); canvas.removeEventListener('pointermove', onMove); canvas.removeEventListener('pointerdown', onDown); disposables.forEach((d) => d.dispose && d.dispose()); renderer.dispose(); }
   const io = new IntersectionObserver(([e]) => { visible = e.isIntersecting; sync(); });
   io.observe(canvas);
   const sync = () => (visible && !document.hidden ? start() : pause());
@@ -287,6 +317,6 @@ export function createClay(canvas, { mobile = false, tier = '360', dark = false,
     setTheme,
     // test runs only: advance the simulated clock in small steps, then draw one frame
     advance(sec) { for (let i = 0; i < sec * 60; i++) { clockT += 1 / 60; animate(); } render(); },
-    destroy() { pause(); io.disconnect(); ro.disconnect(); document.removeEventListener('visibilitychange', sync); canvas.removeEventListener('pointermove', onMove); canvas.removeEventListener('pointerdown', onDown); disposables.forEach((d) => d.dispose && d.dispose()); renderer.dispose(); },
+    destroy,
   };
 }

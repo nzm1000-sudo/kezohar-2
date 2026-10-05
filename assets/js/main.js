@@ -82,7 +82,10 @@ const heroCopy = $('.hero-copy');
 const dustTitle = $('[data-dust-title]');
 const railDots = $$('.hero-rail b').map((el) => ({ el, at: parseFloat(el.style.getPropertyValue('--at')), on: false }));
 const H = {
-  title: $('.hero-title'), rest: [...heroCopy.children].filter((el) => !el.classList.contains('hero-title')),
+  title: $('.hero-title'),
+  // the words around the title, in the order they leave: the plaque, the presidency and the buttons first,
+  // then the kicker and the eyebrow, and last the two lines that hug the title
+  outer: $$('.hero-lede, .hero-presidency, .hero-ctas'), mid: $$('.hero-kicker, .hero-eyebrow'), inner: $$('.hero-sub, .hero-motto'),
   photo: $('.hero-photo'), sharp: $('.hero-photo-sharp'), scrim: $('.hero-scrim'), veil: $('.hero-veil'), halo: $('.hero-halo'),
   line: $('.hero-line'), scroll: $('.hero-scroll'), rail: $('.hero-rail'), fill: $('.hero-rail-fill'), caption: $('.hero-caption'),
 };
@@ -94,21 +97,24 @@ function heroTarget() {
   return span > 0 ? Math.min(1, Math.max(0, (window.scrollY - M.top) / span)) : 0;
 }
 function heroApply(p) {
-  // the title hands over to its particle twin (hero-scene STAGE.textIn 1.2–6.5%); without the
-  // 3D it simply fades a little later. The rest of the copy leaves gently, after the title.
+  // Order of the story: first the words around the title leave (outer lines first, the lines that
+  // hug the title last), and only once they are all gone does the title hand over to its particle
+  // twin (hero-scene STAGE.textIn 7–12%). Without the 3D the title simply fades at the same moment.
   const dust = heroScene && heroScene.hasDust;
-  const title = 1 - (dust ? sm(0.02, 0.068, p) : sm(0.05, 0.14, p));
-  const copy = 1 - sm(0.07, 0.18, p);
-  const line = sm(0.22, 0.3, p) * (1 - sm(0.43, 0.51, p));
-  // a long, overlapping cross-fade: the photo arrives over ~37% of the stage while the points thin out
-  const photo = sm(0.58, 0.95, p);
-  const blur = 1 - sm(0.6, 0.92, p);
-  const halo = sm(0.74, 0.97, p);
+  const title = 1 - (dust ? sm(0.072, 0.118, p) : sm(0.072, 0.15, p));
+  const outer = 1 - sm(0.004, 0.044, p), mid = 1 - sm(0.014, 0.054, p), inner = 1 - sm(0.024, 0.064, p);
+  const line = sm(0.3, 0.37, p) * (1 - sm(0.5, 0.57, p));
+  // a long, overlapping cross-fade: the photo arrives over ~35% of the stage while the points thin out
+  const photo = sm(0.6, 0.95, p);
+  const blur = 1 - sm(0.62, 0.92, p);
+  const halo = sm(0.75, 0.97, p);
   const f = (x) => x.toFixed(3);
   put(H.title, 'opacity', f(title));
-  const co = f(copy), ct = `translateY(${((1 - copy) * -18).toFixed(1)}px)`;
-  H.rest.forEach((el) => { put(el, 'opacity', co); put(el, 'transform', ct); });
-  put(H.scroll, 'opacity', co);
+  for (const [els, v] of [[H.outer, outer], [H.mid, mid], [H.inner, inner]]) {
+    const o = f(v), t = `translateY(${((1 - v) * -14).toFixed(1)}px)`;
+    els.forEach((el) => { put(el, 'opacity', o); put(el, 'transform', t); });
+  }
+  put(H.scroll, 'opacity', f(outer));
   put(H.line, 'opacity', f(line)); put(H.line, 'transform', `translateY(${((1 - line) * 16).toFixed(1)}px)`);
   put(H.photo, 'opacity', f(photo)); put(H.sharp, 'opacity', f(1 - blur));
   put(H.caption, 'opacity', f(photo)); // "המחשה" arrives with the photo it labels
@@ -118,7 +124,7 @@ function heroApply(p) {
   put(H.fill, 'transform', `scaleY(${f(p)})`);
   railDots.forEach((d) => { const on = p >= d.at - 0.005; if (on !== d.on) { d.on = on; d.el.classList.toggle('is-on', on); } });
   const hOn = halo > 0.005; if (hOn !== H.halo.__on) { H.halo.__on = hOn; H.halo.classList.toggle('is-on', hOn); }
-  const hidden = copy < 0.02 && title < 0.02; if (hidden !== heroCopy.__hid) { heroCopy.__hid = hidden; heroCopy.toggleAttribute('data-hidden', hidden); }
+  const hidden = inner < 0.02 && title < 0.02; if (hidden !== heroCopy.__hid) { heroCopy.__hid = hidden; heroCopy.toggleAttribute('data-hidden', hidden); }
   if (heroScene) heroScene.setProgress(p);
 }
 function heroTick(now) {
@@ -135,19 +141,23 @@ function heroState() {
   if (TEST && TEST.instant) { heroP = heroT; heroApply(heroP); return; }
   if (!heroRaf) { heroLast = 0; heroRaf = requestAnimationFrame(heroTick); }
 }
-// the golden aura sits behind the building of the photo: match the photo's cover-fit box
+// the golden aura sits behind the building of the photo: match the photo's cover-fit box. On portrait
+// screens the photo is the portrait render (tools/portrait-renders.cjs): the 1376×768 frame is scaled by
+// 900/1256 (sideways) and 550/768 (down), shifted 60 px left and placed 1040 px down a 900×1950 picture.
 const heroImg = $('.hero-photo-sharp img');
+const PORTRAIT = mq('(max-aspect-ratio: 4/5)');
 function layoutHalo() {
   if (!FX) return;
   const W = hero.clientWidth, Hh = M.vh;
   const op = getComputedStyle(heroImg).objectPosition.split(' ').map(parseFloat);
   const ox = Number.isNaN(op[0]) ? 0.5 : op[0] / 100, oy = Number.isNaN(op[1]) ? 0.78 : op[1] / 100;
-  const s = Math.max(W / 1376, Hh / 768), w = 1376 * s, h = 768 * s;
-  Object.assign(H.halo.style, { left: ((W - w) * ox).toFixed(1) + 'px', top: ((Hh - h) * oy).toFixed(1) + 'px', width: w.toFixed(1) + 'px', height: h.toFixed(1) + 'px' });
+  const P = PORTRAIT.matches ? { w: 900, h: 1950, x: -60 * 900 / 1256, y: 1040, bw: 1376 * 900 / 1256, bh: 550 } : { w: 1376, h: 768, x: 0, y: 0, bw: 1376, bh: 768 };
+  const s = Math.max(W / P.w, Hh / P.h), l = (W - P.w * s) * ox + P.x * s, t = (Hh - P.h * s) * oy + P.y * s;
+  Object.assign(H.halo.style, { left: l.toFixed(1) + 'px', top: t.toFixed(1) + 'px', width: (P.bw * s).toFixed(1) + 'px', height: (P.bh * s).toFixed(1) + 'px' });
 }
 if (FX) { layoutHalo(); heroT = heroP = heroTarget(); heroApply(heroP); }
 // keyboard users tabbing into hero CTAs: bring hero copy back into view
-heroCopy.addEventListener('focusin', () => { if (FX && heroP > 0.06) { window.scrollTo({ top: M.top, behavior: 'auto' }); if (lenis) lenis.scrollTo(M.top, { immediate: true }); heroT = heroP = 0; heroApply(0); } });
+heroCopy.addEventListener('focusin', () => { if (FX && heroP > 0.004) { window.scrollTo({ top: M.top, behavior: 'auto' }); if (lenis) lenis.scrollTo(M.top, { immediate: true }); heroT = heroP = 0; heroApply(0); } });
 
 /* ---------- back to top ---------- */
 const toTop = $('[data-to-top]');
@@ -265,7 +275,9 @@ $$('[data-open-donate]').forEach((b) => b.addEventListener('click', () => {
 }));
 setTier($('input[name="tier"]:checked').value);
 const ded = $('#dedication-name'), plaque = $('[data-plaque-name]');
-ded.addEventListener('input', () => { plaque.textContent = ded.value.trim() || 'שמכם כאן'; });
+const syncPlaque = () => { plaque.textContent = ded.value.trim() || 'שמכם כאן'; };
+ded.addEventListener('input', syncPlaque);
+syncPlaque(); // a name the browser restored (reload / back) shows on the plaque too
 
 /* ---------- dedication certificate (drawn on the visitor's device; the name is never sent) ---------- */
 let certMod = null;
@@ -358,7 +370,7 @@ if (MOTION && !(TEST && TEST.noLenis) && mq('(min-width: 1024px)').matches && !M
     if (!MOBILE) {
       // a calmer wheel: each notch travels ~25% less and glides a little longer (keyboard, anchors
       // and the scrollbar keep native distances; phones never load Lenis; reduced motion skips it)
-      lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.75, smoothWheel: true, anchors: { offset: -72 } });
+      lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.75, smoothWheel: true, anchors: true }); // Lenis already honours the page's scroll-padding-top (the header clearance)
       lenis.on('scroll', () => { ScrollTrigger.update(); onScroll(); });
       gsap.ticker.add((t) => lenis.raf(t * 1000));
       gsap.ticker.lagSmoothing(0);
