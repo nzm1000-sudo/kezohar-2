@@ -275,7 +275,9 @@ $$('[data-open-donate]').forEach((b) => b.addEventListener('click', () => {
 }));
 setTier($('input[name="tier"]:checked').value);
 const ded = $('#dedication-name'), plaque = $('[data-plaque-name]');
-ded.addEventListener('input', () => { plaque.textContent = ded.value.trim() || 'שמכם כאן'; });
+const syncPlaque = () => { plaque.textContent = ded.value.trim() || 'שמכם כאן'; };
+ded.addEventListener('input', syncPlaque);
+syncPlaque(); // a name the browser restored (reload / back) shows on the plaque too
 
 /* ---------- dedication certificate (drawn on the visitor's device; the name is never sent) ---------- */
 let certMod = null;

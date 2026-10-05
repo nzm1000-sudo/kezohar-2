@@ -943,6 +943,8 @@ html.motion .tier-royal.is-paused .royal-frame, html.motion .tier-royal.is-pause
 @media (max-width: 767px) {
   /* the page's dark footer runs on beneath the floating dock, so its last line clears it */
   .footer:not(.doc-footer) { padding-bottom: calc(var(--dock-h) + var(--dock-gap) + var(--sp-6) + env(safe-area-inset-bottom)); }
+  /* keyboard focus scrolled into view stops above the floating dock, never under it */
+  html:has(.dock) { scroll-padding-bottom: calc(var(--dock-h) + var(--dock-gap) * 2 + env(safe-area-inset-bottom)); }
   .dock {
     position: fixed; inset: auto var(--dock-gap) calc(var(--dock-gap) + env(safe-area-inset-bottom)) var(--dock-gap); z-index: 40; display: flex; gap: 8px; padding: 8px;
     border-radius: 999px; background-color: color-mix(in srgb, var(--surface) 92%, transparent); background-image: var(--grain);
