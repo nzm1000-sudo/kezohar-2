@@ -5,10 +5,12 @@ import { buildCloud, makeMass, makeMaterial, makeGroundGlow, setDepth, skyTextur
 
 const sm = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 const lerp = (a, b, t) => a + (b - a) * t;
+const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2); // the shader's ease()
 
-// Stage map (fractions of the 640vh hero; main.js drives the DOM side with matching numbers):
-//   title → dust 1.2–6.5% · dust gathers 10–40% · hold · orbit 48–70% · dissolve 66–99% (photo 58–95%)
-export const STAGE = { textIn: [0.012, 0.065], assemble: [0.1, 0.4], orbit: [0.48, 0.7], dissolve: [0.66, 0.99] };
+// Stage map (fractions of the 720vh hero; main.js drives the DOM side with matching numbers):
+//   the words leave 0.4–6.4% · only then the title → dust 7–12% · dust gathers 15–44% · hold ·
+//   orbit 50–71% · dissolve 67–99% (photo 60–95%)
+export const STAGE = { textIn: [0.07, 0.12], assemble: [0.15, 0.44], orbit: [0.5, 0.71], dissolve: [0.67, 0.99] };
 
 // Device capability → quality tier (0 low, 1 mid, 2 high). Cheap signals first; the runtime governor
 // below then corrects with real frame times.
@@ -218,6 +220,9 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
     const tt = t * 0.7; // all ambient motion runs a little slower
     u.uTime.value = tt; u.uAssemble.value = assemble; u.uDissolve.value = dissolve;
     u.uTextIn.value = state.dust ? sm(...STAGE.textIn, p) : 0;
+    // how much of the dust title still stands on the letters (the slowest particle: delay 1 → .3)
+    const te = ease(Math.min(1, Math.max(0, (assemble - 0.126) / 0.58)));
+    state.titleA = u.uTextIn.value * (1 - sm(0, 0.35, te));
     u.uIntensity.value = lerp(1.35, gain, assemble);
     ground.material.uniforms.uOpacity.value = assemble * assemble * (1 - dissolve);
     mass.userData.material.uniforms.uOpacity.value = sm(0.55, 1, assemble) * (1 - sm(0, 0.55, dissolve)) * 0.94;
@@ -260,6 +265,7 @@ export function createHero(canvas, { mobile = false, poster = false, noGov = fal
   return {
     setProgress(p) { state.progress = p; },
     get hasDust() { return state.dust; },
+    get dustTitle() { return state.titleA || 0; },
     get points() { return { N, tier, drawn: Math.min(N, geo.drawRange.count), dpr, level, text: state.textN || 0 }; },
     resample: sampleTitle,
     // test runs only (main.js exposes this object on localhost): render one frame, optionally without the dissolve
