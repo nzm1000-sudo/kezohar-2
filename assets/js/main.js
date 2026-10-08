@@ -292,7 +292,8 @@ $$('[data-close-nav]').forEach((a) => a.addEventListener('click', () => { const 
 menuBtn.addEventListener('click', () => openDialog(menu));
 
 /* ---------- tiers (section ↔ sheet stay in sync) ---------- */
-const NEDARIM = 'https://www.matara.pro/nedarimplus/online/?mosad=5776132';
+const DONATE = 'https://nzm1000-sudo.github.io/hesed-landing/donate/';
+const DONATE_CAT = { 100: '1m', 180: '1.5m', 360: '3m', 560: 'meyasdim', 1080: 'meah' };
 const NAMES = { 100: 'מטר אחד', 180: 'מטר וחצי', 360: 'שלושה מטרים', 560: 'היכל המייסדים', 1080: 'נבחרת המאה' };
 const fmt = (n) => '₪' + Number(n).toLocaleString('en-US');
 let igniteScene = null;
@@ -311,8 +312,7 @@ function setTier(v, from) {
   const b = $(`input[name="sheet-tier"][value="${v}"]`); if (b && from !== 'sheet') b.checked = true;
   $('[data-plaque-tier]').textContent = NAMES[v];
   $('[data-sheet-sum]').innerHTML = `<bdi>${fmt(v)}</bdi> לחודש`;
-  // Nedarim Plus pre-fill (parameters read by the donation page itself): monthly sum, 48 charges, הוראת קבע
-  $('[data-nedarim]').href = `${NEDARIM}&Amount=${v}&Payment=48&KevaDefault=1`;
+  $('[data-nedarim]').href = `${DONATE}?cat=${DONATE_CAT[v]}&months=48`;
   $('[data-ignite-name]').textContent = NAMES[v];
   if (igniteScene) igniteScene.setTier(v); else swapArt(v);
 }

@@ -46,7 +46,7 @@ for (const [pkg, f] of fonts) fs.copyFileSync(fsrc(pkg, f), out('fonts', f));
 // ---------- QR ----------
 (async () => {
   mk(out('img'));
-  const url = 'https://www.matara.pro/nedarimplus/online/?mosad=5776132';
+  const url = 'https://nzm1000-sudo.github.io/hesed-landing/donate/';
   const svg = await QRCode.toString(url, { type: 'svg', errorCorrectionLevel: 'M', margin: 2, color: { dark: '#1C1B18', light: '#F7F3EC' } });
   fs.writeFileSync(out('img', 'qr-nedarim.svg'), svg);
 

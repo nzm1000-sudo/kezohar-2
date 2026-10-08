@@ -500,8 +500,8 @@
         <picture class="clay-art method-art"><source type="image/avif" srcset="assets/img/clay/pay-card-240.avif 240w, assets/img/clay/pay-card-480.avif 480w" sizes="(min-width: 640px) 140px, 128px"><img src="assets/img/clay/pay-card-240.webp" srcset="assets/img/clay/pay-card-240.webp 240w, assets/img/clay/pay-card-480.webp 480w" sizes="(min-width: 640px) 140px, 128px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
         <h3>אשראי / ביט</h3>
         <p>תרומה מאובטחת ונוחה ישירות באתר — תוך דקות.</p>
-        <!-- General link (no tier chosen here). The sheet's button pre-fills the tier: see data-nedarim below. -->
-        <a class="btn btn-solid" href="https://www.matara.pro/nedarimplus/online/?mosad=5776132" target="_blank" rel="noopener">לתרומה מאובטחת <svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr-only">(נפתח בלשונית חדשה)</span></a>
+        <!-- General link (no tier chosen here). The sheet's button pre-selects the tier: see data-nedarim below. -->
+        <a class="btn btn-solid" href="https://nzm1000-sudo.github.io/hesed-landing/donate/" target="_blank" rel="noopener">לתרומה מאובטחת <svg aria-hidden="true"><use href="#i-out"/></svg><span class="sr-only">(נפתח בלשונית חדשה)</span></a>
         <p class="method-small">אשראי · ביט · דרך נדרים פלוס</p>
       </article>
 
@@ -520,8 +520,8 @@
         <picture class="clay-art method-art"><source type="image/avif" srcset="assets/img/clay/pay-qr-240.avif 240w, assets/img/clay/pay-qr-480.avif 480w" sizes="(min-width: 640px) 140px, 128px"><img src="assets/img/clay/pay-qr-240.webp" srcset="assets/img/clay/pay-qr-240.webp 240w, assets/img/clay/pay-qr-480.webp 480w" sizes="(min-width: 640px) 140px, 128px" width="240" height="240" alt="" loading="lazy" decoding="async"></picture>
         <h3>סריקת QR</h3>
         <p>סרקו את הקוד בטלפון — ותגיעו ישר לדף התרומה.</p>
-        <img class="qr" src="assets/img/qr-nedarim.svg" width="168" height="168" alt="קוד QR לדף התרומה בנדרים פלוס" loading="lazy">
-        <a class="link" href="https://www.matara.pro/nedarimplus/online/?mosad=5776132" target="_blank" rel="noopener">פתיחת הקישור<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
+        <img class="qr" src="assets/img/qr-nedarim.svg" width="168" height="168" alt="קוד QR לדף התרומה" loading="lazy">
+        <a class="link" href="https://nzm1000-sudo.github.io/hesed-landing/donate/" target="_blank" rel="noopener">פתיחת הקישור<span class="sr-only"> (נפתח בלשונית חדשה)</span></a>
       </article>
 
       <article class="method method-bank clay">
@@ -662,11 +662,9 @@
     </div>
 
     <div class="sheet-actions">
-      <!-- Nedarim Plus pre-fill: the donation page's own script (Files/JavaScript5.js) reads Amount (monthly sum in keva mode),
-           Payment (number of charges) and KevaDefault=1 (selects הוראת קבע). Verified 2026-10 by loading the page with these
-           parameters: הוראת קבע selected, ₪360 × 48 = ₪17,280. main.js rewrites this href when the tier changes. -->
-      <a class="btn btn-solid btn-lg btn-block" href="https://www.matara.pro/nedarimplus/online/?mosad=5776132&amp;Amount=360&amp;Payment=48&amp;KevaDefault=1" target="_blank" rel="noopener" data-nedarim>המשך לתרומה מאובטחת <svg aria-hidden="true"><use href="#i-out"/></svg></a>
-      <p class="sheet-small">נפתח בלשונית חדשה באתר נדרים פלוס, עם הוראת קבע ממולאת מראש: <strong data-sheet-sum><bdi>₪360</bdi> לחודש</strong> × <bdi>48</bdi> חודשים</p>
+      <!-- the tier is pre-selected on the donation page via ?cat=…&months=48; main.js rewrites this href when the tier changes -->
+      <a class="btn btn-solid btn-lg btn-block" href="https://nzm1000-sudo.github.io/hesed-landing/donate/?cat=3m&amp;months=48" target="_blank" rel="noopener" data-nedarim>המשך לתרומה מאובטחת <svg aria-hidden="true"><use href="#i-out"/></svg></a>
+      <p class="sheet-small">נפתח בלשונית חדשה בדף התרומה המאובטח, עם הוראת קבע ממולאת מראש: <strong data-sheet-sum><bdi>₪360</bdi> לחודש</strong> × <bdi>48</bdi> חודשים</p>
     </div>
     <p class="sheet-alt">התרומה מתבצעת באתר נדרים פלוס (אשראי / ביט). מעדיפים טלפון? <a href="tel:0585555530"><bdi>058-5555530</bdi></a> · <a href="tel:0535470052"><bdi>053-5470052</bdi></a> · <a href="#donate" data-close-nav>העברה בנקאית</a></p>
   </form>
